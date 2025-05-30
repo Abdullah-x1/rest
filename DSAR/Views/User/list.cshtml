@@ -1,0 +1,55 @@
+@model List<DSAR.ViewModels.UserView>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>User List</title>
+</head>
+<body>
+    <form asp-controller="Account" asp-action="Logout" method="post">
+        <button type="submit">Logout</button>
+    </form>
+@*     @if (Model != null)
+    {
+        <p> @Model.FullName <strong>مرحباً ياً:</strong> </p>
+    }
+    else
+    {
+        <p>No user found.</p>
+    } *@
+    <h2>User List</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                
+                <th>FullName</th>
+                
+                <th>Email</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+          
+                @foreach (var user in Model)
+                {
+                    <tr>
+                       
+                        <td>@user.FullName</td>
+                        
+                        <td>@user.Email</td>
+                    <td>
+                        <a asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edit</a> <!-- ✅ Edit link -->
+                    </td>
+                    <td><a asp-controller="User" asp-action="Delete" asp-route-id="@user.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+        
+        </tbody>
+    
+</body>
+</html>

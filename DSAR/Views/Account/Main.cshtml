@@ -1,0 +1,29 @@
+@model DSAR.ViewModels.UserView;
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form asp-action="Logout" method="post">
+        <button type="submit">Logout</button>
+    </form>
+    
+   
+    <p>
+        @User.FindFirst("FullName").Value مرحباً يا
+    <form asp-controller="User" asp-action="Insert" method="post">
+        <input type="submit" name="name" value="Insert" />
+    </form>
+        <form asp-controller="User" asp-action="list" method="post">
+    <input type="submit" name="name" value="list" />
+    </form>
+
+    
+   
+</body>
+</html>
