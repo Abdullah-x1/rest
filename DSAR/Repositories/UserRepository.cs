@@ -54,7 +54,8 @@ public class UserRepository : IUserRepository
             throw new InvalidOperationException("User not found.");
 
         // Update only specific fields
-        userInDb.FullName = updatedUser.FullName;
+        userInDb.FirstName = updatedUser.FirstName;
+        userInDb.LastName = updatedUser.LastName;
         userInDb.Email = updatedUser.Email;
         userInDb.UserName = updatedUser.UserName;
         _context.User.Update(userInDb);

@@ -1,0 +1,116 @@
+﻿body {
+    background: radial-gradient( circle at top left, #00B96B 0%, #29B6F6 33%, #304FFE 76%, #8C52FF 100% );
+    background-size: 200% 200%;
+    background-repeat: no-repeat;
+    background-position: top left;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.login-container {
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 600px;
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.logo {
+    width: 120px;
+    height: 120px;
+}
+
+    .logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 16px;
+    }
+
+h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+}
+
+.form-control:focus {
+    border-color: #8BC6EC;
+    box-shadow: 0 0 0 0.2rem rgba(139, 198, 236, 0.25);
+}
+
+.password-group {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    top: 68%;
+    left: 1rem;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    color: #555;
+    cursor: pointer;
+}
+
+.btn-login {
+    background: linear-gradient(135deg, #8BC6EC 0%, #9599E2 100%);
+    color: white;
+    font-weight: 500;
+    padding: 12px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+    .btn-login:hover {
+        background: linear-gradient(135deg, #76b8e3 0%, #848ae0 100%);
+        transform: scale(1.02);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+.logo (max-width: 576px) {
+
+{
+    width: 100px;
+    height: 100px;
+}
+
+.login-container {
+    padding: 2rem 1rem;
+}
+
+h1 {
+    font-size: 1.5rem;
+}
+
+}
+
+/* Make inputs larger */
+.form-control {
+    font-size: 1.1rem;
+    padding: 14px 16px;
+    border-radius: 14px;
+}
+
+/* Align labels to the left regardless of RTL */
+.form-label {
+    text-align: left !important;
+    display: block;
+    font-weight: 500;
+    font-size: 1rem;
+    color: #333;
+}
+
+
+/*main*/

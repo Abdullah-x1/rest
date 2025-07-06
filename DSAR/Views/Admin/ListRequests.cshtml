@@ -1,0 +1,41 @@
+﻿@model IEnumerable<DSAR.Models.ViewModels.RequestListItemViewModel>
+
+<div class="mb-3">
+    <a asp-controller="Account"
+       asp-action="Main"
+       class="btn btn-secondary">
+        الصفحة الرئيسية
+    </a>
+
+<h2>قائمة الطلبات</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>رقم الطلب</th>
+            <th>رقم المستخدم</th>
+            <th>الحالة</th>
+            <th>الإدارة</th>
+            <th>القسم</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td>@r.RequestId</td>
+                <td>@r.UserId</td>
+                <td>@r.StatusName</td>
+                <td>@r.DepartmentName</td>
+                <td>@r.SectionName</td>
+                <td>
+                    <a asp-action="ViewSubmission" asp-controller="Request" asp-route-id="@r.RequestId" class="btn btn-sm btn-info">
+                        Details
+                    </a>
+                    <a asp-action="ChangeLevel" asp-route-id="@r.RequestId" class="btn btn-sm btn-warning">
+                        Rollback Level
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

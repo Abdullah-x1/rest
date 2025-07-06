@@ -1,0 +1,31 @@
+﻿@model DSAR.ViewModels.RequestViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تأكيد تقديم الطلب</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/confirm.css" asp-append-version="true" />
+
+</head>
+<body>
+    <form asp-controller="Request" asp-action="Request" method="post" class="container">
+        <h1>هل أنت متأكد من تقديم الطلب؟</h1>
+
+        <div class="buttons">
+            <button type="button" class="btn btn-cancel" onclick="history.back()">رجوع</button>
+            <button type="submit" class="btn btn-submit">تأكيد وتقديم</button>
+        </div>
+    </form>
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
+</body>
+</html>
+

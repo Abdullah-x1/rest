@@ -1,0 +1,149 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المتطلبات والشروط والأحكام</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #8BC6EC 0%, #9599E2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            direction: rtl;
+        }
+
+        .container {
+            background: white;
+            width: 1288px;
+            height: 729px;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .requirements {
+            list-style: none;
+        }
+
+            .requirements li {
+                color: #444;
+                font-size: 18px;
+                margin-bottom: 40px;
+                position: relative;
+                padding-right: 20px;
+            }
+
+                .requirements li::before {
+                    content: '-';
+                    position: absolute;
+                    right: 0;
+                }
+
+        .checkbox-container {
+            margin-top: 95px;
+        }
+
+            .checkbox-container label {
+                display: flex;
+                align-items: center;
+                color: #444;
+                font-size: 16px;
+                cursor: pointer;
+            }
+
+            .checkbox-container input[type="checkbox"] {
+                margin-left: 10px;
+                width: 18px;
+                height: 18px;
+            }
+
+        .buttons {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+            .btn:hover:not(:disabled) {
+                opacity: 0.9;
+            }
+
+        .back-btn {
+            background: #666;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #4b6cb7 0%, #4c75c3 100%);
+        }
+
+            .submit-btn:disabled {
+                background: #ccc;
+                cursor: not-allowed;
+                opacity: 0.7;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>المتطلبات والشروط والأحكام:</h1>
+        <ul class="requirements">
+            <li>جميع الوثائق يجب ان تكون سارية المفعول</li>
+            <li>عدم وجود طلب قائم لنفس الخدمة</li>
+            <li>استكمال جميع الحقول المطلوبة</li>
+            <li>الطلبات الغير نشطة يتم اغلاقها</li>
+            <li>مقدم الطلب يجب ان يكون موظف رسمي بالهيئة الملكية</li>
+            <li>يجب ارفاق جميع موافقات المدن</li>
+        </ul>
+        <div class="checkbox-container">
+            <label>
+                <input type="checkbox" id="termsCheckbox">
+                اوافق على الشروط والأحكام
+            </label>
+        </div>
+        <div class="buttons">
+            <button class="btn submit-btn" onclick="location.href='@Url.Action("Login", "Account")';">الرجوع</button>
+            <button class="btn submit-btn" id="submitBtn" disabled onclick="location.href='@Url.Action("Main", "Account")';">تقديم طلب</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('termsCheckbox').addEventListener('change', function() {
+            document.getElementById('submitBtn').disabled = !this.checked;
+        });
+    </script>
+</body>
+</html>

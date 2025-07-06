@@ -1,0 +1,67 @@
+@model DSAR.ViewModels.RequestViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <title>Step Descriptions</title>
+    <link rel="stylesheet" href="~/css/StepDescription.css" asp-append-version="true" />
+    <script src="~/css/Script.js" asp-append-version="true"></script>
+
+
+</head>
+<body>
+    <form asp-action="StepDescriptions" method="post" class="form-container">
+        <h3 style="text-align: center; margin-bottom: 20px;">صلاحيات المعتمدين</h3>
+
+        <div class="table-container">
+            <table id="fieldsTable">
+                <thead>
+                    <tr>
+                        <th>الإدارة</th>
+                        <th>اسم المعتمد</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr>
+                        <td><input name="Descriptions[0].Description1" class="form-control" /></td>
+                        <td><input name="Descriptions[0].Description2" class="form-control" /></td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="button-container">
+            <button type="button" class="btn btn-success" onclick="addRow()">+ إضافة صف</button>
+            <button type="button" class="btn btn-danger" onclick="deleteLastRow()">حذف صف</button>
+        </div>
+        <button type="button" class="arrow arrow-left" onclick="location.href='@Url.Action("Step2", "Request")'">
+            <img src="~/images/arrowL.png" alt="السابق" />
+        </button>
+        @if (User.IsInRole("ApplicationManager"))
+        {
+            <a asp-action="AnalyzerUsers" asp-route-requestId="@Model.FormId">Choose Analyzer</a>
+        }
+        @if (!User.IsInRole("ApplicationManager"))
+        {
+            <button type="submit" class="arrow arrow-right">
+                <img src="~/images/arrowR.png" alt="التالي" />
+            </button>
+        }
+
+
+    </form>
+
+    <style>
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+
+    
+</body>
+</html> 

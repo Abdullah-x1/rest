@@ -1,0 +1,89 @@
+﻿@model DSAR.ViewModels.RequestViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <title>Step 1</title>
+    <link rel="stylesheet" href="~/css/steps.css" asp-append-version="true" />
+    <script src="~/css/Script.js" asp-append-version="true"></script>
+</head>
+<body>
+    <form asp-action="Step1" method="post" enctype="multipart/form-data">
+
+
+        <div class="form-container">
+            <div class="right-column column">
+                <textarea asp-for ="Field1" class="in1" placeholder="يتم كتابة اسم الخدمة المطلوبة" value="@Model.Field1"></textarea>
+                <textarea asp-for="Field2" class="in1" placeholder="يتم تحديد نوع الخدمة وموقعها" value="@Model.Field2" ></textarea>
+                <textarea asp-for = "Field3" class="in2" placeholder="يتم كتابة وصف تفصيلي للخدمة المطلوب تطويرها">@Model.Field3</textarea>
+
+                <div class="radio-section">
+                    <label>هل توجد اعتمادية على خدمات حالية؟</label>
+                    <div class="radio-options">
+                        <label><input type="radio" name="Depend" value="yes" @(Model.Depend == "yes" ? "checked" : "") /> نعم</label>
+                        <label><input type="radio" name="Depend" value="no" @(Model.Depend == "no" ? "checked" : "") /> لا</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="left-column column">
+                <textarea asp-for="Field4" class="in1" placeholder="توضيح الاعتمادية ان وجد" value="@Model.Field4" ></textarea>
+                <textarea asp-for="Field5" class="in1" placeholder="رقم الإجراء الإداري إن وجد" value="@Model.Field5" ></textarea>
+                <textarea asp-for="Field6" class="in3" placeholder="رفع ملف الإجراء الإداري إن وجد" value="@Model.Field6" ></textarea>
+
+                <label for="file-upload" style="cursor: pointer;">
+                    <img src="~/images/link.png" alt="إرفاق ملف" style="width: 24px;" />
+                </label>
+                <input type="file" name="Attachment" id="file-upload" style="display: none;" />
+            </div>
+
+            <button type="submit" class="arrow arrow-right">
+                <img src="~/images/arrowR.png" alt="التالي" />
+            </button>
+            <!-- Navigation Arrows -->
+            <button type="button" class="arrow arrow-left" onclick="location.href='@Url.Action("Main", "Account")'">
+                <img src="~/images/arrowL.png" alt="السابق" />
+            </button>
+        </div>
+    </form>
+
+    <!-- ✅ Popup Modal - Only for basic users -->
+    @if (!User.IsInRole("Admin") &&
+    !User.IsInRole("SectionManager") &&
+    !User.IsInRole("DepartmentManager") &&
+        !User.IsInRole("ITManager") &&
+    !User.IsInRole("Analyzer") &&
+    !User.IsInRole("ApplicationManager"))
+    {
+        <div id="termsPopup" class="popup-overlay">
+            <div class="popup-content">
+                <h1>المتطلبات والشروط والأحكام:</h1>
+                <ul class="requirements">
+                    <li>جميع الوثائق يجب ان تكون سارية المفعول</li>
+                    <li>عدم وجود طلب قائم لنفس الخدمة</li>
+                    <li>استكمال جميع الحقول المطلوبة</li>
+                    <li>الطلبات الغير نشطة يتم اغلاقها</li>
+                    <li>مقدم الطلب يجب ان يكون موظف رسمي بالهيئة الملكية</li>
+                    <li>يجب ارفاق جميع موافقات المدن</li>
+                </ul>
+                <div class="checkbox-container">
+                    <label>
+                        <input type="checkbox" id="termsCheckbox" />
+                        اوافق على الشروط والأحكام
+                    </label>
+                </div>
+                <div class="popup-buttons">
+                    <button class="popup-btn back-btn" onclick="closePopup()">رجوع</button>
+                    <button class="popup-btn confirm-btn" id="acceptTermsBtn" disabled onclick="closePopup()">موافق</button>
+                </div>
+            </div>
+        </div>
+    }
+
+   
+</body>
+</html>
+

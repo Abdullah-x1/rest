@@ -10,27 +10,39 @@
             <div class="mb-3">
                 <label asp-for="UserId" class="form-label"></label>
                 <input asp-for="UserId" class="form-control" />
-                <span asp-validation-for="UserId" class="text-danger"></span>
+                @* <span asp-validation-for="UserId" class="text-danger"></span> *@
             </div>
             <div class="mb-3">
-                <label asp-for="Name" class="form-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label asp-for="FirstName" class="form-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                @* <span asp-validation-for="FirstName" class="text-danger"></span> *@
+            </div>
+            <div class="mb-3">
+                <label asp-for="LastName" class="form-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                @* <span asp-validation-for="LastName" class="text-danger"></span> *@
             </div>
             <div class="mb-3">
                 <label asp-for="Email" class="form-label"></label>
                 <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
+                @* <span asp-validation-for="Email" class="text-danger"></span> *@
+            </div
+            <div class="mb-3">
+    <label asp-for="CityId" class="form-label"></label>
+    <select asp-for="CityId" asp-items="Model.Cities" class="form-select"></select>
+    <span asp-validation-for="CityId" class="text-danger"></span>
+</div>
+
+
             <div class="mb-3">
                 <label asp-for="Password" class="form-label"></label>
                 <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
+                @* <span asp-validation-for="Password" class="text-danger"></span> *@
             </div>
             <div class="mb-3">
                 <label asp-for="ConfirmPassword" class="form-label"></label>
                 <input asp-for="ConfirmPassword" class="form-control" />
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                @* <span asp-validation-for="ConfirmPassword" class="text-danger"></span> *@
             </div>
             <input type="submit" value="Register" class="btn btn-success w-100 p-2" />
             <p class="text-center mt-2">

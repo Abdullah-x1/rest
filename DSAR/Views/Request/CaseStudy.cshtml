@@ -1,0 +1,189 @@
+@model DSAR.ViewModels.CaseStudyViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المراجع والملاحظات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #8BC6EC 0%, #9599E2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            width: 1288px;
+            min-height: 729px;
+            height: auto;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            direction: rtl;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+            font-size: 18px;
+            color: #333;
+        }
+
+        td {
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            height: 60px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-control {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+            font-size: 14px;
+        }
+
+        textarea.form-control {
+            height: 120px;
+            overflow-y: auto;
+            resize:none;
+        }
+
+        .buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 20px;
+            justify-content: flex-start;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+            .btn:hover {
+                opacity: 0.9;
+            }
+
+        .reject-btn {
+            background: #933740;
+        }
+
+        .accept-btn {
+            background: #216e33;
+        }
+
+        .attachment-label img {
+            width: 24px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <form asp-action="CaseStudy" method="post" enctype="multipart/form-data" class="container">
+        <table>
+            <tr>
+                <th>الملاحظات</th>
+                <th>المراجع</th>
+            </tr>
+
+            @if (!string.IsNullOrWhiteSpace(Model.SectionNotes))
+            {
+                <tr>
+                    <td>@Model.SectionNotes</td>
+                    <td><h4>ملاحظة مدير القسم</h4></td>
+                </tr>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Model.DepartmentNotes))
+            {
+                <tr>
+                    <td>@Model.DepartmentNotes</td>
+                    <td><h4>ملاحظة مدير الإدارة</h4></td>
+                </tr>
+            }
+
+       
+        </table>
+
+        <div class="form-group">
+            <label asp-for="WorkTeam"></label>
+            <input asp-for="WorkTeam" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Notes"></label>
+            <textarea asp-for="Notes" class="form-control" rows="4"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="restriction"></label>
+            <textarea asp-for="restriction" class="form-control" rows="4"></textarea>
+        </div>
+
+        <div class="attachment">
+            <input type="file" id="CaseStudyAttachment" name="CaseStudyAttachment" style="display: none;" />
+            <label for="CaseStudyAttachment" style="cursor: pointer;">
+                <img src="~/images/link.png" alt="إرفاق ملف" style="width: 24px;" />
+            </label>
+        </div>
+
+        <input type="hidden" asp-for="CaseId" />
+        <input type="hidden" asp-for="UserId" />
+        <input type="hidden" asp-for="RequestId" />
+
+        @if (User.IsInRole("ApplicationManager") || User.IsInRole("ITManager"))
+        {
+            <div class="buttons">
+                <button type="button" class="btn reject-btn">رفض الطلب</button>
+                <button type="submit" class="btn accept-btn">قبول الطلب</button>
+            </div>
+        }
+
+        <div class="buttons">
+            <button type="submit" class="btn accept-btn">قبول الطلب</button>
+        </div>
+    </form>
+</body>
+</html>

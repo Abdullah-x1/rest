@@ -1,0 +1,87 @@
+﻿@model DSAR.Models.ViewModels.EditUserViewModel
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+<div class="mb-3">
+    <a asp-controller="Account"
+       asp-action="Main"
+       class="btn btn-secondary">
+        الصفحة الرئيسية
+    </a>
+<h2>تعديل بيانات المستخدم</h2>
+
+<form asp-action="EditUser" method="post">
+    <input type="hidden" asp-for="IdentityGuid" />
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="form-group">
+        <label asp-for="NationalId"></label>
+        <input asp-for="NationalId" class="form-control" />
+        <span asp-validation-for="NationalId" class="text-danger"></span>
+    </div>
+    <!-- repeat for FirstName, LastName, Email -->
+    <div class="form-group">
+        <label asp-for="FirstName"></label>
+        <input asp-for="FirstName" class="form-control" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="LastName"></label>
+        <input asp-for="LastName" class="form-control" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <!-- dropdowns: City, Section, Department, Sector, Role -->
+    <div class="form-group">
+        <label asp-for="CityId"></label>
+        <select asp-for="CityId" asp-items="Model.Cities" class="form-control">
+            <option value="">-- اختر المدينة --</option>
+        </select>
+        <span asp-validation-for="CityId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="SectionId"></label>
+        <select asp-for="SectionId" asp-items="Model.Sections" class="form-control">
+            <option value="">-- اختر القسم --</option>
+        </select>
+        <span asp-validation-for="SectionId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="DepartmentId"></label>
+        <select asp-for="DepartmentId" asp-items="Model.Departments" class="form-control">
+            <option value="">-- اختر الإدارة --</option>
+        </select>
+        <span asp-validation-for="DepartmentId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="SectorId"></label>
+        <select asp-for="SectorId" asp-items="Model.Sectors" class="form-control">
+            <option value="">-- اختر القطاع --</option>
+        </select>
+        <span asp-validation-for="SectorId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Role"></label>
+        <select asp-for="Role" asp-items="Model.Roles" class="form-control">
+            <option value="">-- اختر الدور --</option>
+        </select>
+        <span asp-validation-for="Role" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">حفظ التغييرات</button>
+    <a asp-action="ResetPassword" asp-route-id="@Model.IdentityGuid" class="btn btn-warning">
+        Reset Password
+    </a>
+    <a asp-action="ListAllUsers" class="btn btn-secondary">إلغاء</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

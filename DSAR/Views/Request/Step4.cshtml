@@ -1,0 +1,61 @@
+﻿@model DSAR.ViewModels.RequestViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <link rel="stylesheet" href="~/css/steps.css" asp-append-version="true" />
+    <script src="~/css/Script.js" asp-append-version="true"></script>
+
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form Page 2</title>
+   
+</head>
+<body>
+    <form asp-action="Step4" method="post" enctype="multipart/form-data">
+        <div class="form-container">
+            <!-- Right Column -->
+            <div class="right-column column">
+                <textarea name="Workflow" class="in3" placeholder="يتم توضيح مسار العمل للخدمة بطريقة رسم (Workflow) توضيحي">@Model.Workflow</textarea>
+                <label for="workflow-upload">
+                    <img src="~/images/link.png" alt="إرفاق ملف" style="width: 24px; float: left; margin-bottom: 15px;" />
+                </label>
+                <input type="file" name="WorkflowFile" id="workflow-upload" style="display: none;" />
+
+                <textarea name="UploadsRequired" class="in2" placeholder="يتم ذكر جميع المرفقات المطلوب إضافتها في الخدمة، مع تحديد إلزاميتها (الزامي او اختياري)">@Model.UploadsRequired</textarea>
+                <label for="uploads-upload">
+                    <img src="~/images/link.png" alt="إرفاق ملف" style="width: 24px; float: left; margin-bottom: 15px;" />
+                </label>
+                <input type="file" name="UploadsRequiredFile" id="uploads-upload" style="display: none;" />
+
+                <textarea name="Documents" class="in1" placeholder="وثائق الدعم
+يتم إرفاق وثائق تدعم الخدمة؛ مثل (إجراءات العمل الموحد، لوائح وأنظمة)">@Model.Documents</textarea>
+                <label for="documents-upload">
+                    <img src="~/images/link.png" alt="إرفاق ملف" style="width: 24px; float: left; margin-bottom: 15px;" />
+                </label>
+                <input type="file" name="DocumentsFile" id="documents-upload" style="display: none;" />
+            </div>
+
+            <!-- Left Column -->
+            <div class="left-column column">
+                <textarea name="Timeline" class="in3" placeholder="المدة الزمنية لإنجاز الخدمة(مع حساب ايام الاجازات الرسمية)">@Model.Timeline</textarea>
+                <textarea name="SystemNeeded" class="in2" placeholder="الأنظمة التي يتطلب الربط معها">@Model.SystemNeeded</textarea>
+                <textarea name="Cities2" class="in3" placeholder="يتم ذكر المدن الموافقة على النموذج">@Model.Cities2</textarea>
+                <textarea name="DepartmentHeadName" class="in3" placeholder="اسم ممثل القطاع الموافق على النموذج">@Model.DepartmentHeadName</textarea>
+                <textarea name="AdditionalNotes" class="in3" placeholder="وثاىق الدعم">@Model.AdditionalNotes</textarea>
+            </div>
+
+            <button type="button" class="arrow arrow-left" onclick="location.href='@Url.Action("Step2", "Request")'">
+                <img src="~/images/arrowL.png" alt="السابق" />
+            </button>
+            <button type="submit" class="arrow arrow-right">
+                <img src="~/images/arrowR.png" alt="التالي" />
+            </button>
+
+        </div>
+    </form>
+</body>
+</html>
