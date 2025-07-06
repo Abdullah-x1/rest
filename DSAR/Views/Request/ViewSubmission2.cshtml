@@ -1,0 +1,202 @@
+﻿@model DSAR.ViewModels.RequestViewModel
+
+@{
+    Layout = null;
+    var step2Attachment1 = Model.Attachments.FirstOrDefault(a => a.FieldName == "Step2_1");
+    var step2Attachment2 = Model.Attachments.FirstOrDefault(a => a.FieldName == "Step2_2");
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <title>عرض الخطوة 2</title>
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(to right, #6dc1a8, #7ab8ea);
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form-container {
+            background-color: white;
+            width: 1288px;
+            height: 729px;
+            display: flex;
+            flex-direction: row;
+            padding: 40px;
+            box-sizing: border-box;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .right-column {
+            width: 414px;
+            margin-left: 238px;
+        }
+
+        .left-column {
+            width: 414px;
+        }
+
+        input[type="text"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: #f5f5f5;
+            color: #555;
+            pointer-events: none;
+            opacity: 0.7;
+            resize: none;
+        }
+
+        textarea {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .arrow {
+            position: absolute;
+            font-size: 32px;
+            cursor: pointer;
+            color: #00c9a7;
+            border: none;
+            background: transparent;
+            padding: 0;
+            outline: none;
+        }
+
+        .arrow-left {
+            left: 20px;
+            bottom: 20px;
+        }
+
+        .arrow-right {
+            right: 20px;
+            bottom: 20px;
+        }
+
+        .arrow img {
+            width: 32px;
+            height: 32px;
+            filter: brightness(0) saturate(100%) invert(52%) sepia(88%) saturate(350%) hue-rotate(120deg);
+        }
+
+        .in1 {
+            width: 414px;
+            height: 113px;
+        }
+
+        .attachment-section {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: right;
+        }
+
+        .attachment-link {
+            color: #1e90ff;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            display: block;
+            margin-top: 5px;
+        }
+
+            .attachment-link:hover {
+                text-decoration: underline;
+            }
+
+        .no-attachment {
+            color: #888;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <!-- Right Column -->
+        <div class="right-column column">
+            <input type="text" class="in1" value="@Model.RepeatLimit" readonly />
+            <input type="text" class="in1" value="@Model.Fees" readonly />
+            <input type="text" class="in1" value="@Model.Cities" readonly />
+
+            <select disabled>
+                <option>@Model.TargetAudience</option>
+            </select>
+
+            <select disabled>
+                <option>@Model.DepName</option>
+            </select>
+        </div>
+
+        <!-- Left Column -->
+        <div class="left-column column">
+            <textarea class="in1" readonly>@Model.ExpectedOutput1</textarea>
+            <textarea class="in1" readonly>@Model.ExpectedOutput2</textarea>
+            <textarea class="in1" readonly>@Model.ApprovedTemplate</textarea>
+
+            <div class="attachment-section">
+                @if (step2Attachment1 != null)
+                {
+                    <span>المرفق:</span>
+                    <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = step2Attachment1.Id })"
+                       class="attachment-link">
+                        @step2Attachment1.FileName@step2Attachment1.FileExtension
+                    </a>
+                }
+                else
+                {
+                    <span class="no-attachment">لا يوجد مرفق</span>
+                }
+            </div>
+
+            <textarea class="in1" readonly>@Model.DetailedInfo</textarea>
+
+            <div class="attachment-section">
+                @if (step2Attachment2 != null)
+                {
+                    <span>المرفق:</span>
+                    <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = step2Attachment2.Id })"
+                       class="attachment-link">
+                        @step2Attachment2.FileName@step2Attachment2.FileExtension
+                    </a>
+                }
+                else
+                {
+                    <span class="no-attachment">لا يوجد مرفق</span>
+                }
+            </div>
+
+            <textarea class="in1" readonly>@Model.RequiredConditions</textarea>
+        </div>
+
+        <!-- Navigation Arrows -->
+        <a href="@Url.Action("ViewSubmission", "Request", new { id = Model.RequestId })">
+            <div class="arrow arrow-left">
+                <img src="~/images/arrowL.png" alt="السابق" />
+            </div>
+        </a>
+
+        <a href="@Url.Action("ViewSubmission3", "Request", new { id = Model.RequestId })">
+            <div class="arrow arrow-right">
+                <img src="~/images/arrowR.png" alt="التالي" />
+            </div>
+        </a>
+    </div>
+</body>
+</html>

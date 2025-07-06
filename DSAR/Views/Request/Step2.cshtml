@@ -1,0 +1,67 @@
+@model DSAR.ViewModels.RequestViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>الصفحة الثانية من النموذج</title>
+    <link rel="stylesheet" href="~/css/steps.css" asp-append-version="true" />
+    <script src="~/css/Script.js" asp-append-version="true"></script>
+
+
+</head>
+<body>
+    <form asp-action="Step2" method="post" enctype="multipart/form-data">
+        <div class="form-container">
+            <!-- Right Column -->
+            <div class="right-column column">
+                <input asp-for="RepeatLimit" placeholder="عدد المرات المسموح بها" />
+                <input asp-for="Fees" placeholder="مجانية / توجد رسوم (مثال:100 ريال)" />
+                <input asp-for="Cities" placeholder="تحديد مدن الهيئة الملكية المقدمة للخدمة" />
+
+                <select asp-for="TargetAudience" class="form-control">
+                    <option value="">الفئة المستهدفة</option>
+                    <option value="افراد">افراد</option>
+                    <option value="مؤسسه">مؤسسه</option>
+                </select>
+
+                <select asp-for="DepName" class="form-control">
+                    <option value="">اسم الإدارة</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                </select>
+            </div>
+
+            <!-- Left Column -->
+            <div class="left-column column">
+                <textarea asp-for="ExpectedOutput1" class="in1" placeholder="يتم ذكر المخرجات المتوقعة بعد طلب الخدمة؛
+مثل (رخصة أو شهادة أو تنفيذ الخدمة) مع ارفاق نموذج من المخرج النهائي"></textarea>
+                <textarea asp-for="ApprovedTemplate" rows="4" class="auto-expand" placeholder="يتم إضافة نموذج معتمد للخدمة حيث يتم فيه إضافة جميع الحقول المطلوبة ووصفها وتحديد نوع الحقول وتحديد الزاميتها باللغتين العربية والإنجليزية"></textarea>
+                <label for="attachment1"><img src="~/images/link.png" alt="إرفاق ملف" style="width: 24px;" /></label>
+                <input type="file" name="Attachment1" id="attachment1" style="display: none;" />
+
+                <textarea asp-for="DetailedInfo" rows="4" placeholder="يتم ذكر بيانات تفصيلية للحقول المضافة في النموذج، في حال وجود تصنيفات معتمدة لأي حقل من الحقول وفي حال وجود حقل معتمد على حقل آخر (يمكن إدراج ملف إكسل)"></textarea>
+                <label for="attachment2"><img src="~/images/link.png" alt="إرفاق ملف" style="width: 24px;" /></label>
+                <input type="file" name="Attachment2" id="attachment2" style="display: none;" />
+
+                <textarea asp-for="RequiredConditions" rows="4" placeholder="يتم ذكر جميع الشروط اللازمة لطلب الخدمة أو تنفيذها من قبل المستخدم المستهدف (مقدم الطلب)"></textarea>
+            </div>
+
+            <!-- Navigation Arrows -->
+            <button type="button" class="arrow arrow-left" onclick="location.href='@Url.Action("Step1", "Request")'">
+                <img src="~/images/arrowL.png" alt="السابق" />
+            </button>
+            <button type="submit" class="arrow arrow-right">
+                <img src="~/images/arrowR.png" alt="التالي" />
+            </button>
+        </div>
+    </form>
+
+    
+</body>
+</html>

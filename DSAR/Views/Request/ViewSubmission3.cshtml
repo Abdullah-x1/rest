@@ -1,0 +1,204 @@
+﻿@model DSAR.ViewModels.RequestViewModel
+@{
+    Layout = null;
+    var step4Attachment1 = Model.Attachments.FirstOrDefault(a => a.FieldName == "Step4_Workflow");
+    var step4Attachment2 = Model.Attachments.FirstOrDefault(a => a.FieldName == "Step4_uploadsRequiredFile");
+    var step4Attachment3 = Model.Attachments.FirstOrDefault(a => a.FieldName == "Step4_documentsFile");
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>عرض الخطوة 4</title>
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(to right, #6dc1a8, #7ab8ea);
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form-container {
+            background-color: white;
+            width: 1288px;
+            height: 729px;
+            display: flex;
+            flex-direction: row;
+            padding: 40px;
+            box-sizing: border-box;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .right-column {
+            width: 414px;
+            margin-left: 246px;
+            margin-top: 65px;
+        }
+
+        .left-column {
+            width: 414px;
+            margin-right: 108px;
+            margin-top: 65px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: #f5f5f5;
+            color: #555;
+            pointer-events: none;
+            opacity: 0.7;
+            resize: none;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .in1 {
+            height: 113px;
+        }
+
+        .in2 {
+            height: 40px;
+        }
+
+        .attachment-section {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: right;
+        }
+
+        .attachment-link {
+            color: #1e90ff;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            display: block;
+            margin-top: 5px;
+        }
+
+            .attachment-link:hover {
+                text-decoration: underline;
+            }
+
+        .no-attachment {
+            color: #888;
+            font-style: italic;
+        }
+
+        .arrow {
+            position: absolute;
+            font-size: 32px;
+            cursor: pointer;
+            color: #00c9a7;
+            border: none;
+            background: transparent;
+            padding: 0;
+            outline: none;
+        }
+
+        .arrow-left {
+            left: 20px;
+            bottom: 20px;
+        }
+
+        .arrow-right {
+            right: 20px;
+            bottom: 20px;
+        }
+
+        .arrow img {
+            width: 32px;
+            height: 32px;
+            filter: brightness(0) saturate(100%) invert(52%) sepia(88%) saturate(350%) hue-rotate(120deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <!-- Right Column -->
+        <div class="right-column column">
+            <textarea class="in2" readonly>@Model.Workflow</textarea>
+            <div class="attachment-section">
+                @if (step4Attachment1 != null)
+                {
+                    <span>المرفق:</span>
+                    <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = step4Attachment1.Id })" class="attachment-link">
+                        @step4Attachment1.FileName@step4Attachment1.FileExtension
+                    </a>
+                }
+                else
+                {
+                    <span class="no-attachment">لا يوجد مرفق</span>
+                }
+            </div>
+
+            <textarea class="in1" readonly>@Model.UploadsRequired</textarea>
+            <div class="attachment-section">
+                @if (step4Attachment2 != null)
+                {
+                    <span>المرفق:</span>
+                    <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = step4Attachment2.Id })" class="attachment-link">
+                        @step4Attachment2.FileName@step4Attachment2.FileExtension
+                    </a>
+                }
+                else
+                {
+                    <span class="no-attachment">لا يوجد مرفق</span>
+                }
+            </div>
+
+            <textarea class="in1" readonly>@Model.Documents</textarea>
+            <div class="attachment-section">
+                @if (step4Attachment3 != null)
+                {
+                    <span>المرفق:</span>
+                    <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = step4Attachment3.Id })" class="attachment-link">
+                        @step4Attachment3.FileName@step4Attachment3.FileExtension
+                    </a>
+                }
+                else
+                {
+                    <span class="no-attachment">لا يوجد مرفق</span>
+                }
+            </div>
+        </div>
+
+        <!-- Left Column -->
+        <div class="left-column column">
+            <textarea class="in2" readonly>@Model.Timeline</textarea>
+            <textarea class="in1" readonly>@Model.SystemNeeded</textarea>
+            <textarea class="in2" readonly>@Model.Cities2</textarea>
+            <textarea class="in2" readonly>@Model.DepartmentHeadName</textarea>
+            <textarea class="in2" readonly>@Model.AdditionalNotes</textarea>
+        </div>
+
+        <!-- Arrows -->
+        <a href="@Url.Action("ViewSubmission2", "Request", new { id = Model.RequestId })">
+            <div class="arrow arrow-left">
+                <img src="~/images/arrowL.png" alt="السابق" />
+            </div>
+        </a>
+        <a href="@Url.Action("StepDescriptionsView", "Request", new { id = Model.RequestId })">
+            <div class="arrow arrow-right">
+                <img src="~/images/arrowR.png" alt="التالي" />
+            </div>
+        </a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,203 @@
+﻿@model DSAR.ViewModels.RequestViewModel
+
+@{
+    var step1Attachment = Model.Attachments.FirstOrDefault(a => a.FieldName == "Step1");
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <title>عرض الطلب - Step 1 (عرض)</title>
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(to right, #6dc1a8, #7ab8ea);
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            direction: rtl;
+        }
+
+        .form-container {
+            background-color: white;
+            width: 1288px;
+            height: 729px;
+            display: flex;
+            flex-direction: row;
+            padding: 40px;
+            box-sizing: border-box;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .right-column {
+            width: 414px;
+            margin-left: 238px;
+        }
+
+        .left-column {
+            width: 414px;
+        }
+
+        input[type="text"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background-color: #f5f5f5;
+            color: #555;
+            pointer-events: none;
+            opacity: 0.7;
+            font-family: inherit;
+            resize: none;
+        }
+
+        .in1 {
+            height: 97px;
+        }
+
+        .in2 {
+            height: 160px;
+        }
+
+        .in3 {
+            height: 42px;
+        }
+
+        .radio-section {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 18px;
+        }
+
+        .radio-options {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        input[type="radio"] {
+            pointer-events: none;
+            accent-color: #ccc;
+        }
+
+        label {
+            color: #555;
+        }
+
+        .attachment-section {
+            margin-top: 10px;
+        }
+
+        .attachment-link {
+            color: #1e90ff;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            display: block;
+            margin-top: 5px;
+        }
+
+            .attachment-link:hover {
+                text-decoration: underline;
+            }
+
+        .no-attachment {
+            color: #888;
+            font-style: italic;
+        }
+
+        .arrow {
+            position: absolute;
+            font-size: 32px;
+            cursor: pointer;
+            color: #00c9a7;
+            border: none;
+            background: transparent;
+            padding: 0;
+            outline: none;
+        }
+
+        .arrow-left {
+            left: 20px;
+            bottom: 20px;
+        }
+
+        .arrow-right {
+            right: 20px;
+            bottom: 20px;
+        }
+
+        .arrow img {
+            width: 32px;
+            height: 32px;
+            filter: brightness(0) saturate(100%) invert(52%) sepia(88%) saturate(350%) hue-rotate(120deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="right-column column">
+            <input type="text" class="in1" value="@Model.Field1" readonly />
+            <input type="text" class="in1" value="@Model.Field2" readonly />
+            <textarea class="in2" readonly>@Model.Field3</textarea>
+
+            <div class="radio-section">
+                <label>هل توجد اعتمادية على خدمات حالية؟</label>
+                <div class="radio-options">
+                    <label><input type="radio" name="Depend" value="yes" @(Model.Depend == "yes" ? "checked" : "") disabled /> نعم</label>
+                    <label><input type="radio" name="Depend" value="no" @(Model.Depend == "no" ? "checked" : "") disabled /> لا</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="left-column column">
+            <input type="text" class="in1" value="@Model.Field4" readonly />
+            <input type="text" class="in1" value="@Model.Field5" readonly />
+            <input type="text" class="in3" value="@Model.Field6" readonly />
+
+            <div class="attachment-section">
+                @if (step1Attachment != null)
+                {
+                    <span>المرفق:</span>
+                    <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = step1Attachment.Id })"
+                       class="attachment-link">
+                        @step1Attachment.FileName@step1Attachment.FileExtension
+                    </a>
+                }
+                else
+                {
+                    <span class="no-attachment">لا يوجد مرفق</span>
+                }
+            </div>
+        </div>
+
+        <button type="button" class="arrow arrow-left">
+            <a href="@Url.Action("Main", "Account", new { id = Model.RequestId })">
+
+                <img src="~/images/arrowL.png" alt="السابق" />
+        </button>
+
+        <a href="@Url.Action("ViewSubmission2", "Request", new { id = Model.RequestId })">
+            <div class="arrow arrow-right">
+                <img src="~/images/arrowR.png" alt="التالي" />
+            </div>
+        </a>
+    </div>
+</body>
+</html>

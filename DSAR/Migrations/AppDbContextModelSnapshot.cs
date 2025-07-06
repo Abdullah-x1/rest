@@ -22,6 +22,590 @@ namespace DSAR.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("AttachmentMetadata", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FieldName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileExtension")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("FormDataId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormDataId");
+
+                    b.ToTable("AttachmentMetadata");
+                });
+
+            modelBuilder.Entity("DSAR.Models.AttachmentData", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AttachmentMetadataId")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("Data")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttachmentMetadataId")
+                        .IsUnique();
+
+                    b.ToTable("AttachmentData");
+                });
+
+            modelBuilder.Entity("DSAR.Models.CaseStudy", b =>
+                {
+                    b.Property<int>("CaseId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CaseId"));
+
+                    b.Property<string>("CreatedAt")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RequestId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("WorkTeam")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("restriction")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CaseId");
+
+                    b.HasIndex("RequestId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CaseStudy");
+                });
+
+            modelBuilder.Entity("DSAR.Models.CaseStudyAttachmentData", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("Data")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CaseStudyAttachmentData");
+                });
+
+            modelBuilder.Entity("DSAR.Models.CaseStudyAttachmentMetadata", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CaseStudyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FieldName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileExtension")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CaseStudyId");
+
+                    b.ToTable("CaseStudyAttachmentMetadata");
+                });
+
+            modelBuilder.Entity("DSAR.Models.City", b =>
+                {
+                    b.Property<int>("CityId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CityId"));
+
+                    b.Property<string>("CityName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CityId");
+
+                    b.ToTable("City");
+                });
+
+            modelBuilder.Entity("DSAR.Models.Department", b =>
+                {
+                    b.Property<int>("DepartmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DepartmentId"));
+
+                    b.Property<string>("DepartmentName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SectorId")
+                        .HasColumnType("int");
+
+                    b.HasKey("DepartmentId");
+
+                    b.HasIndex("SectorId");
+
+                    b.ToTable("Department");
+                });
+
+            modelBuilder.Entity("DSAR.Models.DescriptionEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description1")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Description2")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int?>("FormDataRequestId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RequestId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormDataRequestId");
+
+                    b.ToTable("DescriptionEntries");
+                });
+
+            modelBuilder.Entity("DSAR.Models.FormData", b =>
+                {
+                    b.Property<int>("RequestId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RequestId"));
+
+                    b.Property<string>("AdditionalNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ApprovedTemplate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Cities")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Cities2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DepName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DepartmentHeadName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DepartmentNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Depend")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DetailedInfo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Documents")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExpectedOutput1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExpectedOutput2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Fees")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Field1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Field2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Field3")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Field4")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Field5")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Field6")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RepeatLimit")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("RequestNumber")
+                        .HasColumnType("float");
+
+                    b.Property<string>("RequiredConditions")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SectionNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SystemNeeded")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TargetAudience")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Timeline")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UploadsRequired")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Workflow")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("RequestId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Forms");
+                });
+
+            modelBuilder.Entity("DSAR.Models.History", b =>
+                {
+                    b.Property<int>("HistoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HistoryId"));
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RequestId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("HistoryId");
+
+                    b.HasIndex("RequestId");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Histories");
+                });
+
+            modelBuilder.Entity("DSAR.Models.Levels", b =>
+                {
+                    b.Property<int>("LevelId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LevelId"));
+
+                    b.Property<string>("LevelName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("LevelId");
+
+                    b.ToTable("Level");
+                });
+
+            modelBuilder.Entity("DSAR.Models.RequestActions", b =>
+                {
+                    b.Property<int>("ActionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ActionId"));
+
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LevelId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RequestId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SectionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ActionId");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.HasIndex("LevelId");
+
+                    b.HasIndex("RequestId")
+                        .IsUnique();
+
+                    b.HasIndex("SectionId");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RequestActions");
+                });
+
+            modelBuilder.Entity("DSAR.Models.Section", b =>
+                {
+                    b.Property<int>("SectionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SectionId"));
+
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SectionName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SectionId");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.ToTable("Section");
+                });
+
+            modelBuilder.Entity("DSAR.Models.Sector", b =>
+                {
+                    b.Property<int>("SectorId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SectorId"));
+
+                    b.Property<int>("CityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SectorName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SectorId");
+
+                    b.HasIndex("CityId");
+
+                    b.ToTable("Sector");
+                });
+
+            modelBuilder.Entity("DSAR.Models.SnapshotAttachmentData", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<byte[]>("Data")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<int>("SnapshotAttachmentMetadataId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SnapshotAttachmentMetadataId")
+                        .IsUnique();
+
+                    b.ToTable("SnapshotAttachmentDatas");
+                });
+
+            modelBuilder.Entity("DSAR.Models.SnapshotAttachmentMetadata", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FieldName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileExtension")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("SnapshotFormDataId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SnapshotFormDataId");
+
+                    b.ToTable("SnapshotAttachmentMetadatas");
+                });
+
+            modelBuilder.Entity("DSAR.Models.SnapshotDescriptionEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description1")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Description2")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("SnapshotFormDataId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SnapshotFormDataId");
+
+                    b.ToTable("SnapshotDescriptionEntries");
+                });
+
+            modelBuilder.Entity("DSAR.Models.SnapshotFormData", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FormDataJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SessionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SnapshotForms");
+                });
+
+            modelBuilder.Entity("DSAR.Models.Status", b =>
+                {
+                    b.Property<int>("StatusId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StatusId"));
+
+                    b.Property<string>("StatusName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("StatusId");
+
+                    b.ToTable("Status");
+                });
+
             modelBuilder.Entity("DSAR.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -30,9 +614,15 @@ namespace DSAR.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<int>("CityId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DepartmentId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -41,8 +631,11 @@ namespace DSAR.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("FullName")
+                    b.Property<string>("FirstName")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -68,20 +661,31 @@ namespace DSAR.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("SectionId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SectorId")
+                        .HasColumnType("int");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CityId");
+
+                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -90,6 +694,10 @@ namespace DSAR.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("SectionId");
+
+                    b.HasIndex("SectorId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -230,6 +838,262 @@ namespace DSAR.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("AttachmentMetadata", b =>
+                {
+                    b.HasOne("DSAR.Models.FormData", "FormData")
+                        .WithMany("Attachments")
+                        .HasForeignKey("FormDataId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FormData");
+                });
+
+            modelBuilder.Entity("DSAR.Models.AttachmentData", b =>
+                {
+                    b.HasOne("AttachmentMetadata", "AttachmentMetadata")
+                        .WithOne("AttachmentData")
+                        .HasForeignKey("DSAR.Models.AttachmentData", "AttachmentMetadataId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AttachmentMetadata");
+                });
+
+            modelBuilder.Entity("DSAR.Models.CaseStudy", b =>
+                {
+                    b.HasOne("DSAR.Models.FormData", "Request")
+                        .WithOne("CaseStudy")
+                        .HasForeignKey("DSAR.Models.CaseStudy", "RequestId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DSAR.Models.User", "User")
+                        .WithMany("CaseStudies")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Request");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DSAR.Models.CaseStudyAttachmentData", b =>
+                {
+                    b.HasOne("DSAR.Models.CaseStudyAttachmentMetadata", "CaseStudyAttachmentMetadata")
+                        .WithOne("CaseStudyAttachmentData")
+                        .HasForeignKey("DSAR.Models.CaseStudyAttachmentData", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CaseStudyAttachmentMetadata");
+                });
+
+            modelBuilder.Entity("DSAR.Models.CaseStudyAttachmentMetadata", b =>
+                {
+                    b.HasOne("DSAR.Models.CaseStudy", "CaseStudy")
+                        .WithMany("Attachments")
+                        .HasForeignKey("CaseStudyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CaseStudy");
+                });
+
+            modelBuilder.Entity("DSAR.Models.Department", b =>
+                {
+                    b.HasOne("DSAR.Models.Sector", "Sector")
+                        .WithMany("Departments")
+                        .HasForeignKey("SectorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Sector");
+                });
+
+            modelBuilder.Entity("DSAR.Models.DescriptionEntry", b =>
+                {
+                    b.HasOne("DSAR.Models.FormData", "FormData")
+                        .WithMany("Descriptions")
+                        .HasForeignKey("FormDataRequestId");
+
+                    b.Navigation("FormData");
+                });
+
+            modelBuilder.Entity("DSAR.Models.FormData", b =>
+                {
+                    b.HasOne("DSAR.Models.User", "User")
+                        .WithMany("Forms")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DSAR.Models.History", b =>
+                {
+                    b.HasOne("DSAR.Models.FormData", "FormData")
+                        .WithMany("Histories")
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DSAR.Models.Status", "Status")
+                        .WithMany("Histories")
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DSAR.Models.User", "User")
+                        .WithMany("Histories")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FormData");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DSAR.Models.RequestActions", b =>
+                {
+                    b.HasOne("DSAR.Models.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DSAR.Models.Levels", "Levels")
+                        .WithMany()
+                        .HasForeignKey("LevelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DSAR.Models.FormData", "FormData")
+                        .WithOne("RequestActions")
+                        .HasForeignKey("DSAR.Models.RequestActions", "RequestId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DSAR.Models.Section", "Section")
+                        .WithMany()
+                        .HasForeignKey("SectionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DSAR.Models.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DSAR.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+
+                    b.Navigation("FormData");
+
+                    b.Navigation("Levels");
+
+                    b.Navigation("Section");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DSAR.Models.Section", b =>
+                {
+                    b.HasOne("DSAR.Models.Department", "Department")
+                        .WithMany("Sections")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("DSAR.Models.Sector", b =>
+                {
+                    b.HasOne("DSAR.Models.City", "City")
+                        .WithMany("Sectors")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("City");
+                });
+
+            modelBuilder.Entity("DSAR.Models.SnapshotAttachmentData", b =>
+                {
+                    b.HasOne("DSAR.Models.SnapshotAttachmentMetadata", "SnapshotAttachmentMetadata")
+                        .WithOne("SnapshotAttachmentData")
+                        .HasForeignKey("DSAR.Models.SnapshotAttachmentData", "SnapshotAttachmentMetadataId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SnapshotAttachmentMetadata");
+                });
+
+            modelBuilder.Entity("DSAR.Models.SnapshotAttachmentMetadata", b =>
+                {
+                    b.HasOne("DSAR.Models.SnapshotFormData", "SnapshotFormData")
+                        .WithMany("Attachments")
+                        .HasForeignKey("SnapshotFormDataId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SnapshotFormData");
+                });
+
+            modelBuilder.Entity("DSAR.Models.SnapshotDescriptionEntry", b =>
+                {
+                    b.HasOne("DSAR.Models.SnapshotFormData", "SnapshotFormData")
+                        .WithMany("Descriptions")
+                        .HasForeignKey("SnapshotFormDataId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SnapshotFormData");
+                });
+
+            modelBuilder.Entity("DSAR.Models.User", b =>
+                {
+                    b.HasOne("DSAR.Models.City", "City")
+                        .WithMany("Users")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DSAR.Models.Department", "Department")
+                        .WithMany("Users")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("DSAR.Models.Section", "Section")
+                        .WithMany("Users")
+                        .HasForeignKey("SectionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("DSAR.Models.Sector", null)
+                        .WithMany("Users")
+                        .HasForeignKey("SectorId");
+
+                    b.Navigation("City");
+
+                    b.Navigation("Department");
+
+                    b.Navigation("Section");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -279,6 +1143,90 @@ namespace DSAR.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("AttachmentMetadata", b =>
+                {
+                    b.Navigation("AttachmentData")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DSAR.Models.CaseStudy", b =>
+                {
+                    b.Navigation("Attachments");
+                });
+
+            modelBuilder.Entity("DSAR.Models.CaseStudyAttachmentMetadata", b =>
+                {
+                    b.Navigation("CaseStudyAttachmentData")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DSAR.Models.City", b =>
+                {
+                    b.Navigation("Sectors");
+
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("DSAR.Models.Department", b =>
+                {
+                    b.Navigation("Sections");
+
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("DSAR.Models.FormData", b =>
+                {
+                    b.Navigation("Attachments");
+
+                    b.Navigation("CaseStudy")
+                        .IsRequired();
+
+                    b.Navigation("Descriptions");
+
+                    b.Navigation("Histories");
+
+                    b.Navigation("RequestActions");
+                });
+
+            modelBuilder.Entity("DSAR.Models.Section", b =>
+                {
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("DSAR.Models.Sector", b =>
+                {
+                    b.Navigation("Departments");
+
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("DSAR.Models.SnapshotAttachmentMetadata", b =>
+                {
+                    b.Navigation("SnapshotAttachmentData")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DSAR.Models.SnapshotFormData", b =>
+                {
+                    b.Navigation("Attachments");
+
+                    b.Navigation("Descriptions");
+                });
+
+            modelBuilder.Entity("DSAR.Models.Status", b =>
+                {
+                    b.Navigation("Histories");
+                });
+
+            modelBuilder.Entity("DSAR.Models.User", b =>
+                {
+                    b.Navigation("CaseStudies");
+
+                    b.Navigation("Forms");
+
+                    b.Navigation("Histories");
                 });
 #pragma warning restore 612, 618
         }

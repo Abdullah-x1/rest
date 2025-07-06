@@ -12,6 +12,7 @@ using System.Linq;
 
 namespace DSAR.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UserController : Controller
     {
         private readonly IUserRepository _userRepository;
@@ -34,7 +35,8 @@ namespace DSAR.Controllers
             var viewModel = users.Select(u => new UserView
             {
                 Id = u.Id,
-                FullName = u.FullName,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
                 Email = u.Email,
                 UserName = u.UserName
             }).ToList();
@@ -55,7 +57,8 @@ namespace DSAR.Controllers
             {
                 Id = user.Id,
                 Email = user.Email,
-                FullName = user.FullName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 UserName = user.UserName
             };
 
@@ -71,7 +74,8 @@ namespace DSAR.Controllers
                 var userEntity = new User
                 {
                     Id = user.Id,
-                    FullName = user.FullName,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
                     Email = user.Email,
                     UserName = user.UserName
                 };
@@ -127,7 +131,8 @@ namespace DSAR.Controllers
             var viewModel = new UserView
             {
                 Id = user.Id,
-                FullName = user.FullName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 Email = user.Email,
                 UserName = user.UserName
             };

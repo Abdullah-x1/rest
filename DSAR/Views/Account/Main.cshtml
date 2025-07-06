@@ -1,29 +1,150 @@
-@model DSAR.ViewModels.UserView;
-
+@model DSAR.ViewModels.UserView
+@using Microsoft.AspNetCore.Authorization
+@{
+    Layout = null;
+}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>الصفحة الرئيسية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+        body {
+            background: linear-gradient(135deg, #8BC6EC 0%, #9599E2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            direction: rtl;
+        }
+
+        .container {
+            background: white;
+            width: 1288px;
+            height: 729px;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+        }
+
+        .logout-icon {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+        }
+
+        .welcome-text h1 {
+            color: #333;
+            font-size: 35px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .welcome-text p {
+            color: #666;
+            font-size: 20px;
+        }
+
+        .buttons {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            gap: 100px;
+        }
+
+        .btn {
+            width: 345px;
+            height: 193px;
+            border: none;
+            border-radius: 12px;
+            font-size: 32px;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s ease;
+            padding-left: 30px;
+            padding-right: 60px;
+        }
+
+            .btn:hover {
+                transform: translateY(-2px);
+            }
+
+        .requests-btn {
+            background: #287067;
+            border-radius: 27px;
+        }
+
+        .submit-btn {
+            background: #35AC90;
+            border-radius: 27px;
+        }
+    </style>
 </head>
 <body>
-    <form asp-action="Logout" method="post">
-        <button type="submit">Logout</button>
-    </form>
-    
-   
-    <p>
-        @User.FindFirst("FullName").Value مرحباً يا
-    <form asp-controller="User" asp-action="Insert" method="post">
-        <input type="submit" name="name" value="Insert" />
-    </form>
-        <form asp-controller="User" asp-action="list" method="post">
-    <input type="submit" name="name" value="list" />
-    </form>
+    <div class="container">
+        <!-- Logout -->
+        <form asp-action="Logout" method="post">
+            <button type="submit" style="background: none; border: none; padding: 0;">
+                <img src="~/images/logout.png" alt="Logout" class="logout-icon" />
+            </button>
+        </form>
 
-    
-   
+        <div class="welcome-text">
+            <h1>مرحباً يا @User.FindFirst("FirstName")?.Value @User.FindFirst("LastName")?.Value</h1>
+            <p>هل ترغب في عرض طلباتك أو تقديم طلب جديد؟</p>
+        </div>
+
+        <div class="buttons">
+            <form asp-controller="Request" asp-action="MyRequest" method="get">
+                <button type="submit" class="btn requests-btn">طلباتي</button>
+            </form>
+
+            <form asp-controller="Request" asp-action="Step1" method="get">
+                <button type="submit" class="btn submit-btn">تقديم طلب</button>
+            </form>
+
+            @if (User.IsInRole("Admin"))
+            {
+                <form asp-controller="User" asp-action="Insert" method="get">
+                    <button type="submit" class="btn" style="background:#6c5ce7;">إدخال</button>
+                </form>
+                <form asp-controller="User" asp-action="list" method="get">
+                    <button type="submit" class="btn" style="background:#00cec9;">قائمة المستخدمين</button>
+                </form>
+            }
+
+            @if (!User.IsInRole("User"))
+            {
+                <form asp-controller="Request" asp-action="OrderPage" method="get">
+                    <button type="submit" class="btn" style="background:#35AC90; border-radius: 27px;">
+                        مراجعة الطلبات
+                    </button>
+                </form>
+            }
+
+
+        </div>
+    </div>
+
+
 </body>
 </html>
+

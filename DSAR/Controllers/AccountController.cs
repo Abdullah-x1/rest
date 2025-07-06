@@ -1,5 +1,6 @@
 
 using DSAR.Data;
+using DSAR.Interfaces;
 using DSAR.Models;
 using DSAR.Repositories;
 using DSAR.ViewModels;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
@@ -17,17 +19,18 @@ namespace DSAR.Controllers
 {
     public class AccountController : Controller
     {
-        
+
         private readonly SignInManager<User> signInManager;
         private readonly UserManager<User> userManager;
 
         private readonly IAccountRepository _accountRepository;
-
-        public AccountController(SignInManager<User> signInManager, UserManager<User> userManager, IAccountRepository accountRepository)
+        private readonly ICityRepository _cityRepository;
+        public AccountController(SignInManager<User> signInManager, UserManager<User> userManager, IAccountRepository accountRepository, ICityRepository cityRepository)
         {
             this.signInManager = signInManager;
             this.userManager = userManager;
             _accountRepository = accountRepository;
+            _cityRepository = cityRepository;
         }
 
 
@@ -58,27 +61,35 @@ namespace DSAR.Controllers
         }
         public ActionResult Register()
         {
+            var model = new RegisterViewModel
+            {
+                Cities = _cityRepository.GetAll()
+        .Select(c => new SelectListItem
+        {
+            Value = c.CityId.ToString(),
+            Text = c.CityName
+        }).ToList()
+            };
 
-            return View();
+            return View(model);
         }
 
-        [HttpPost]       
+        [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
+
             if (ModelState.IsValid)
             {
-                var result = await _accountRepository.RegisterAsync(model);
+                var result = await _accountRepository.RegisterAsync(model, "User"); // or "Admin", etc.
 
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Login", "Account");
                 }
-                else
+
+                foreach (var error in result.Errors)
                 {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError("", error.Description);
-                    }
+                    ModelState.AddModelError("", error.Description);
                 }
             }
 

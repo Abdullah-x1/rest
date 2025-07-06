@@ -21,7 +21,9 @@ namespace DSAR.Factories // Replace with your project's namespace
             var identity = await base.GenerateClaimsAsync(user);
 
             // Add custom claims
-            identity.AddClaim(new Claim("FullName", user.FullName ?? string.Empty));
+            identity.AddClaim(new Claim("FirstName", user.FirstName ?? string.Empty));
+            identity.AddClaim(new Claim("LastName", user.LastName ?? string.Empty));
+            identity.AddClaim(new Claim("Id", user.Id ?? string.Empty));
             // Add more claims if needed (e.g., Email, UserId)
             // identity.AddClaim(new Claim("Email", user.Email));
 

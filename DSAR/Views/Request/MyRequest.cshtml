@@ -1,0 +1,49 @@
+﻿@model IEnumerable<DSAR.ViewModels.RequestViewModel>
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>الطلبات</title>
+    <link rel="stylesheet" href="~/css/MyRequest.css" asp-append-version="true" />
+
+</head>
+<body>
+    <div class="container">
+        <h1>الطلبات</h1>
+
+        <div class="search-icon"></div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>رقم الطلب</th>
+                        <th>القسم</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var request in Model)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-action="ViewSubmission" asp-route-levelId="@request.LevelId" asp-route-id="@request.RequestId">
+                                    @request.RequestNumber
+                                </a>
+                            </td>
+                            <td>@request.DepartmentName</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <button type="button" class="arrow arrow-left" onclick="location.href='@Url.Action("Main", "Account")'">
+            <img src="~/images/arrowL.png" alt="السابق" />
+        </button>
+    </div>
+
+</body>
+</html>

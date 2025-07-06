@@ -1,0 +1,31 @@
+﻿@model IEnumerable<DSAR.ViewModels.RequestViewModel>
+
+<h2>Requests Assigned to You</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Request ID</th>
+            <th>Submitted By</th>
+            <th>Department</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var request in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-action="RequestDetails" asp-route-levelId="@request.LevelId" asp-route-id="@request.RequestId">@request.RequestId</a>
+                </td>
+                <td>@request.FirstName @request.LastName</td>
+                <td>@request.DepartmentName</td>
+               
+                <td>
+                    <a asp-action="Approve" asp-route-id="@request.RequestId" class="btn btn-success">Approve</a>
+                    <a asp-action="Reject" asp-route-id="@request.RequestId" class="btn btn-danger">Reject</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
