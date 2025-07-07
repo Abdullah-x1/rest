@@ -25,9 +25,10 @@ namespace DSAR.Controllers
         private readonly ICaseStudyRepository _caseStudyRepository;
         private readonly UserManager<User> _userManager;
         private readonly iFormRepository _formRepo;
+        private readonly IAppHistoryRepository _historyRepository;
 
 
-        public RequestController(IRequestActionRepository requestActionRepository, IRequestRepository requestRepository, IUserRepository userRepository, ICaseStudyRepository caseStudyRepository, UserManager<User> userManager, iFormRepository formRepo)
+        public RequestController(IRequestActionRepository requestActionRepository, IRequestRepository requestRepository, IUserRepository userRepository, ICaseStudyRepository caseStudyRepository, UserManager<User> userManager, iFormRepository formRepo, IAppHistoryRepository historyRepository)
         {
             _requestActionRepository = requestActionRepository;
             _requestRepository = requestRepository;
@@ -35,13 +36,14 @@ namespace DSAR.Controllers
             _userManager = userManager;
             _caseStudyRepository = caseStudyRepository;
             _formRepo = formRepo;
+            _historyRepository = historyRepository;
         }
 
-        public IActionResult MyRequest()
+        public async Task<IActionResult> MyRequest()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get logged-in user's ID
             
-            var requestAction = _requestActionRepository.GetAllByUserId(userId); // Filtered list
+            var requestAction = await _requestActionRepository.GetRequestsStillInProcessByUserId(userId); // Filtered list
             var viewModel = requestAction.Select(r => new RequestViewModel
             {
                 RequestId = r.RequestId,
@@ -68,8 +70,9 @@ namespace DSAR.Controllers
             var currentUser = await _userManager.GetUserAsync(User);
             FormData request; // Change type to 'FormData' to match the return type of 'SectionManagerHandleStep3Data' and 'HandleStep3Data'
             bool emailResponse;
+            const int initialStatusId = 1; // "new submission" status
 
-            if (await _userManager.IsInRoleAsync(currentUser, "SectionManager") && !(await _userManager.IsInRoleAsync(currentUser, "ApplicationManager")))
+            if (await _userManager.IsInRoleAsync(currentUser, "SectionManager"))
             {
                 data.UserId = currentUser.Id;
                 request = await _formRepo.HandleStep3Data(data, currentUser.UserId); // Fix: Ensure 'request' is of type 'FormData'
@@ -80,6 +83,17 @@ namespace DSAR.Controllers
                 {
                     // Handle false response  
                 }
+                ////////////////////history///////////////////////////////////////
+
+                await _historyRepository.CreateHistoryAsync(
+                    currentUser,
+                    request,
+                    initialStatusId,
+                    1,
+                    "Request submitted"
+                );
+
+                ////////////////////history///////////////////////////////////////
                 return RedirectToAction("Main", "Account");
             }
             else if (await _userManager.IsInRoleAsync(currentUser, "DepartmentManager"))
@@ -93,6 +107,14 @@ namespace DSAR.Controllers
                 {
                     // Handle false response  
                 }
+
+                await _historyRepository.CreateHistoryAsync(
+                    currentUser,
+                    request,
+                    initialStatusId,
+                    1,
+                    "Request submitted"
+                );
                 return RedirectToAction("Main", "Account");
             }
             else if (await _userManager.IsInRoleAsync(currentUser, "ITManager"))
@@ -106,6 +128,13 @@ namespace DSAR.Controllers
                 {
                     // Handle false response  
                 }
+                await _historyRepository.CreateHistoryAsync(
+                    currentUser,
+                    request,
+                    initialStatusId,
+                    1,
+                    "Request submitted"
+                );
                 return RedirectToAction("Main", "Account");
             }
             else if (await _userManager.IsInRoleAsync(currentUser, "ApplicationManager"))
@@ -119,6 +148,13 @@ namespace DSAR.Controllers
                 {
                     // Handle false response  
                 }
+                await _historyRepository.CreateHistoryAsync(
+                    currentUser,
+                    request,
+                    initialStatusId,
+                    1,
+                    "Request submitted"
+                );
                 return RedirectToAction("Main", "Account");
             }
             data.UserId = currentUser.Id;
@@ -131,7 +167,18 @@ namespace DSAR.Controllers
             {
                 // Handle false response  
             }
+            ////////////////////history///////////////////////////////////////
 
+             // "new submission" status
+            await _historyRepository.CreateHistoryAsync(
+                currentUser,
+                request,
+                initialStatusId,
+                1,
+                "Request submitted"
+            );
+
+            ////////////////////history///////////////////////////////////////
             return RedirectToAction("Main", "Account");
         }
         //New Form
@@ -503,7 +550,7 @@ namespace DSAR.Controllers
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
-            var requests = await _requestRepository.GetRequestsStillInProcessByUserId(currentUser.Id);
+            var requests = await _requestActionRepository.GetRequestsStillInProcessByUserId(currentUser.Id);
             if (requests.Count! > 0)
             {
                 TempData["Error"] = "You already have a pending request. Please wait until it is completed before submitting a new one.";
@@ -525,7 +572,7 @@ namespace DSAR.Controllers
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
-            var requests = await _requestRepository.GetRequestsStillInProcessByUserId(currentUser.Id);
+            var requests = await _requestActionRepository.GetRequestsStillInProcessByUserId(currentUser.Id);
             if (requests.Count! > 0)
             {
                 TempData["Error"] = "You already have a pending request. Please wait until it is completed before submitting a new one.";
@@ -547,7 +594,7 @@ namespace DSAR.Controllers
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
-            var requests = await _requestRepository.GetRequestsStillInProcessByUserId(currentUser.Id);
+            var requests = await _requestActionRepository.GetRequestsStillInProcessByUserId(currentUser.Id);
             if (requests.Count! > 0)
             {
                 TempData["Error"] = "You already have a pending request. Please wait until it is completed before submitting a new one.";
@@ -574,7 +621,7 @@ namespace DSAR.Controllers
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
-            var requests = await _requestRepository.GetRequestsStillInProcessByUserId(currentUser.Id);
+            var requests = await _requestActionRepository.GetRequestsStillInProcessByUserId(currentUser.Id);
             if (requests.Count! > 0)
             {
                 TempData["Error"] = "You already have a pending request. Please wait until it is completed before submitting a new one.";
@@ -606,7 +653,7 @@ namespace DSAR.Controllers
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
-            var requests = await _requestRepository.GetRequestsStillInProcessByUserId(currentUser.Id);
+            var requests = await _requestActionRepository.GetRequestsStillInProcessByUserId(currentUser.Id);
             if (requests.Count! > 0)
             {
                 TempData["Error"] = "You already have a pending request. Please wait until it is completed before submitting a new one.";
@@ -896,12 +943,33 @@ namespace DSAR.Controllers
                         action.StatusId = 3; // Approved
                         action.LevelId = 3;
                         request.DepartmentNotes = model.DepartmentNotes;
+
+                        //history
+                        const int initialStatusId = 2; // "in progress" status
+                        await _historyRepository.CreateHistoryAsync(
+                            currentUser,
+                            request,
+                            initialStatusId,
+                            3,
+                            "Request approved by DepartmentManager"
+                        );
+                        //history
                     }
                     else if (decision == "decline")
                     {
-                        action.StatusId = 7; // You can define 99 = Declined in your status table
+                        action.StatusId = 4; // You can define 99 = Declined in your status table
                         action.LevelId = 9;   // Stays the same
                         request.DepartmentNotes = model.DepartmentNotes; // Optional
+                        //history
+                        const int initialStatusId = 4; // "rejected" status
+                        await _historyRepository.CreateHistoryAsync(
+                            currentUser,
+                            request,
+                            initialStatusId,
+                            9,
+                            "Request Rejected by DepartmentManager"
+                        );
+                        //history
                     }
 
                     _requestActionRepository.Update(action);
@@ -927,12 +995,32 @@ namespace DSAR.Controllers
                         action.StatusId = 2;
                         action.LevelId = 2;
                         request.SectionNotes = model.SectionNotes;
+                        //history
+                        const int initialStatusId = 2; // "in progress" status
+                        await _historyRepository.CreateHistoryAsync(
+                            currentUser,
+                            request,
+                            initialStatusId,
+                            2,
+                            "Request approved by SecctionManager"
+                        );
+                        //history
                     }
                     else if (decision == "decline")
                     {
-                        action.StatusId = 7; // You can define 99 = Declined in your status table
+                        action.StatusId = 4; // You can define 99 = Declined in your status table
                         action.LevelId = 9;   // Stays the same
                         request.SectionNotes = model.SectionNotes; // Optional
+                          //history
+                        const int initialStatusId = 4; // "rejected" status
+                        await _historyRepository.CreateHistoryAsync(
+                            currentUser,
+                            request,
+                            initialStatusId,
+                            9,
+                            "Request Rejected by SecctionManager"
+                        );
+                        //history
                     }
                    
                     _requestActionRepository.Update(action);
@@ -964,23 +1052,55 @@ namespace DSAR.Controllers
                     {
                         if (action.LevelId == 3)
                         {
-                            action.StatusId = 4;
+                            action.StatusId = 2;
                             action.LevelId = 4;
                             _requestActionRepository.Update(action);
+
+                            //history
+                            const int initialStatusId = 2; // "in progress" status
+                            await _historyRepository.CreateHistoryAsync(
+                                currentUser,
+                                request,
+                                initialStatusId,
+                                4,
+                                "Request approved initially by ITManager"
+                            );
+                            //history
                         }
                         else if (action.LevelId == 7)
                         {
-                            //action.StatusId = 4;
+                            action.StatusId = 3;
                             action.LevelId = 8;
                             _requestActionRepository.Update(action);
+                            //history
+                            const int initialStatusId = 3; // "approved" status
+                            await _historyRepository.CreateHistoryAsync(
+                                currentUser,
+                                request,
+                                initialStatusId,
+                                8,
+                                "Request approved by ITManager"
+                            );
+                            //history
                         }
                     }
                     else if (decision == "decline")
                     {
-                        action.StatusId = 7; // You can define 99 = Declined in your status table
+                        action.StatusId = 4; // You can define 99 = Declined in your status table
                         action.LevelId = 9;   // Stays the same
+
+                        //history
+                        const int initialStatusId = 4; // "rejected" status
+                        await _historyRepository.CreateHistoryAsync(
+                            currentUser,
+                            request,
+                            initialStatusId,
+                            9,
+                            "Request Rejected by ITManager"
+                        );
+                        //history
                     }
-                   
+
 
                     // ✅ Optional: add note for administration
                     // request.AdministrationNote = notes;
@@ -1009,12 +1129,32 @@ namespace DSAR.Controllers
                         // ✅ Optional: add note for administration
                         // request.AdministrationNote = notes;
                         _requestRepository.Update(request);
+                        //history
+                        const int initialStatusId = 2; // "in progress" status
+                        await _historyRepository.CreateHistoryAsync(
+                            currentUser,
+                            request,
+                            initialStatusId,
+                            7,
+                            "Request approved by ApplicationManager"
+                        );
+                        //history
                     }
                     else if (decision == "decline")
                     {
-                        action.StatusId = 7; // You can define 99 = Declined in your status table
+                        action.StatusId = 4; // You can define 99 = Declined in your status table
                         action.LevelId = 9;   // Stays the same
                         _requestRepository.Update(request);
+                        //history
+                        const int initialStatusId = 4; // "rejected" status
+                        await _historyRepository.CreateHistoryAsync(
+                            currentUser,
+                            request,
+                            initialStatusId,
+                            9,
+                            "Request Rejected by ApplicationsManager"
+                        );
+                        //history
                     }
 
                     TempData["Success"] = "Request approved successfully.";
@@ -1087,7 +1227,9 @@ namespace DSAR.Controllers
         public async Task<IActionResult> ConfirmAnalyzer(int requestId, string userId)
         {
             var currentUser = await _userManager.GetUserAsync(User);
-
+            var request = _requestRepository.GetById(requestId);
+            if (request == null)
+                return NotFound();
             // Step 1: Create CaseStudy record
             _caseStudyRepository.CreateCaseStudy(userId, requestId);
 
@@ -1100,6 +1242,16 @@ namespace DSAR.Controllers
                 existingAction.StatusId = 5;
                 existingAction.LevelId = 5;
                 _requestActionRepository.Update(existingAction);
+                //history
+                const int initialStatusId = 2; // "in progress" status
+                await _historyRepository.CreateHistoryAsync(
+                    currentUser,
+                    request,
+                    initialStatusId,
+                    5,
+                    "Request approved initially by ITManager"
+                );
+                //history
             }
 
             return RedirectToAction("Main", "Account");
@@ -1173,6 +1325,22 @@ namespace DSAR.Controllers
                 existingAction.LevelId = 6;
                 existingAction.StatusId = 6;
                 _requestActionRepository.Update(existingAction);
+                // history
+
+                var request = _requestRepository.GetById(requestId);
+                if (request == null)
+                    return NotFound();
+                var currentUser = await _userManager.GetUserAsync(User);
+
+                const int initialStatusId = 2; // "in progress" status
+                await _historyRepository.CreateHistoryAsync(
+                    currentUser,
+                    request,
+                    initialStatusId,
+                    6,
+                    "Request studied by Analyzer"
+                );
+                // history
             }
 
             return RedirectToAction("Main", "Account");
@@ -1208,17 +1376,71 @@ namespace DSAR.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get logged-in user's ID
 
-            var requestAction = _requestActionRepository.GetAllByUserId(userId); // Filtered list
+            var requestAction = await _requestActionRepository.GetCompeleteRequestsByUserId(userId); // Filtered list
             var viewModel = requestAction.Select(r => new RequestViewModel
             {
                 RequestId = r.RequestId,
-                FirstName = r.User?.FirstName,
-                LastName = r.User?.LastName,
                 StatusName = r.Status?.StatusName,
                 DepartmentName = r.Department?.DepartmentName,
                 RequestNumber = r.FormData.RequestNumber,
                 LevelId = r.LevelId,
-                ActionId = r.ActionId,
+                ActionId = r.ActionId
+
+            }).ToList();
+
+            return View(viewModel);
+        }
+
+        public async Task<IActionResult> GetAllRequests()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get logged-in user's ID
+
+            var requestAction =  _requestActionRepository.GetAllByUserId(userId); // Filtered list
+            var viewModel = requestAction.Select(r => new RequestViewModel
+            {
+                RequestId = r.RequestId,
+                StatusName = r.Status?.StatusName,
+                DepartmentName = r.Department?.DepartmentName,
+                RequestNumber = r.FormData.RequestNumber,
+                LevelId = r.LevelId,
+                ActionId = r.ActionId
+
+            }).ToList();
+
+            return View(viewModel);
+        }
+        public async Task<IActionResult> CompeleteRequestManager()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get logged-in user's ID
+
+            var requestAction = await _historyRepository.GetHistroyRequestsByUserId(userId); // Filtered list
+            var viewModel = requestAction.Select(r => new HistoryViewModel
+            {
+                RequestId = r.RequestId,
+                StatusName = r.Status?.StatusName,
+               // DepartmentName = r.Department?.DepartmentName,
+                RequestNumber = r.FormData.RequestNumber,
+                LevelId = r.LevelId,
+               // ActionId = r.ActionId
+
+            }).ToList();
+
+            return View(viewModel);
+        }
+
+        public async Task<IActionResult> GetAllRequestsManager()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get logged-in user's ID
+
+            var requestAction = await _historyRepository.GetHistroyRequestsByUserId(userId); // Filtered list
+            var viewModel = requestAction.Select(r => new HistoryViewModel
+            {
+                RequestId = r.RequestId,
+                StatusName = r.Status?.StatusName,
+                // DepartmentName = r.Department?.DepartmentName,
+                RequestNumber = r.FormData.RequestNumber,
+                LevelId = r.LevelId,
+                // ActionId = r.ActionId
 
             }).ToList();
 

@@ -11,10 +11,12 @@
 .form-container {
     background-color: white;
     width: 1288px;
+    max-width: 98vw;
     height: 729px;
+    max-height: 90vh;
     display: flex;
     flex-direction: column;
-    padding: 40px;
+    padding: 25px 30px;
     box-sizing: border-box;
     border-radius: 10px;
     position: relative;
@@ -23,7 +25,7 @@
 .table-container {
     flex: 1;
     overflow-y: auto;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 table {
@@ -52,16 +54,18 @@ th {
 
 .button-container {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     justify-content: flex-end;
-    margin-bottom: 60px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
 }
 
 .btn {
-    padding: 8px 16px;
+    padding: 10px 18px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    min-width: 120px;
 }
 
 .btn-success {
@@ -91,19 +95,131 @@ th {
     outline: none;
 }
 
-
 .arrow-left {
-    left: 20px;
-    bottom: 20px;
+    left: 10px;
+    bottom: 5px;
 }
 
 .arrow-right {
-    right: 20px;
-    bottom: 20px;
+    right: 10px;
+    bottom: 5px;
 }
 
 .arrow img {
     width: 32px;
     height: 32px;
     filter: brightness(0) saturate(100%) invert(52%) sepia(88%) saturate(350%) hue-rotate(120deg);
+}
+
+/* === Responsive: Mobile === */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+        align-items: center;
+        height: auto;
+        padding: 10px 5px;
+    }
+
+    .form-container {
+        width: 100%;
+        max-width: 600px; /* bigger than before */
+        height: auto;
+        padding: 20px 25px;
+        border-radius: 10px;
+    }
+
+    .button-container {
+        flex-direction: column;
+        align-items: stretch;
+        margin-bottom: 20px;
+    }
+
+    .btn {
+        width: 100%;
+        min-width: unset;
+        padding: 14px 0;
+        font-size: 1.1rem;
+    }
+
+    .arrow-left, .arrow-right {
+        position: static;
+        margin-top: 15px;
+        text-align: center;
+    }
+
+    .arrow img {
+        width: 28px;
+        height: 28px;
+    }
+}
+/* === Responsive: Mobile === */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+        align-items: center;
+        height: auto;
+        padding: 10px 10px; /* reduce padding to bring container closer */
+    }
+
+    .form-container {
+        width: 100%;
+        max-width: 700px; /* increase max-width to make form bigger */
+        height: auto;
+        padding: 20px 25px; /* moderate padding */
+        border-radius: 10px;
+    }
+
+    .button-container {
+        flex-direction: column;
+        align-items: stretch;
+        margin-bottom: 20px;
+        gap: 10px;
+    }
+
+    .btn {
+        width: 100%;
+        min-width: unset;
+        padding: 14px 0;
+        font-size: 1.1rem;
+    }
+
+    .arrow-left, .arrow-right {
+        position: static;
+        margin-top: 15px;
+        text-align: center;
+    }
+
+    .arrow img {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+/* === Responsive: Tablet === */
+@media (min-width: 500px) and (max-width: 1200px) {
+    .form-container {
+        width: 90vw;
+        max-width: 1000px; /* bigger on tablet */
+        height: auto;
+        padding: 30px 35px;
+    }
+
+    .button-container {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .btn {
+        flex: 1 1 auto;
+        min-width: 140px;
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
+
+    .arrow-left, .arrow-right {
+        bottom: 10px;
+    }
+}
+
 }

@@ -1,7 +1,5 @@
 ﻿@model IEnumerable<DSAR.ViewModels.RequestViewModel>
-@{
-    Layout = null;
-}
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -16,9 +14,9 @@
         <h1>الطلبات</h1>
 
         <div class="filter-tabs">
-            <button class="tab-button" onclick="location.href='@Url.Action("CompeleteRequest", "Request")'">الطلبات المنجزة</button>
-            <button class="tab-button active">الطلبات الجديدة</button>
-            <button class="tab-button" onclick="location.href='@Url.Action("GetAllRequests", "Request")'">جميع الطلبات</button>
+            <button class="tab-button " onclick="location.href='@Url.Action("CompeleteRequest", "Request")'">الطلبات المنجزة</button>
+            <button class="tab-button " onclick="location.href='@Url.Action("MyRequest", "Request")'">الطلبات الجديدة</button>
+            <button class="tab-button active" >جميع الطلبات</button>
         </div>
 
         <div class="table-wrapper">
@@ -44,7 +42,7 @@
 
                         </tr>
 
-                        
+
                     }
                 </tbody>
             </table>

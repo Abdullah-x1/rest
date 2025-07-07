@@ -1,8 +1,5 @@
 @model DSAR.ViewModels.RequestViewModel
 
-@{
-    Layout = null;
-}
 
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -12,7 +9,9 @@
     <title>الصفحة الثانية من النموذج</title>
     <link rel="stylesheet" href="~/css/steps.css" asp-append-version="true" />
     <script src="~/css/Script.js" asp-append-version="true"></script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
 
 </head>
 <body>
@@ -21,20 +20,36 @@
             <!-- Right Column -->
             <div class="right-column column">
                 <input asp-for="RepeatLimit" placeholder="عدد المرات المسموح بها" />
+                <div class="required-wrapper">
+                    <span class="required-asterisk">*</span>
+
                 <input asp-for="Fees" placeholder="مجانية / توجد رسوم (مثال:100 ريال)" />
+                <span asp-validation-for="Fees" class="text-danger"></span>
+                </div>
+
                 <input asp-for="Cities" placeholder="تحديد مدن الهيئة الملكية المقدمة للخدمة" />
+
+                <div class="required-wrapper">
+                    <span class="required-asterisk">*</span>
 
                 <select asp-for="TargetAudience" class="form-control">
                     <option value="">الفئة المستهدفة</option>
                     <option value="افراد">افراد</option>
                     <option value="مؤسسه">مؤسسه</option>
                 </select>
+                <span asp-validation-for="TargetAudience" class="text-danger"></span>
+                </div>
 
-                <select asp-for="DepName" class="form-control">
+                <div class="required-wrapper">
+                    <span class="required-asterisk">*</span>
+
+                <select asp-for="DepName"  class="form-control">
                     <option value="">اسم الإدارة</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
                 </select>
+                <span asp-validation-for="DepName" class="text-danger"></span>
+                </div>
             </div>
 
             <!-- Left Column -->

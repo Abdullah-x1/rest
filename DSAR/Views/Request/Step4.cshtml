@@ -1,12 +1,13 @@
 ﻿@model DSAR.ViewModels.RequestViewModel
-@{
-    Layout = null;
-}
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <link rel="stylesheet" href="~/css/steps.css" asp-append-version="true" />
     <script src="~/css/Script.js" asp-append-version="true"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
 
 
     <meta charset="UTF-8" />
@@ -19,7 +20,9 @@
         <div class="form-container">
             <!-- Right Column -->
             <div class="right-column column">
-                <textarea name="Workflow" class="in3" placeholder="يتم توضيح مسار العمل للخدمة بطريقة رسم (Workflow) توضيحي">@Model.Workflow</textarea>
+                <textarea asp-for="Workflow" name="Workflow" class="in3" placeholder="يتم توضيح مسار العمل للخدمة بطريقة رسم (Workflow) توضيحي">@Model.Workflow</textarea>
+                <span asp-validation-for="Workflow" class="text-danger"></span>
+
                 <label for="workflow-upload">
                     <img src="~/images/link.png" alt="إرفاق ملف" style="width: 24px; float: left; margin-bottom: 15px;" />
                 </label>
@@ -41,7 +44,9 @@
 
             <!-- Left Column -->
             <div class="left-column column">
-                <textarea name="Timeline" class="in3" placeholder="المدة الزمنية لإنجاز الخدمة(مع حساب ايام الاجازات الرسمية)">@Model.Timeline</textarea>
+                <textarea name="Timeline" asp-for="Timeline" class="in3" placeholder="المدة الزمنية لإنجاز الخدمة(مع حساب ايام الاجازات الرسمية)">@Model.Timeline</textarea>
+                <span asp-validation-for="Timeline" class="text-danger"></span>
+
                 <textarea name="SystemNeeded" class="in2" placeholder="الأنظمة التي يتطلب الربط معها">@Model.SystemNeeded</textarea>
                 <textarea name="Cities2" class="in3" placeholder="يتم ذكر المدن الموافقة على النموذج">@Model.Cities2</textarea>
                 <textarea name="DepartmentHeadName" class="in3" placeholder="اسم ممثل القطاع الموافق على النموذج">@Model.DepartmentHeadName</textarea>

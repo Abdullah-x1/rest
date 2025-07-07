@@ -291,20 +291,7 @@ namespace DSAR.Repositories
 
         }
 
-        public async Task<List<FormData>> GetRequestsStillInProcessByUserId(string UserId)
-        {
-            var requestActions = await _context.RequestActions
-                .Include(ra => ra.FormData)
-                .Where(r => r.UserId == UserId && r.LevelId != 8 && r.LevelId != 9)
-                .ToListAsync();
-
-            var inProcessRequests = requestActions
-                .Where(ra => ra.FormData != null)
-                .Select(ra => ra.FormData)
-                .ToList();
-
-            return inProcessRequests;
-        }
+       
         public async Task<bool> SendEmailAsync(RequestViewModel request, User currentUser)
         {
             try

@@ -20,8 +20,8 @@ namespace DSAR.Interfaces
         Task<RequestActions> GetRequestActionByRequestIdAsync(int requestId);
          Task<RequestActions?> GetByIdAsync(int id);
 
-
-
+        Task<List<RequestActions>> GetCompeleteRequestsByUserId(string UserId);
+        Task<List<RequestActions>> GetRequestsStillInProcessByUserId(string UserId);
 
     }
 }

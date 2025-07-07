@@ -20,7 +20,7 @@ namespace DSAR.Repositories
 
         public RequestActions Create(RequestViewModel viewModel, User currentUser, FormData request)
         {
-            
+
 
             var requestActions = new RequestActions
             {
@@ -168,7 +168,28 @@ namespace DSAR.Repositories
             return await _context.RequestActions.FindAsync(id);
         }
 
+        public async Task<List<RequestActions>> GetCompeleteRequestsByUserId(string UserId)
+        {
+            return await _context.RequestActions
+                .Include(r => r.User)
+                .Include(r => r.Status)
+                .Include(r => r.Department)
+                .Include(r => r.FormData)
+                .Where(r => r.UserId == UserId && (r.LevelId == 8 || r.LevelId == 9)) // Assuming 2 is the ID for completed status
+                .ToListAsync();
 
+        }
 
+        public async Task<List<RequestActions>> GetRequestsStillInProcessByUserId(string UserId)
+        {
+            return await _context.RequestActions
+                .Include(r => r.User)
+                .Include(r => r.Status)
+                .Include(r => r.Department)
+                .Include(r => r.FormData)
+                .Where(r => r.UserId == UserId && r.LevelId != 8 && r.LevelId != 9)
+                .ToListAsync();
+
+        }
     }
 }

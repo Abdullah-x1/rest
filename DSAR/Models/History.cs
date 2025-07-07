@@ -1,7 +1,7 @@
-﻿
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace DSAR.Models
 {
@@ -10,20 +10,29 @@ namespace DSAR.Models
         [Key]
         public int HistoryId { get; set; }
 
-        [ForeignKey("Status")]
+        [Required]
+        public DateTime CreationDate { get; set; } = DateTime.UtcNow;
+
+        [Required, ForeignKey(nameof(Levels))]
+        public int LevelId { get; set; }
+        public Levels Levels { get; set; }
+
+        [Required, ForeignKey(nameof(Status))]
         public int StatusId { get; set; }
-
-        [ForeignKey("User")]
-        public string UserId { get; set; }
-
-        public DateTime CreationDate { get; set; }
-
-        [ForeignKey("Request")]
-        public int RequestId { get; set; }
-
-        // navigation
         public Status Status { get; set; }
+
+        [Required, ForeignKey(nameof(User))]
+        public string UserId { get; set; }
         public User User { get; set; }
+
+        [Required, ForeignKey(nameof(FormData))]
+        public int RequestId { get; set; }
         public FormData FormData { get; set; }
+
+        [Required, ForeignKey(nameof(Role))]
+        public string RoleId { get; set; }
+        public IdentityRole Role { get; set; }
+
+        public string Information { get; set; }
     }
 }

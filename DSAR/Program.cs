@@ -48,6 +48,8 @@ builder.Services.AddTransient<IRequestActionRepository,RequestActionRepository>(
 builder.Services.AddTransient<IRequestRepository, RequestRepository>();
 builder.Services.AddTransient<ICaseStudyRepository, CaseStudyRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+builder.Services.AddScoped<IAppHistoryRepository, AppHistoryRepository>();
+
 //Email
 
 

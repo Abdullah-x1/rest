@@ -1,4 +1,5 @@
 ﻿using DSAR.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DSAR.ViewModels
@@ -32,29 +33,43 @@ namespace DSAR.ViewModels
         public string? Name { get; set; }
         public string? Email { get; set; }
         public string? Message { get; set; }
-        public string? Field1 { get; set; }
-        public string? Field2 { get; set; }
+        [Required(ErrorMessage = "اسم الخدمة مطلوب")]
+
+        public string Field1 { get; set; }
+
+        [Required(ErrorMessage = "نوع الخدمة مطلوب")]
+
+        public string Field2 { get; set; }
+        [Required(ErrorMessage = "الوصف التفصيلي مطلوب")]
+
         public string? Field3 { get; set; }
         public string? Depend { get; set; }
         public string? Field4 { get; set; }
         public string? Field5 { get; set; }
         public string? Field6 { get; set; }
         public string? RepeatLimit { get; set; }
-        public string? Fees { get; set; }
+        [Required(ErrorMessage = "الرسوم مطلوبه")]
+
+        public string Fees { get; set; }
         public string? Cities { get; set; }
-        public string? TargetAudience { get; set; }
-        public string? DepName { get; set; }
+        [Required(ErrorMessage = "الفئة المستهدفة مطلوبه")]
+
+        public string TargetAudience { get; set; }
+        [Required(ErrorMessage = " اسم الإدارة مطلوب")]
+        public string DepName { get; set; }
         public string? ExpectedOutput1 { get; set; }
         public string? ExpectedOutput2 { get; set; }
         public string? ApprovedTemplate { get; set; }
         public string? DetailedInfo { get; set; }
         public string? RequiredConditions { get; set; }
 
-        public string? Workflow { get; set; }
+        [Required(ErrorMessage = " مسار العمل مطلوب")]
+        public string Workflow { get; set; }
         public string? UploadsRequired { get; set; }
         public string? Documents { get; set; }
 
-        public string? Timeline { get; set; }
+        [Required(ErrorMessage = " المدة الزمنية  مطلوبه")]
+        public string Timeline { get; set; }
         public string? SystemNeeded { get; set; }
         public string? Cities2 { get; set; } // to avoid collision with existing Cities
         public string? DepartmentHeadName { get; set; }

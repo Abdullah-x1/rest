@@ -106,3 +106,31 @@ td {
     height: 32px;
     filter: brightness(0) saturate(100%) invert(52%) sepia(88%) saturate(350%) hue-rotate(120deg);
 }
+.filter-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 30px;
+    margin-top: 10px;
+}
+
+.tab-button {
+    padding: 12px 24px;
+    border: none;
+    background-color: #e5e5e5;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    transition: background-color 0.2s ease-in-out;
+}
+
+    .tab-button.active {
+        background-color: #ffffff;
+        font-weight: bold;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .tab-button:hover {
+        background-color: #dcdcdc;
+    }

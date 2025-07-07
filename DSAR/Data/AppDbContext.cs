@@ -1,4 +1,5 @@
 ﻿using DSAR.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.SqlServer.Server;
@@ -125,6 +126,32 @@ namespace DSAR.Data
              .WithMany(u => u.Forms)
              .HasForeignKey(f => f.UserId)
              .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<History>()
+          .HasOne(h => h.Levels)
+          .WithMany(l => l.Histories)
+          .HasForeignKey(h => h.LevelId)
+         .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<History>()
+              .HasOne(h => h.FormData)
+               .WithMany(f => f.Histories)
+                .HasForeignKey(h => h.RequestId)
+                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<History>()
+              .HasOne(h => h.User)
+              .WithMany(u => u.Histories)
+              .HasForeignKey(h => h.UserId);
+
+            modelBuilder.Entity<History>()
+              .HasOne(h => h.Status)
+              .WithMany(s => s.Histories)
+              .HasForeignKey(h => h.StatusId);
+
+            modelBuilder.Entity<History>()
+              .HasOne<IdentityRole>(h => h.Role)
+              .WithMany()
+              .HasForeignKey(h => h.RoleId);
 
             //end of added
 
