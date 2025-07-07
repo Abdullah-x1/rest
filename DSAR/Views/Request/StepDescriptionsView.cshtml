@@ -181,7 +181,16 @@
                         </button>
                     </a>
                 }
-                
+                @if (User.IsInRole("User"))
+                {
+                    <button asp-route-requestId="@Model.FormId" asp-route-actionId="@Model.ActionId" asp-action="CancelRequest" value="decline" class="btn reject-btn">رفض الطلب</button>
+
+                    <a asp-action="CancelRequest" asp-route-requestId="@Model.FormId" asp-route-actionId="@Model.ActionId">
+                        <button type="submit" class="arrow arrow-right">
+                            <img src="~/images/arrowR.png" alt="التالي" />
+                        </button>
+                    </a>
+                }
             </div>
         </div>
     </div>
