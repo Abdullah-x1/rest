@@ -40,8 +40,11 @@
                                 </a>
                             </td>
                             <td>@request.DepartmentName</td>
-                            <td>@request.StatusName</td>
-
+                            <a asp-action="History" asp-route-requestId="@request.RequestId"> @request.StatusName </a>
+                            <td>
+                                <a asp-action="History" asp-route-requestId="@request.RequestId" class="btn btn-link"> عرض السجل </a>
+                            </td>
+                            <td>
                         </tr>
 
                         

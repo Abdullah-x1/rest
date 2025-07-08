@@ -752,7 +752,7 @@ namespace DSAR.Controllers
                 // Not authorized
                 return Forbid();
             }
-
+            //AutoMapper
             var viewModels = requests.Select(r => new RequestViewModel
             {
                 RequestId = r.RequestId,
@@ -1445,6 +1445,30 @@ namespace DSAR.Controllers
             }).ToList();
 
             return View(viewModel);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> History(int requestId)
+        {
+
+            var histories = await _historyRepository.GetHistoriesByRequestIdAsync(requestId);
+
+
+            var historiesVm = histories.Select(h => new HistoryViewModel
+            {
+                CreationDate = h.CreationDate,
+                LevelName = h.Levels.LevelName,
+                StatusName = h.Status.StatusName,
+                RoleName = h.Role.Name,
+                Information = h.Information
+            })
+            .ToList();
+
+
+            ViewBag.RequestId = requestId;
+
+
+            return View(historiesVm);
         }
 
     }

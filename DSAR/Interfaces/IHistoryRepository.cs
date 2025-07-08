@@ -10,5 +10,8 @@ namespace DSAR.Interfaces
         Task<List<History>> GetHistroyRequestsByUserId(string UserId);
         Task<List<History>> GetAllHistroyRequestsByUserId(string UserId);
 
+        Task<List<History>> GetHistoriesByRequestIdAsync(int requestId);
+
+
     }
 }

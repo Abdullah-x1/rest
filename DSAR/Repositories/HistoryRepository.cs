@@ -65,5 +65,17 @@ namespace DSAR.Repositories
                            .Where(r => r.UserId == UserId)
                            .ToListAsync();
         }
+
+        public async Task<List<History>> GetHistoriesByRequestIdAsync(int requestId)
+        {
+            return await _db.Histories
+                .Include(h => h.Levels)
+                .Include(h => h.Status)
+                .Include(h => h.User)
+                .Include(h => h.Role)
+                .Where(h => h.RequestId == requestId)
+                .OrderBy(h => h.CreationDate)
+                .ToListAsync();
+        }
     }
 }

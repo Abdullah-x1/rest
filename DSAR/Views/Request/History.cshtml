@@ -1,0 +1,41 @@
+﻿@using DSAR.ViewModels
+@model IEnumerable<HistoryViewModel>
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <title>سجل الطلب</title>
+</head>
+<body>
+
+    <h1>سجل الطلب #@ViewBag.RequestId</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>الوقت</th>
+                <th>المستوى</th>
+                <th>الحالة</th>
+                <th>الدور</th>
+                <th>معلومات إضافية</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var entry in Model)
+            {
+                <tr>
+                    <td>@entry.CreationDate.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@entry.LevelName</td>
+                    <td>@entry.StatusName</td>
+                    <td>@entry.RoleName</td>
+                    <td>@entry.Information</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button onclick="history.back()">رجوع</button>
+</body>
+</html>

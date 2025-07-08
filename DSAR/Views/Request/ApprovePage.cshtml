@@ -43,7 +43,7 @@
             <textarea asp-for="DepartmentNotes" class="notes-input" placeholder="ذكر الملاحظات إن وجدت"></textarea>
         }
 
-        @if ((User.IsInRole("ApplicationManager") || User.IsInRole("AdministrationManager")) && Model.LevelId >= 4)
+        @if ((User.IsInRole("ApplicationManager") || User.IsInRole("ITManager")) && Model.LevelId >= 4)
         {
             <p>Request Level: @Model.LevelId</p>
 
