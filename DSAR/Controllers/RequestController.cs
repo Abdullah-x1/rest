@@ -1323,7 +1323,7 @@ namespace DSAR.Controllers
             if (existingAction != null)
             {
                 existingAction.LevelId = 6;
-                existingAction.StatusId = 6;
+                existingAction.StatusId = 2;
                 _requestActionRepository.Update(existingAction);
                 // history
 
