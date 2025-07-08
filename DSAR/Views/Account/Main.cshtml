@@ -37,11 +37,14 @@
 
             @if (User.IsInRole("Admin"))
             {
-                <form asp-controller="User" asp-action="Insert" method="get">
+                <form asp-controller="Admin" asp-action="InsertUser" method="get">
                     <button type="submit" class="btn" style="background:#6c5ce7;">إدخال</button>
                 </form>
-                <form asp-controller="User" asp-action="list" method="get">
+                <form asp-controller="Admin" asp-action="ListAllUsers" method="get">
                     <button type="submit" class="btn" style="background:#00cec9;">قائمة المستخدمين</button>
+                </form>
+                <form asp-controller="Admin" asp-action="ListRequests" method="get">
+                    <button type="submit" class="btn" style="background:#00cec9;">قائمة الطلبات</button>
                 </form>
             }
 
