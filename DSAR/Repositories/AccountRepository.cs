@@ -21,6 +21,15 @@ namespace DSAR.Repositories
 
         public async Task<SignInResult> LoginAsync(LoginViewModel model)
         {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return SignInResult.Failed; // User not found
+            }
+            if (!user.Active)
+            {
+                return SignInResult.Failed; // User not found or inactive
+            }
             return await _signInManager.PasswordSignInAsync(
                 model.Email,
                 model.Password,
