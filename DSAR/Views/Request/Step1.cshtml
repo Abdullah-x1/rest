@@ -5,35 +5,47 @@
 <head>
     <meta charset="UTF-8" />
     <title>Step 1</title>
+
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <!-- Your Custom CSS -->
     <link rel="stylesheet" href="~/css/steps.css" asp-append-version="true" />
-    <script src="~/css/Script.js" asp-append-version="true"></script>
+
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/css/Script.js" asp-append-version="true"></script>
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Your shared scripts -->
+    <script src="~/js/form-handler.js" asp-append-version="true"></script>
+    <script src="~/js/file-validator.js" asp-append-version="true"></script>
 </head>
+
 <body>
-    <form asp-action="Step1" method="post" enctype="multipart/form-data  asp-antiforgery=" true"">
-
-
-        <div class="form-container">
+    <form asp-action="Step1" id="step1Form" method="post" enctype="multipart/form-data" asp-antiforgery="true">
+        <div class="form-container position-relative">
             <div class="right-column column">
                 <div class="required-wrapper">
                     <span class="required-asterisk">*</span>
-                <textarea asp-for ="Field1" class="in1" placeholder="يتم كتابة اسم الخدمة المطلوبة" value="@Model.Field1"></textarea>
-                <span asp-validation-for="Field1" class="text-danger"></span>
-                </div>
-                <div class="required-wrapper">
-                    <span class="required-asterisk">*</span>
-
-                <textarea asp-for="Field2" class="in1" placeholder="يتم تحديد نوع الخدمة وموقعها" value="@Model.Field2" ></textarea>
-                <span asp-validation-for="Field2" class="text-danger"></span>
+                    <textarea asp-for="Field1" class="in1" placeholder="يتم كتابة اسم الخدمة المطلوبة">@Model.Field1</textarea>
+                    <span asp-validation-for="Field1" class="text-danger"></span>
                 </div>
 
                 <div class="required-wrapper">
                     <span class="required-asterisk">*</span>
-                <textarea asp-for = "Field3" class="in2" placeholder="يتم كتابة وصف تفصيلي للخدمة المطلوب تطويرها">@Model.Field3</textarea>
-                <span asp-validation-for="Field3" class="text-danger"></span>
+                    <textarea asp-for="Field2" class="in1" placeholder="يتم تحديد نوع الخدمة وموقعها">@Model.Field2</textarea>
+                    <span asp-validation-for="Field2" class="text-danger"></span>
+                </div>
+
+                <div class="required-wrapper">
+                    <span class="required-asterisk">*</span>
+                    <textarea asp-for="Field3" class="in2" placeholder="يتم كتابة وصف تفصيلي للخدمة المطلوب تطويرها">@Model.Field3</textarea>
+                    <span asp-validation-for="Field3" class="text-danger"></span>
                 </div>
 
                 <div class="radio-section">
@@ -46,33 +58,81 @@
             </div>
 
             <div class="left-column column">
-                <textarea asp-for="Field4" class="in1" placeholder="توضيح الاعتمادية ان وجد" value="@Model.Field4" ></textarea>
-                <textarea asp-for="Field5" class="in1" placeholder="رقم الإجراء الإداري إن وجد" value="@Model.Field5" ></textarea>
-                <textarea asp-for="Field6" class="in3" placeholder="رفع ملف الإجراء الإداري إن وجد" value="@Model.Field6" ></textarea>
+                <textarea asp-for="Field4" class="in1" placeholder="توضيح الاعتمادية ان وجد">@Model.Field4</textarea>
+                <textarea asp-for="Field5" class="in1" placeholder="رقم الإجراء الإداري إن وجد">@Model.Field5</textarea>
 
-                <label for="file-upload" style="cursor: pointer;">
-                    <img src="~/images/link.png" alt="إرفاق ملف" style="width: 24px;" />
+                <label for="Attachment" class="form-label">إرفاق ملف الإجراء الإداري إن وجد:</label><br />
+                <label for="Attachment" style="cursor: pointer;">
+                    <img src="~/images/link.png" alt="إرفاق ملف" width="24" />
+                    اختر ملف
                 </label>
-                <input type="file" name="Attachment" id="file-upload" style="display: none;" />
+
+                <input type="file" name="Attachment" id="Attachment" class="d-none"
+                       accept=".doc,.docx,.xls,.xlsx,.pdf,image/*" onchange="updateFileName()" />
+
+                <span id="attachmentName" class="text-muted mt-2 d-block"></span>
+
+                @if (Model.Attachment1Id > 0)
+                {
+                    <div class="text-info mt-1">
+                        <i class="bi bi-paperclip me-1"></i> الملف الحالي:
+                        <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = Model.Attachment1Id })">
+                            @Model.Attachment1Name
+                        </a>
+
+                    </div>
+                }
+
+                <div id="statusMessage"></div>
             </div>
 
-            <button type="submit" class="arrow arrow-right">
-                <img src="~/images/arrowR.png" alt="التالي" />
-            </button>
-            <!-- Navigation Arrows -->
-            <button type="button" class="arrow arrow-left" onclick="location.href='@Url.Action("Main", "Account")'">
-                <img src="~/images/arrowL.png" alt="السابق" />
-            </button>
+            <div class="d-flex justify-content-between align-items-center position-absolute bottom-0 start-0 end-0 p-3">
+                <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("Main", "Account")'">السابق</button>
+
+                <div class="d-flex gap-2">
+                    <button type="button" id="saveButton" class="btn btn-success d-flex align-items-center" name="action" value="save">
+                        <i class="bi bi-save me-2"></i> حفظ
+                    </button>
+
+                    <button type="submit" class="btn btn-primary" name="action" value="next">التالي</button>
+                </div>
+            </div>
         </div>
     </form>
+    <script>
+        // Reuse the AJAX logic
+        setupAjaxSave(
+            '#step1Form',
+            '#saveButton',
+            '@Url.Action("Step1", "Request")'
+        );
 
-    <!-- ✅ Popup Modal - Only for basic users -->
+        // Optional: if you want file name display + extension check
+        setupFileValidation('#Attachment', '#attachmentName');
+    </script>
+    <script>
+              if (response.success) {
+            Swal.fire("نجاح", response.message, "success");
+            if (response.attachmentName) {
+                $('#attachmentName').text(response.attachmentName);
+            }
+        } else {
+            Swal.fire("تنبيه", response.message, "info");
+        }
+
+    </script>
+ 
+</body>
+</html>
+
+
+    <!-- ✅ Popup Modal -->
     @if (!User.IsInRole("Admin") &&
-    !User.IsInRole("SectionManager") &&
-    !User.IsInRole("DepartmentManager") &&
-    !User.IsInRole("AdministrationManager") &&
-    !User.IsInRole("Analyzer") &&
-    !User.IsInRole("ApplicationManager"))
+          !User.IsInRole("SectionManager") &&
+          !User.IsInRole("DepartmentManager") &&
+          !User.IsInRole("AdministrationManager") &&
+          !User.IsInRole("Analyzer") &&
+          !User.IsInRole("ApplicationManager"))
     {
         <div id="termsPopup" class="popup-overlay">
             <div class="popup-content">
@@ -99,7 +159,4 @@
         </div>
     }
 
-   
-</body>
-</html>
-
+  

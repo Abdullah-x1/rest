@@ -10,6 +10,8 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
 
 namespace DSAR.Repository
 {
@@ -85,34 +87,44 @@ namespace DSAR.Repository
         #endregion
 
         #region Snapshot Management
-        private string GetSessionId()
+        private string GetOrCreateCookieId()
         {
-            var session = _httpContextAccessor.HttpContext.Session;
-            var sessionId = session.GetString("SnapshotSessionId");
+            var context = _httpContextAccessor.HttpContext;
+            const string cookieName = "SnapshotCookieId";
 
-            if (string.IsNullOrEmpty(sessionId))
+            if (context.Request.Cookies.TryGetValue(cookieName, out var cookieId) && !string.IsNullOrWhiteSpace(cookieId))
+                return cookieId;
+
+            cookieId = Guid.NewGuid().ToString();
+
+            context.Response.Cookies.Append(cookieName, cookieId, new CookieOptions
             {
-                sessionId = Guid.NewGuid().ToString();
-                session.SetString("SnapshotSessionId", sessionId);
-            }
+                HttpOnly = true,
+                IsEssential = true,
+                SameSite = SameSiteMode.Lax,
+                Secure = context.Request.IsHttps,
+                Expires = DateTimeOffset.UtcNow.AddDays(7)
+            });
 
-            return sessionId;
+            return cookieId;
         }
+
 
         private async Task<SnapshotFormData> GetOrCreateSnapshotAsync()
         {
-            var sessionId = GetSessionId();
+            var cookieId = GetOrCreateCookieId();
             var snapshot = await _context.SnapshotForms
                 .Include(s => s.Attachments)
                 .ThenInclude(a => a.SnapshotAttachmentData)
                 .Include(s => s.Descriptions)
-                .FirstOrDefaultAsync(s => s.SessionId == sessionId);
+                .FirstOrDefaultAsync(s => s.CookieId == cookieId);
 
             if (snapshot == null)
             {
                 snapshot = new SnapshotFormData
                 {
-                    SessionId = sessionId,
+                    CookieId = cookieId,
+
                     FormDataJson = JsonSerializer.Serialize(new FormData(), _jsonOptions)
                 };
                 await _context.SnapshotForms.AddAsync(snapshot);
@@ -124,9 +136,10 @@ namespace DSAR.Repository
 
         public async Task ClearCurrentSnapshot()
         {
-            var sessionId = GetSessionId();
+            var cookieId = GetOrCreateCookieId();
             var snapshot = await _context.SnapshotForms
-                .FirstOrDefaultAsync(s => s.SessionId == sessionId);
+                .FirstOrDefaultAsync(s => s.CookieId == cookieId);
+
 
             if (snapshot != null)
             {
@@ -171,19 +184,86 @@ namespace DSAR.Repository
                 Cities2 = formData.Cities2,
                 DepartmentHeadName = formData.DepartmentHeadName,
                 AdditionalNotes = formData.AdditionalNotes
+               
             };
+            requestViewModel.Attachment1Id = snapshot.Attachments
+        .Where(a => a.FieldName == "Step1")
+        .Select(a => a.Id)
+        .FirstOrDefault();
+
+            requestViewModel.Attachment1Name = snapshot.Attachments
+                .Where(a => a.FieldName == "Step1")
+                .Select(a => $"{a.FileName}{a.FileExtension}")
+                .FirstOrDefault();
+
+            requestViewModel.Attachment2Id = snapshot.Attachments
+                .Where(a => a.FieldName == "Step2_1")
+                .Select(a => a.Id)
+                .FirstOrDefault();
+
+            requestViewModel.Attachment2Name = snapshot.Attachments
+                .Where(a => a.FieldName == "Step2_1")
+                .Select(a => $"{a.FileName}{a.FileExtension}")
+                .FirstOrDefault();
+
+            requestViewModel.Attachment3Id = snapshot.Attachments
+                .Where(a => a.FieldName == "Step2_2")
+                .Select(a => a.Id)
+                .FirstOrDefault();
+
+            requestViewModel.Attachment3Name = snapshot.Attachments
+                .Where(a => a.FieldName == "Step2_2")
+                .Select(a => $"{a.FileName}{a.FileExtension}")
+                .FirstOrDefault();
+
+            requestViewModel.WorkflowAttachmentId = snapshot.Attachments
+                .Where(a => a.FieldName == "Step4_Workflow")
+                .Select(a => a.Id)
+                .FirstOrDefault();
+
+            requestViewModel.WorkflowName = snapshot.Attachments
+                .Where(a => a.FieldName == "Step4_Workflow")
+                .Select(a => $"{a.FileName}{a.FileExtension}")
+                .FirstOrDefault();
+
+            requestViewModel.UploadsRequiredAttachmentId = snapshot.Attachments
+                .Where(a => a.FieldName == "Step4_uploadsRequiredFile")
+                .Select(a => a.Id)
+                .FirstOrDefault();
+
+            requestViewModel.UploadsRequiredName = snapshot.Attachments
+                .Where(a => a.FieldName == "Step4_uploadsRequiredFile")
+                .Select(a => $"{a.FileName}{a.FileExtension}")
+                .FirstOrDefault();
+
+            requestViewModel.DocumentsAttachmentId = snapshot.Attachments
+                .Where(a => a.FieldName == "Step4_documentsFile")
+                .Select(a => a.Id)
+                .FirstOrDefault();
+
+            requestViewModel.DocumentsName = snapshot.Attachments
+                .Where(a => a.FieldName == "Step4_documentsFile")
+                .Select(a => $"{a.FileName}{a.FileExtension}")
+                .FirstOrDefault();
 
             return requestViewModel;
         }
         #endregion
 
         #region Step Handlers
-        public async Task HandleStep1Data(RequestViewModel data, IFormFile attachment)
+        public async Task<bool> HandleStep1Data(RequestViewModel data, IFormFile attachment)
         {
             var snapshot = await GetOrCreateSnapshotAsync();
             var currentData = snapshot.GetFormData(_jsonOptions);
 
-            // Update only step 1 fields
+            // Check if there are meaningful changes or a new attachment
+            if (!HasMeaningfulChanges(currentData, data) && attachment == null)
+            {
+                // No changes detected, return false to indicate nothing saved
+                return false;
+            }
+
+            // Update the data with new values
             currentData.Field1 = data.Field1;
             currentData.Field2 = data.Field2;
             currentData.Field3 = data.Field3;
@@ -194,31 +274,35 @@ namespace DSAR.Repository
 
             snapshot.SetFormData(currentData, _jsonOptions);
 
+            // If an attachment was uploaded, handle it
             if (attachment != null && attachment.Length > 0)
             {
                 await HandleAttachment(attachment, snapshot, "Step1");
             }
 
-            //var request = new FormData
-            //{
-            //    Field1 = data.Field1,
-            //    Field2 = data.Field2,
-            //    Field3 = data.Field3,
-            //    Depend = data.Depend,
-            //    Field4 = data.Field4,
-            //    Field5 = data.Field5,
-            //    Field6 = data.Field6,
-
-            //};
-
+            // Save changes to database
             await _context.SaveChangesAsync();
+
+            return true;
         }
 
-        public async Task HandleStep2Data(RequestViewModel data, IFormFile attachment1, IFormFile attachment2)
+        private bool HasMeaningfulChanges(FormData current, RequestViewModel incoming)
+        {
+            return current.Field1 != incoming.Field1 ||
+                   current.Field2 != incoming.Field2 ||
+                   current.Field3 != incoming.Field3 ||
+                   current.Depend != incoming.Depend ||
+                   current.Field4 != incoming.Field4 ||
+                   current.Field5 != incoming.Field5 ||
+                   current.Field6 != incoming.Field6;
+        }
+
+        public async Task<bool> HandleStep2Data(RequestViewModel data, IFormFile attachment1, IFormFile attachment2)
         {
             var snapshot = await GetOrCreateSnapshotAsync();
             var currentData = snapshot.GetFormData(_jsonOptions);
-
+            if (!HasMeaningfulChangesStep2(currentData, data) && attachment1 == null && attachment2 == null)
+                return false;
             // Update only step 2 fields
             currentData.Name = data.Name;
             currentData.Email = data.Email;
@@ -262,7 +346,25 @@ namespace DSAR.Repository
             //};
 
             await _context.SaveChangesAsync();
+            return true;
         }
+
+        private bool HasMeaningfulChangesStep2(FormData current, RequestViewModel incoming)
+        {
+            return current.Name != incoming.Name ||
+                   current.Email != incoming.Email ||
+                   current.RepeatLimit != incoming.RepeatLimit ||
+                   current.Fees != incoming.Fees ||
+                   current.Cities != incoming.Cities ||
+                   current.TargetAudience != incoming.TargetAudience ||
+                   current.DepName != incoming.DepName ||
+                   current.ExpectedOutput1 != incoming.ExpectedOutput1 ||
+                   current.ExpectedOutput2 != incoming.ExpectedOutput2 ||
+                   current.ApprovedTemplate != incoming.ApprovedTemplate ||
+                   current.DetailedInfo != incoming.DetailedInfo ||
+                   current.RequiredConditions != incoming.RequiredConditions;
+        }
+
 
         public async Task<FormData> HandleStep3Data(RequestViewModel data, string UserId)
         {
@@ -390,18 +492,42 @@ namespace DSAR.Repository
             return request;
         }
 
-    
 
-        public async Task HandleStep4Data(
-            RequestViewModel data,
-            IFormFile workflowFile,
-            IFormFile uploadsRequiredFile,
-            IFormFile documentsFile)
+
+        public async Task<(bool isSaved, string workflowName, string uploadsName, string documentsName)> HandleStep4Data(
+        RequestViewModel data,
+        IFormFile workflowFile,
+        IFormFile uploadsRequiredFile,
+        IFormFile documentsFile)
         {
             var snapshot = await GetOrCreateSnapshotAsync();
             var currentData = snapshot.GetFormData(_jsonOptions);
+            if (!HasMeaningfulChangesStep4(currentData, data) &&
+    (workflowFile == null || workflowFile.Length == 0) &&
+    (uploadsRequiredFile == null || uploadsRequiredFile.Length == 0) &&
+    (documentsFile == null || documentsFile.Length == 0))
+            {
+                // No changes detected, skip saving
+                return (false, null, null, null);
+            }
+            // Check if anything changed
+            bool hasChanges =
+                currentData.Workflow != data.Workflow ||
+                currentData.UploadsRequired != data.UploadsRequired ||
+                currentData.Documents != data.Documents ||
+                currentData.Timeline != data.Timeline ||
+                currentData.SystemNeeded != data.SystemNeeded ||
+                currentData.Cities2 != data.Cities2 ||
+                currentData.DepartmentHeadName != data.DepartmentHeadName ||
+                currentData.AdditionalNotes != data.AdditionalNotes ||
+                (workflowFile != null && workflowFile.Length > 0) ||
+                (uploadsRequiredFile != null && uploadsRequiredFile.Length > 0) ||
+                (documentsFile != null && documentsFile.Length > 0);
 
-            // Update only step 4 fields
+            if (!hasChanges)
+                return (false, null, null, null);
+
+            // Update fields
             currentData.Workflow = data.Workflow;
             currentData.UploadsRequired = data.UploadsRequired;
             currentData.Documents = data.Documents;
@@ -413,47 +539,62 @@ namespace DSAR.Repository
 
             snapshot.SetFormData(currentData, _jsonOptions);
 
+            string workflowName = null, uploadsName = null, documentsName = null;
+
             if (workflowFile != null && workflowFile.Length > 0)
             {
                 await HandleAttachment(workflowFile, snapshot, "Step4_Workflow");
+                workflowName = Path.GetFileName(workflowFile.FileName);
             }
 
             if (uploadsRequiredFile != null && uploadsRequiredFile.Length > 0)
             {
                 await HandleAttachment(uploadsRequiredFile, snapshot, "Step4_uploadsRequiredFile");
+                uploadsName = Path.GetFileName(uploadsRequiredFile.FileName);
             }
 
             if (documentsFile != null && documentsFile.Length > 0)
             {
                 await HandleAttachment(documentsFile, snapshot, "Step4_documentsFile");
+                documentsName = Path.GetFileName(documentsFile.FileName);
             }
-            //var request = new FormData
-            //{
-            //    Workflow = data.Workflow,
-            //    UploadsRequired = data.UploadsRequired,
-            //    Documents = data.Documents,
-            //    Timeline = data.Timeline,
-            //    SystemNeeded = data.SystemNeeded,
-            //    Cities2 = data.Cities2,
-            //    DepartmentHeadName = data.DepartmentHeadName,
-            //    AdditionalNotes = data.AdditionalNotes,
-             
-            //};
 
             await _context.SaveChangesAsync();
+            return (true, workflowName, uploadsName, documentsName);
         }
+        private bool HasMeaningfulChangesStep4(FormData current, RequestViewModel incoming)
+        {
+            return current.Workflow != incoming.Workflow ||
+                   current.UploadsRequired != incoming.UploadsRequired ||
+                   current.Documents != incoming.Documents ||
+                   current.Timeline != incoming.Timeline ||
+                   current.SystemNeeded != incoming.SystemNeeded ||
+                   current.Cities2 != incoming.Cities2 ||
+                   current.DepartmentHeadName != incoming.DepartmentHeadName ||
+                   current.AdditionalNotes != incoming.AdditionalNotes;
+        }
+
         #endregion
 
         #region Description Handling
-        public async Task HandleDescriptions(List<DescriptionEntry> descriptions)
+        public async Task<bool> HandleDescriptions(List<DescriptionEntry> descriptions)
         {
             var snapshot = await GetOrCreateSnapshotAsync();
+            var existingDescriptions = snapshot.Descriptions
+                .Select(d => new DescriptionEntry
+                {
+                    Description1 = d.Description1,
+                    Description2 = d.Description2
+                })
+                .ToList();
 
-            // Clear existing descriptions
+            if (!HasMeaningfulChangesDescriptions(existingDescriptions, descriptions))
+                return false;
+
+            // Clear existing and add new
             _context.SnapshotDescriptionEntries.RemoveRange(snapshot.Descriptions);
             await _context.SaveChangesAsync();
 
-            // Add new ones
             foreach (var desc in descriptions)
             {
                 snapshot.Descriptions.Add(new SnapshotDescriptionEntry
@@ -464,7 +605,25 @@ namespace DSAR.Repository
             }
 
             await _context.SaveChangesAsync();
+            return true;
         }
+        private bool HasMeaningfulChangesDescriptions(List<DescriptionEntry> current, List<DescriptionEntry> incoming)
+        {
+            if (current.Count != incoming.Count)
+                return true;
+
+            for (int i = 0; i < current.Count; i++)
+            {
+                if (current[i].Description1?.Trim() != incoming[i].Description1?.Trim() ||
+                    current[i].Description2?.Trim() != incoming[i].Description2?.Trim())
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
 
         public async Task<List<DescriptionEntry>> GetDescriptions()
         {
@@ -482,15 +641,40 @@ namespace DSAR.Repository
         {
             if (attachment == null || attachment.Length == 0) return;
 
+            // Get file extension
+            var extension = Path.GetExtension(attachment.FileName).ToLower();
+
+            // Define allowed extensions
+            var allowedExtensions = new[]
+            {
+        ".doc", ".docx", ".xls", ".xlsx", ".pdf", // Office files
+        ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" // Image files
+    };
+
+            // Validate file type
+            if (!allowedExtensions.Contains(extension))
+                throw new InvalidOperationException($"Unsupported file type: {extension}");
+
+        
+
+            // Remove any existing attachments for this field
+            var existing = snapshot.Attachments
+                .Where(a => a.FieldName == fieldName)
+                .ToList();
+
+            foreach (var att in existing)
+            {
+                snapshot.Attachments.Remove(att);
+            }
+
+            // Save new attachment
             var attachmentMetadata = new SnapshotAttachmentMetadata
             {
                 FileName = Path.GetFileNameWithoutExtension(attachment.FileName),
-                FileExtension = Path.GetExtension(attachment.FileName),
-                FieldName = fieldName, // Add this
-
+                FileExtension = extension,
+                FieldName = fieldName,
                 FileSize = attachment.Length,
                 SnapshotAttachmentData = new SnapshotAttachmentData
-
                 {
                     Data = await GetFileBytesAsync(attachment)
                 }
@@ -498,6 +682,14 @@ namespace DSAR.Repository
 
             snapshot.Attachments.Add(attachmentMetadata);
         }
+        public async Task<SnapshotAttachmentData> GetSnapshotAttachmentById(int id)
+        {
+            return await _context.SnapshotAttachmentDatas
+                .Include(d => d.SnapshotAttachmentMetadata)
+                .FirstOrDefaultAsync(d => d.Id == id);
+        }
+
+
 
         private async Task<byte[]> GetFileBytesAsync(IFormFile file)
         {
