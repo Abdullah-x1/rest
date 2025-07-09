@@ -1,8 +1,7 @@
 ﻿@model DSAR.ViewModels.RequestViewModel
 @{
-    Layout = null;
     var attachments = ViewBag.Attachments as List<CaseStudyAttachmentMetadata>;
-    var caseStudyAttachment = attachments?.FirstOrDefault(a => a.FieldName == "CaseStudyAttachment");
+    var caseStudyAttachments = attachments?.Where(a => a.FieldName == "CaseStudyAttachment").ToList();
 }
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -65,21 +64,28 @@
 
 
             <div class="attachment-section" style="margin-top: 20px;">
-               
-                @if (caseStudyAttachment != null)
+
+                @if (caseStudyAttachments != null && caseStudyAttachments.Any())
                 {
                     <div class="attachment-section" style="margin-top: 20px;">
-                        <label style="font-weight:bold;">المرفق:</label>
-                        <a href="@Url.Action("DownloadCaseStudyAttachment", "Request", new { attachmentId = caseStudyAttachment.Id })"
-                           class="attachment-link"
-                           style="display:block; margin-top: 8px; color: #1e90ff; font-weight: bold; text-decoration: none;">
-                            @caseStudyAttachment.FileName@caseStudyAttachment.FileExtension
-                        </a>
+                        <label style="font-weight:bold;">المرفقات:</label>
+                        <ul class="attached-files" style="margin-top: 8px;">
+                            @foreach (var attachment in caseStudyAttachments)
+                            {
+                                <li>
+                                    <a href="@Url.Action("DownloadCaseStudyAttachment", "Request", new { attachmentId = attachment.Id })"
+                                       class="attachment-link"
+                                       style="color: #1e90ff; font-weight: bold; text-decoration: none;">
+                                        @attachment.FileName@attachment.FileExtension
+                                    </a>
+                                </li>
+                            }
+                        </ul>
                     </div>
                 }
                 else
                 {
-                    <span class="no-attachment" style="color: #888; font-style: italic;">لا يوجد مرفق</span>
+                    <span class="no-attachment" style="color: #888; font-style: italic;">لا يوجد مرفقات</span>
                 }
 
             </div>

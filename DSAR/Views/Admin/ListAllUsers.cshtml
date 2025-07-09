@@ -1,73 +1,70 @@
 ﻿@model IEnumerable<DSAR.Models.ViewModels.ListUserViewModel>
 
+<div class="container list-container">
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 
-<div class="mb-3">
-    <a asp-controller="Account"
-       asp-action="Main"
-       class="btn btn-secondary">
-        الصفحة الرئيسية
-    </a>
-</div>
-<h2>قائمة المستخدمين</h2>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>رقم الهوية</th>
-            <th>الاسم</th>
-            <th>البريد الإلكتروني</th>
-            <th>الدور</th>
-            <th>الإدارة</th>
-            <th>القسم</th>
-            <th>القطاع</th>
-            <th>المدينة</th>
-            <th>الحالة</th>
-            <th></th> @* for Edit button *@
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var u in Model)
-        {
+
+    <h2 class="list-title">قائمة المستخدمين</h2>
+
+    <table class="table list-table">
+        <thead>
             <tr>
-                <td>@u.NationalId</td>
-                <td>@u.FirstName @u.LastName</td>
-                <td>@u.Email</td>
-                <td>@string.Join(", ", u.Roles)</td>
-                <td>@u.DepartmentName</td>
-                <td>@u.SectionName</td>
-                <td>@u.SectorId</td>
-                <td>@u.CityName</td>
-                <td>
-                    @if (u.IsActive)
-                    {
-                        <span class="badge bg-success">Active</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-secondary">Inactive</span>
-                    }
-                </td>
-                
-                <td>
-                    <a asp-controller="Admin"
-                       asp-action="EditUser"
-                       asp-route-id="@u.IdentityGuid"
-                       class="btn btn-sm btn-primary">
-                        Edit
-                    </a>
-
-                    <form asp-controller="Admin"
-                          asp-action="DeleteUser"
-                          asp-route-id="@u.IdentityGuid"
-                          method="post"
-                          style="display:inline"
-                          onsubmit="return confirm('هل أنت متأكد أنك تريد حذف هذا المستخدم؟');">
-                        <button type="submit" class="btn btn-sm btn-danger">
-                            Delete
-                        </button>
-                        @Html.AntiForgeryToken()
-                    </form>
-                </td>
+                <th>رقم الهوية</th>
+                <th>الاسم</th>
+                <th>البريد الإلكتروني</th>
+                <th>الدور</th>
+                <th>الإدارة</th>
+                <th>القسم</th>
+                <th>القطاع</th>
+                <th>المدينة</th>
+                <th>الحالة</th>
+                <th></th> <!-- Actions -->
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var u in Model)
+            {
+                <tr>
+                    <td data-label="رقم الهوية">@u.NationalId</td>
+                    <td data-label="الاسم">@u.FirstName @u.LastName</td>
+                    <td data-label="البريد الإلكتروني">@u.Email</td>
+                    <td data-label="الدور">@string.Join(", ", u.Roles)</td>
+                    <td data-label="الإدارة">@u.DepartmentName</td>
+                    <td data-label="القسم">@u.SectionName</td>
+                    <td data-label="القطاع">@u.SectorId</td>
+                    <td data-label="المدينة">@u.CityName</td>
+                    <td data-label="الحالة">
+                        @if (u.IsActive)
+                        {
+                            <span class="badge badge-active">Active</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-inactive">Inactive</span>
+                        }
+                    </td>
+                    <td data-label="إجراءات">
+                        <a asp-controller="Admin"
+                           asp-action="EditUser"
+                           asp-route-id="@u.IdentityGuid"
+                           class="btn btn-sm btn-edit">
+                            تعديل
+                        </a>
+
+                        <form asp-controller="Admin"
+                              asp-action="DeleteUser"
+                              asp-route-id="@u.IdentityGuid"
+                              method="post"
+                              style="display:inline"
+                              onsubmit="return confirm('هل أنت متأكد أنك تريد حذف هذا المستخدم؟');">
+                            <button type="submit" class="btn btn-sm btn-delete">
+                                حذف
+                            </button>
+                            @Html.AntiForgeryToken()
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

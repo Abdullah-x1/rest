@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DSAR.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250705135639_new12")]
-    partial class new12
+    [Migration("20250713194048_new5")]
+    partial class new5
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -359,8 +359,19 @@ namespace DSAR.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Information")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("LevelId")
+                        .HasColumnType("int");
+
                     b.Property<int>("RequestId")
                         .HasColumnType("int");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
@@ -371,7 +382,11 @@ namespace DSAR.Migrations
 
                     b.HasKey("HistoryId");
 
+                    b.HasIndex("LevelId");
+
                     b.HasIndex("RequestId");
+
+                    b.HasIndex("RoleId");
 
                     b.HasIndex("StatusId");
 
@@ -576,14 +591,14 @@ namespace DSAR.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("CookieId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("FormDataJson")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SessionId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -616,6 +631,9 @@ namespace DSAR.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
 
                     b.Property<int>("CityId")
                         .HasColumnType("int");
@@ -929,7 +947,7 @@ namespace DSAR.Migrations
                     b.HasOne("DSAR.Models.User", "User")
                         .WithMany("Forms")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -937,10 +955,22 @@ namespace DSAR.Migrations
 
             modelBuilder.Entity("DSAR.Models.History", b =>
                 {
+                    b.HasOne("DSAR.Models.Levels", "Levels")
+                        .WithMany("Histories")
+                        .HasForeignKey("LevelId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("DSAR.Models.FormData", "FormData")
                         .WithMany("Histories")
                         .HasForeignKey("RequestId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("DSAR.Models.Status", "Status")
@@ -956,6 +986,10 @@ namespace DSAR.Migrations
                         .IsRequired();
 
                     b.Navigation("FormData");
+
+                    b.Navigation("Levels");
+
+                    b.Navigation("Role");
 
                     b.Navigation("Status");
 
@@ -1086,7 +1120,7 @@ namespace DSAR.Migrations
                         .HasForeignKey("SectionId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("DSAR.Models.Sector", null)
+                    b.HasOne("DSAR.Models.Sector", "Sector")
                         .WithMany("Users")
                         .HasForeignKey("SectorId");
 
@@ -1095,6 +1129,8 @@ namespace DSAR.Migrations
                     b.Navigation("Department");
 
                     b.Navigation("Section");
+
+                    b.Navigation("Sector");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1191,6 +1227,11 @@ namespace DSAR.Migrations
                     b.Navigation("Histories");
 
                     b.Navigation("RequestActions");
+                });
+
+            modelBuilder.Entity("DSAR.Models.Levels", b =>
+                {
+                    b.Navigation("Histories");
                 });
 
             modelBuilder.Entity("DSAR.Models.Section", b =>

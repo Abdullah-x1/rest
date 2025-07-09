@@ -4,6 +4,7 @@ using DSAR.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DSAR.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250713201429_new2")]
+    partial class new2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -310,9 +313,8 @@ namespace DSAR.Migrations
                     b.Property<string>("RepeatLimit")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RequestNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<double>("RequestNumber")
+                        .HasColumnType("float");
 
                     b.Property<string>("RequiredConditions")
                         .HasColumnType("nvarchar(max)");
@@ -325,9 +327,6 @@ namespace DSAR.Migrations
 
                     b.Property<string>("TargetAudience")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TermsAccepted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Timeline")
                         .HasColumnType("nvarchar(max)");
@@ -598,9 +597,6 @@ namespace DSAR.Migrations
                     b.Property<string>("FormDataJson")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TermsAccepted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("UserId")
                         .IsRequired()

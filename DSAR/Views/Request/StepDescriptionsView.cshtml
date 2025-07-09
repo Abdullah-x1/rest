@@ -1,7 +1,5 @@
 ﻿@model DSAR.ViewModels.RequestViewModel
-@{
-    Layout = null;
-}
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -15,13 +13,14 @@
 
     <div class="form-container">
         <div class="content-wrapper">
-            <h3>تفاصيل إضافية</h3>
+            <h3>صلاحيات المعتمدين</h3>
 
             <table>
                 <thead>
                     <tr>
-                        <th>الوصف 1</th>
-                        <th>الوصف 2</th>
+                        <th>الإدارة</th>
+                        <th>اسم المعتمد</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
@@ -35,62 +34,58 @@
                 </tbody>
             </table>
 
-            <div class="actions">
-                <a href="@Url.Action("ViewSubmission3", "Request", new { id = Model.FormId })">
-                    <button type="button" class="arrow arrow-left" onclick="location.href='@Url.Action("Step1", "Request")'">
-                        <img src="~/images/arrowL.png" alt="السابق" />
-                    </button>
-                </a>
 
-                @if (User.IsInRole("ApplicationManager") && Model.LevelId == 6)
-                {
-                    <a asp-action="ApprovePage" asp-route-actionId="@Model.ActionId" asp-route-requestId="@Model.FormId">
-                        <button type="submit" class="arrow arrow-right">
-                            <img src="~/images/arrowR.png" alt="التالي" />
-                        </button>
-                    </a>
-                }
-
-                @if (User.IsInRole("ApplicationManager") && Model.LevelId == 4)
-                {
-                    <a asp-action="AnalyzerUsers" asp-route-requestId="@Model.FormId">
-                        <button type="submit" class="arrow arrow-right">
-                            <img src="~/images/arrowR.png" alt="التالي" />
-                        </button>
-                    </a>
-                }
-
-                @if (User.IsInRole("SectionManager") || User.IsInRole("DepartmentManager") || User.IsInRole("ITManager"))
-                {
-
-                    <a asp-action="ApprovePage" asp-route-actionId="@Model.ActionId" asp-route-requestId="@Model.FormId">
-                        <button type="submit" class="arrow arrow-right">
-                            <img src="~/images/arrowR.png" alt="التالي" />
-                        </button>
-                    </a>
-
-                }
-
-                @if (User.IsInRole("Analyzer"))
-                {
-                    <a asp-action="CaseStudy" asp-route-requestId="@Model.FormId">
-                        <button type="submit" class="arrow arrow-right">
-                            <img src="~/images/arrowR.png" alt="التالي" />
-                        </button>
-                    </a>
-                }
-                @if (User.IsInRole("User"))
-                {
-                    <button asp-route-requestId="@Model.FormId" asp-route-actionId="@Model.ActionId" asp-action="CancelRequest" value="decline" class="btn reject-btn">رفض الطلب</button>
-
-                    <a asp-action="CancelRequest" asp-route-requestId="@Model.FormId" asp-route-actionId="@Model.ActionId">
-                        <button type="submit" class="arrow arrow-right">
-                            <img src="~/images/arrowR.png" alt="التالي" />
-                        </button>
-                    </a>
-                }
+            <div class="button-footer">
+                <button type="button"
+                        class="btn-prev"
+                        onclick="location.href='@Url.Action("ViewSubmission3", "Request", new { id = Model.RequestId })'">
+                    السابق
+                </button>
+                <div class="btn-group-custom">
+                    @* Role-based logic for "التالي" *@
+                    @if (User.IsInRole("ApplicationManager") && Model.LevelId == 6)
+                    {
+                        <form method="get" asp-action="ApprovePage" asp-controller="Request">
+                            <input type="hidden" name="requestId" value="@Model.FormId" />
+                            <input type="hidden" name="actionId" value="@Model.ActionId" />
+                            <button type="submit" class="btn-next">التالي</button>
+                        </form>
+                    }
+                    else if (User.IsInRole("ApplicationManager") && Model.LevelId == 4)
+                    {
+                        <form method="get" asp-action="AnalyzerUsers" asp-controller="Request">
+                            <input type="hidden" name="requestId" value="@Model.FormId" />
+                            <button type="submit" class="btn-next">التالي</button>
+                        </form>
+                    }
+                    else if (User.IsInRole("SectionManager") || User.IsInRole("DepartmentManager") || User.IsInRole("ITManager"))
+                    {
+                        <form method="get" asp-action="ApprovePage" asp-controller="Request">
+                            <input type="hidden" name="requestId" value="@Model.FormId" />
+                            <input type="hidden" name="actionId" value="@Model.ActionId" />
+                            <button type="submit" class="btn-next">التالي</button>
+                        </form>
+                    }
+                    else if (User.IsInRole("Analyzer"))
+                    {
+                        <form method="get" asp-action="CaseStudy" asp-controller="Request">
+                            <input type="hidden" name="requestId" value="@Model.FormId" />
+                            <button type="submit" class="btn-next">التالي</button>
+                        </form>
+                    }
+                    else if (User.IsInRole("User"))
+                    {
+                        
+                        <form method="get" asp-action="CancelRequest" asp-controller="Request">
+                            <input type="hidden" name="requestId" value="@Model.FormId" />
+                            <input type="hidden" name="actionId" value="@Model.ActionId" />
+                            <button type="submit" class="btn-next">الغاء الطلب</button>
+                        </form>
+                    }
+                </div>
             </div>
-        </div>
-    </div>
+
 </body>
 </html>
+
+

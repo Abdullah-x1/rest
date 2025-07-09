@@ -1,10 +1,11 @@
 ﻿@model DSAR.ViewModels.RequestViewModel
+
 @{
-    Layout = null;
-    var step4Attachment1 = Model.Attachments.FirstOrDefault(a => a.FieldName == "Step4_Workflow");
-    var step4Attachment2 = Model.Attachments.FirstOrDefault(a => a.FieldName == "Step4_uploadsRequiredFile");
-    var step4Attachment3 = Model.Attachments.FirstOrDefault(a => a.FieldName == "Step4_documentsFile");
+    var step4Attachments1 = Model.Attachments.Where(a => a.FieldName == "Step4_Workflow").ToList();
+    var step4Attachments2 = Model.Attachments.Where(a => a.FieldName == "Step4_uploadsRequiredFile").ToList();
+    var step4Attachments3 = Model.Attachments.Where(a => a.FieldName == "Step4_documentsFile").ToList();
 }
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -12,78 +13,149 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>عرض الخطوة 4</title>
     <link rel="stylesheet" href="~/css/StepsView.css" asp-append-version="true" />
-
 </head>
 <body>
+
+    <div class="page-wrapper">
+        <div class="sidebar">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>المستوى</th>
+                        <th>الحالة</th>
+                        <th>الدور</th>
+                        <th>معلومات إضافية</th>
+                        <th>الوقت والتاريخ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var entry in Model.History)
+                    {
+                        <tr>
+                            <td>@entry.LevelName</td>
+                            <td>@entry.StatusName</td>
+                            <td>@entry.RoleName</td>
+                            <td>@entry.Information</td>
+                            <td>@entry.CreationDate</td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="content-area">
     <div class="form-container">
         <!-- Right Column -->
         <div class="right-column column">
-            <textarea class="in2" readonly>@Model.Workflow</textarea>
-            <div class="attachment-section">
-                @if (step4Attachment1 != null)
-                {
-                    <span>المرفق:</span>
-                    <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = step4Attachment1.Id })" class="attachment-link">
-                        @step4Attachment1.FileName@step4Attachment1.FileExtension
-                    </a>
-                }
-                else
-                {
-                    <span class="no-attachment">لا يوجد مرفق</span>
-                }
-            </div>
-
+            <label class="form-label small-label">المرفقات المطلوبة للخدمة</label>
             <textarea class="in1" readonly>@Model.UploadsRequired</textarea>
+
+            <label class="form-label small-label">ملفات المرفقات المطلوبة:</label>
             <div class="attachment-section">
-                @if (step4Attachment2 != null)
+                @if (step4Attachments2.Any())
                 {
-                    <span>المرفق:</span>
-                    <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = step4Attachment2.Id })" class="attachment-link">
-                        @step4Attachment2.FileName@step4Attachment2.FileExtension
-                    </a>
+                    <ul class="attached-files">
+                        @foreach (var att in step4Attachments2)
+                        {
+                            <li>
+                                <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = att.Id })" target="_blank" class="attachment-link">
+                                    @att.FileName@att.FileExtension
+                                </a>
+                            </li>
+                        }
+                    </ul>
                 }
                 else
                 {
-                    <span class="no-attachment">لا يوجد مرفق</span>
+                    <span class="no-attachment">لا يوجد مرفقات</span>
                 }
             </div>
 
+            <label class="form-label small-label">وثائق الدعم</label>
             <textarea class="in1" readonly>@Model.Documents</textarea>
+
+            <label class="form-label small-label">ملفات وثائق الدعم:</label>
             <div class="attachment-section">
-                @if (step4Attachment3 != null)
+                @if (step4Attachments3.Any())
                 {
-                    <span>المرفق:</span>
-                    <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = step4Attachment3.Id })" class="attachment-link">
-                        @step4Attachment3.FileName@step4Attachment3.FileExtension
-                    </a>
+                    <ul class="attached-files">
+                        @foreach (var att in step4Attachments3)
+                        {
+                            <li>
+                                <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = att.Id })" target="_blank" class="attachment-link">
+                                    @att.FileName@att.FileExtension
+                                </a>
+                            </li>
+                        }
+                    </ul>
                 }
                 else
                 {
-                    <span class="no-attachment">لا يوجد مرفق</span>
+                    <span class="no-attachment">لا يوجد مرفقات</span>
+                }
+            </div>
+
+            <label class="form-label small-label">مسار العمل للخدمة بطريقة رسم (Workflow) توضيحي:</label>
+            <div class="attachment-section">
+                @if (step4Attachments1.Any())
+                {
+                    <ul class="attached-files">
+                        @foreach (var att in step4Attachments1)
+                        {
+                            <li>
+                                <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = att.Id })" target="_blank" class="attachment-link">
+                                    @att.FileName@att.FileExtension
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <span class="no-attachment">لا يوجد مرفقات</span>
                 }
             </div>
         </div>
 
         <!-- Left Column -->
         <div class="left-column column">
+            <label class="form-label small-label">المدة الزمنية لإنجاز الخدمة</label>
             <textarea class="in2" readonly>@Model.Timeline</textarea>
+
+            <label class="form-label small-label">الربط الخارجي</label>
             <textarea class="in1" readonly>@Model.SystemNeeded</textarea>
+
+            <label class="form-label small-label">المدن الموافقة على النموذج</label>
             <textarea class="in2" readonly>@Model.Cities2</textarea>
+
+            <label class="form-label small-label">ممثل القطاع الموافق على النموذج</label>
             <textarea class="in2" readonly>@Model.DepartmentHeadName</textarea>
+
+            <label class="form-label small-label">منصب ممثل القطاع</label>
             <textarea class="in2" readonly>@Model.AdditionalNotes</textarea>
         </div>
 
-        <!-- Arrows -->
-        <a href="@Url.Action("ViewSubmission2", "Request", new { id = Model.RequestId })">
-            <div class="arrow arrow-left">
-                <img src="~/images/arrowL.png" alt="السابق" />
+        <!-- Navigation Buttons -->
+        <div class="button-footer">
+            <button type="button"
+                    class="btn-prev"
+                    onclick="location.href='@Url.Action("ViewSubmission2", "Request", new { id = Model.RequestId })'">
+                السابق
+            </button>
+
+            <div class="btn-group-custom">
+                <form method="post" asp-action="StepDescriptionsView" asp-controller="Request">
+                    <input type="hidden" name="id" value="@Model.RequestId" />
+                    <button type="submit" class="btn-next" name="action" value="next">
+                        التالي
+                    </button>
+                </form>
             </div>
-        </a>
-        <a href="@Url.Action("StepDescriptionsView", "Request", new { id = Model.RequestId })">
-            <div class="arrow arrow-right">
-                <img src="~/images/arrowR.png" alt="التالي" />
-            </div>
-        </a>
+        </div>
     </div>
+    </div>
+    </div>
+    
 </body>
 </html>
