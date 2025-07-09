@@ -195,31 +195,55 @@ th {
     }
 }
 
-/* === Responsive: Tablet === */
-@media (min-width: 500px) and (max-width: 1200px) {
-    .form-container {
-        width: 90vw;
-        max-width: 1000px; /* bigger on tablet */
+/* Only activate mobile/tablet view below 992px */
+@media (max-width: 991px) {
+    body {
+        align-items: flex-start;
+        padding: 20px;
         height: auto;
-        padding: 30px 35px;
     }
 
-    .button-container {
-        flex-wrap: wrap;
-        justify-content: flex-end;
-        gap: 10px;
+    .form-container,
+    .popup-content {
+        width: 95vw;
+        height: auto;
+        flex-direction: column;
+        padding: 30px;
+        padding-bottom: 80px;
     }
 
-    .btn {
-        flex: 1 1 auto;
-        min-width: 140px;
-        padding: 12px 20px;
-        font-size: 1rem;
+    .right-column,
+    .left-column,
+    .in1,
+    .in2,
+    .in3 {
+        width: 100%;
+        margin-left: 0;
     }
 
-    .arrow-left, .arrow-right {
-        bottom: 10px;
+    .arrow,
+    .arrow-left,
+    .arrow-right {
+        bottom: 20px;
+    }
+
+        .arrow img {
+            width: 28px;
+            height: 28px;
+        }
+
+    .popup-buttons {
+        position: static;
+        flex-direction: column;
+        margin-top: 20px;
+        align-items: stretch;
+    }
+
+    .popup-btn {
+        width: 100%;
     }
 }
 
+
 }
+

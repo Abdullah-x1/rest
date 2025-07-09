@@ -9,7 +9,7 @@ namespace DSAR.ViewModels
         public int RequestId { get; set; }
         public int ReuqestNumber { get; set; }
         public string UserId { get; set; }
-        public Double RequestNumber { get; set; }
+        public string RequestNumber { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string DepartmentName { get; set; }
@@ -34,21 +34,30 @@ namespace DSAR.ViewModels
         public string? Email { get; set; }
         public string? Message { get; set; }
         [Required(ErrorMessage = "اسم الخدمة مطلوب")]
-
+        [StringLength(250)]
         public string Field1 { get; set; }
 
         [Required(ErrorMessage = "نوع الخدمة مطلوب")]
+        [StringLength(250)]
 
         public string Field2 { get; set; }
         [Required(ErrorMessage = "الوصف التفصيلي مطلوب")]
+        [StringLength(1000)]
 
         public string? Field3 { get; set; }
         public string? Depend { get; set; }
+        [StringLength(250)]
+
         public string? Field4 { get; set; }
+        [StringLength(250)]
+
         public string? Field5 { get; set; }
-        public string? Field6 { get; set; }
+
+        [StringLength(250)]
         public string? RepeatLimit { get; set; }
+
         [Required(ErrorMessage = "الرسوم مطلوبه")]
+        [StringLength(250)]
 
         public string Fees { get; set; }
         public string? Cities { get; set; }
@@ -57,43 +66,84 @@ namespace DSAR.ViewModels
         public string TargetAudience { get; set; }
         [Required(ErrorMessage = " اسم الإدارة مطلوب")]
         public string DepName { get; set; }
+
+        [StringLength(1000)]
         public string? ExpectedOutput1 { get; set; }
+        [StringLength(1000)]
+
         public string? ExpectedOutput2 { get; set; }
+        [StringLength(1000)]
+
         public string? ApprovedTemplate { get; set; }
+        [StringLength(1000)]
+
         public string? DetailedInfo { get; set; }
+        [StringLength(1000)]
+
         public string? RequiredConditions { get; set; }
 
         [Required(ErrorMessage = " مسار العمل مطلوب")]
+        [StringLength(250)]
         public string Workflow { get; set; }
+        [StringLength(1000)]
+
         public string? UploadsRequired { get; set; }
+        [StringLength(250)]
+
         public string? Documents { get; set; }
 
         [Required(ErrorMessage = " المدة الزمنية  مطلوبه")]
+        [StringLength(250)]
+
         public string Timeline { get; set; }
+        [StringLength(1000)]
+
         public string? SystemNeeded { get; set; }
+        [StringLength(250)]
+
         public string? Cities2 { get; set; } // to avoid collision with existing Cities
+        [StringLength(250)]
+
         public string? DepartmentHeadName { get; set; }
+        [StringLength(250)]
+
         public string? AdditionalNotes { get; set; } //
-        public string? FilePath { get; set; } // Store file name or path
 
         [NotMapped]
-
-        public IFormFile? Attachment1 { get; set; }
-
-        [NotMapped]
-        public IFormFile? Attachment2 { get; set; }
+        public List<IFormFile> Attachment1 { get; set; }
 
         [NotMapped]
-        public IFormFile? Attachment3 { get; set; }
+        public List<IFormFile> Attachment2 { get; set; }
 
         [NotMapped]
-        public IFormFile? WorkflowFile { get; set; }
+        public List<IFormFile> Attachment3 { get; set; }
 
         [NotMapped]
-        public IFormFile? UploadsRequiredFile { get; set; }
+        public List<IFormFile> WorkflowFile { get; set; }
 
         [NotMapped]
-        public IFormFile? DocumentsFile { get; set; }
+        public List<IFormFile> UploadsRequiredFile { get; set; }
+
+        [NotMapped]
+        public List<IFormFile> DocumentsFile { get; set; }
+
+        public List<int> Attachment1Id { get; set; } = new();
+        public List<string> Attachment1Name { get; set; } = new();
+
+        public List<int> Attachment2Id { get; set; }
+        public List<string> Attachment2Name { get; set; }
+
+        public List<int> Attachment3Id { get; set; }
+        public List<string> Attachment3Name { get; set; }
+
+        public List<int> WorkflowAttachmentId { get; set; }
+        public List<string> WorkflowName { get; set; }
+
+        public List<int> UploadsRequiredAttachmentId { get; set; }
+        public List<string> UploadsRequiredName { get; set; }
+
+        public List<int> DocumentsAttachmentId { get; set; }
+        public List<string> DocumentsName { get; set; }
 
         //Descriptions
         public List<DescriptionEntry> Descriptions { get; set; } = new();
@@ -104,6 +154,7 @@ namespace DSAR.ViewModels
         public string? SectionNotes { get; set; }
         public string? DepartmentNotes { get; set; }
 
+        public IEnumerable<HistoryViewModel> History { get; set; }
 
 
 

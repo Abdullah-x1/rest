@@ -3,64 +3,138 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>الصفحة الرابعة من النموذج</title>
+
     <link rel="stylesheet" href="~/css/steps.css" asp-append-version="true" />
     <script src="~/css/Script.js" asp-append-version="true"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
-
-
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Form Page 2</title>
-   
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Your shared scripts -->
+    <script src="~/js/form-handler.js" asp-append-version="true"></script>
+    <script src="~/js/file-validator.js" asp-append-version="true"></script>
 </head>
 <body>
-    <form asp-action="Step4" method="post" enctype="multipart/form-data">
+    <form asp-action="Step4" id="step4Form" method="post" enctype="multipart/form-data">
         <div class="form-container">
             <!-- Right Column -->
             <div class="right-column column">
-                <textarea asp-for="Workflow" name="Workflow" class="in3" placeholder="يتم توضيح مسار العمل للخدمة بطريقة رسم (Workflow) توضيحي">@Model.Workflow</textarea>
+                <textarea asp-for="Workflow" class="in3" placeholder="يتم توضيح مسار العمل للخدمة بطريقة رسم (Workflow) توضيحي"></textarea>
                 <span asp-validation-for="Workflow" class="text-danger"></span>
-
-                <label for="workflow-upload">
-                    <img src="~/images/link.png" alt="إرفاق ملف" style="width: 24px; float: left; margin-bottom: 15px;" />
+                <label for="workflowFile">
+                    <img src="~/images/link.png" alt="إرفاق ملف" style="width: 24px;" />
                 </label>
-                <input type="file" name="WorkflowFile" id="workflow-upload" style="display: none;" />
 
-                <textarea name="UploadsRequired" class="in2" placeholder="يتم ذكر جميع المرفقات المطلوب إضافتها في الخدمة، مع تحديد إلزاميتها (الزامي او اختياري)">@Model.UploadsRequired</textarea>
-                <label for="uploads-upload">
-                    <img src="~/images/link.png" alt="إرفاق ملف" style="width: 24px; float: left; margin-bottom: 15px;" />
-                </label>
-                <input type="file" name="UploadsRequiredFile" id="uploads-upload" style="display: none;" />
+                @if (Model.WorkflowAttachmentId != null && Model.WorkflowAttachmentId.Any())
+                {
+                    <div class="text-info mt-1">
+                        <i class="bi bi-paperclip me-1"></i> الملفات الحالية لمسار العمل:
+                        <ul class="attached-files">
+                            @for (int i = 0; i < Model.WorkflowAttachmentId.Count; i++)
+                            {
+                                <li>
+                                    <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = Model.WorkflowAttachmentId[i] })" target="_blank">
+                                        @Model.WorkflowName[i]
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
 
-                <textarea name="Documents" class="in1" placeholder="وثائق الدعم
-يتم إرفاق وثائق تدعم الخدمة؛ مثل (إجراءات العمل الموحد، لوائح وأنظمة)">@Model.Documents</textarea>
-                <label for="documents-upload">
-                    <img src="~/images/link.png" alt="إرفاق ملف" style="width: 24px; float: left; margin-bottom: 15px;" />
+                <span id="workflowFileName" class="text-muted d-block mt-1"></span>
+                <input type="file" name="WorkflowFile" multiple id="workflowFile" accept=".doc,.docx,.xls,.xlsx,.pdf,image/*" onchange="validateAndDisplayFiles('workflowFile', 'workflowFileName')" style="display: none;" />
+
+                <textarea asp-for="UploadsRequired" class="in2" placeholder="يتم ذكر جميع المرفقات المطلوب إضافتها في الخدمة، مع تحديد إلزاميتها (الزامي او اختياري)"></textarea>
+                <label for="uploadsRequiredFile">
+                    <img src="~/images/link.png" alt="إرفاق ملف" style="width: 24px;" />
                 </label>
-                <input type="file" name="DocumentsFile" id="documents-upload" style="display: none;" />
+
+                @if (Model.UploadsRequiredAttachmentId != null && Model.UploadsRequiredAttachmentId.Any())
+                {
+                    <div class="text-info mt-1">
+                        <i class="bi bi-paperclip me-1"></i> الملفات الحالية للمرفقات المطلوبة:
+                        <ul class="attached-files">
+                            @for (int i = 0; i < Model.UploadsRequiredAttachmentId.Count; i++)
+                            {
+                                <li>
+                                    <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = Model.UploadsRequiredAttachmentId[i] })" target="_blank">
+                                        @Model.UploadsRequiredName[i]
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+                <span id="uploadsRequiredFileName" class="text-muted d-block mt-1"></span>
+                <input type="file" multiple name="UploadsRequiredFile" id="uploadsRequiredFile" accept=".doc,.docx,.xls,.xlsx,.pdf,image/*" onchange="validateAndDisplayFiles('uploadsRequiredFile', 'uploadsRequiredFileName')" style="display: none;" />
+
+                <textarea asp-for="Documents" class="in1" placeholder="وثائق الدعم؛ مثل (إجراءات العمل الموحد، لوائح وأنظمة)"></textarea>
+                <label for="documentsFile">
+                    <img src="~/images/link.png" alt="إرفاق ملف" style="width: 24px;" />
+                </label>
+
+                @if (Model.DocumentsAttachmentId != null && Model.DocumentsAttachmentId.Any())
+                {
+                    <div class="text-info mt-1">
+                        <i class="bi bi-paperclip me-1"></i> الملفات الحالية لوثائق الدعم:
+                        <ul class="attached-files">
+                            @for (int i = 0; i < Model.DocumentsAttachmentId.Count; i++)
+                            {
+                                <li>
+                                    <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = Model.DocumentsAttachmentId[i] })" target="_blank">
+                                        @Model.DocumentsName[i]
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <span id="documentsFileName" class="text-muted d-block mt-1"></span>
+                <input type="file" multiple name="DocumentsFile" id="documentsFile" accept=".doc,.docx,.xls,.xlsx,.pdf,image/*" onchange="validateAndDisplayFiles('documentsFile', 'documentsFileName')" style="display: none;" />
             </div>
 
             <!-- Left Column -->
             <div class="left-column column">
-                <textarea name="Timeline" asp-for="Timeline" class="in3" placeholder="المدة الزمنية لإنجاز الخدمة(مع حساب ايام الاجازات الرسمية)">@Model.Timeline</textarea>
+                <textarea asp-for="Timeline" class="in3" placeholder="المدة الزمنية لإنجاز الخدمة(مع حساب ايام الاجازات الرسمية)"></textarea>
                 <span asp-validation-for="Timeline" class="text-danger"></span>
 
-                <textarea name="SystemNeeded" class="in2" placeholder="الأنظمة التي يتطلب الربط معها">@Model.SystemNeeded</textarea>
-                <textarea name="Cities2" class="in3" placeholder="يتم ذكر المدن الموافقة على النموذج">@Model.Cities2</textarea>
-                <textarea name="DepartmentHeadName" class="in3" placeholder="اسم ممثل القطاع الموافق على النموذج">@Model.DepartmentHeadName</textarea>
-                <textarea name="AdditionalNotes" class="in3" placeholder="وثاىق الدعم">@Model.AdditionalNotes</textarea>
+                <textarea asp-for="SystemNeeded" class="in2" placeholder="الأنظمة التي يتطلب الربط معها"></textarea>
+                <textarea asp-for="Cities2" class="in3" placeholder="يتم ذكر المدن الموافقة على النموذج"></textarea>
+                <textarea asp-for="DepartmentHeadName" class="in3" placeholder="اسم ممثل القطاع الموافق على النموذج"></textarea>
+                <textarea asp-for="AdditionalNotes" class="in3" placeholder="وثائق الدعم"></textarea>
             </div>
 
-            <button type="button" class="arrow arrow-left" onclick="location.href='@Url.Action("Step2", "Request")'">
-                <img src="~/images/arrowL.png" alt="السابق" />
-            </button>
-            <button type="submit" class="arrow arrow-right">
-                <img src="~/images/arrowR.png" alt="التالي" />
-            </button>
+            <!-- Navigation Arrows -->
+            <div class="d-flex justify-content-between align-items-center position-absolute bottom-0 start-0 end-0 p-3">
+                <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("Step2", "Request")'">السابق</button>
 
+                <div class="d-flex gap-2">
+                    <button type="button" id="saveButton" class="btn btn-success d-flex align-items-center" name="action" value="save">
+                        <i class="bi bi-save me-2"></i> حفظ
+                    </button>
+
+                    <button type="submit" class="btn btn-primary" name="action" value="next">التالي</button>
+                </div>
+            </div>
         </div>
     </form>
+
+    <script>
+        setupAjaxSave(
+            '#step4Form',
+            '#saveButton',
+            '@Url.Action("Step4", "Request")'
+        );
+
+        setupFileValidation('#workflowFile', '#workflowFileName');
+        setupFileValidation('#uploadsRequiredFile', '#uploadsRequiredFileName');
+        setupFileValidation('#documentsFile', '#documentsFileName');
+    </script>
 </body>
 </html>

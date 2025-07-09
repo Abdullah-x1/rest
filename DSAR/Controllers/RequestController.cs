@@ -75,7 +75,7 @@ namespace DSAR.Controllers
             if (await _userManager.IsInRoleAsync(currentUser, "SectionManager"))
             {
                 data.UserId = currentUser.Id;
-                request = await _formRepo.HandleStep3Data(data, currentUser.UserId); // Fix: Ensure 'request' is of type 'FormData'
+                request = await _formRepo.HandleStep3Data(data); // Fix: Ensure 'request' is of type 'FormData'
                 _requestActionRepository.CreateSectionManager(data, currentUser, request);
 
                 emailResponse = await _requestRepository.SendEmailAsync(data, currentUser);
@@ -86,6 +86,7 @@ namespace DSAR.Controllers
                 ////////////////////history///////////////////////////////////////
 
                 await _historyRepository.CreateHistoryAsync(
+
                     currentUser,
                     request,
                     initialStatusId,
@@ -99,7 +100,7 @@ namespace DSAR.Controllers
             else if (await _userManager.IsInRoleAsync(currentUser, "DepartmentManager"))
             {
                 data.UserId = currentUser.Id;
-                request = await _formRepo.HandleStep3Data(data, currentUser.UserId); // Fix: Ensure 'request' is of type 'FormData'
+                request = await _formRepo.HandleStep3Data(data); // Fix: Ensure 'request' is of type 'FormData'
                 _requestActionRepository.CreateDepartmentManager(data, currentUser, request);
 
                 emailResponse = await _requestRepository.SendEmailAsync(data, currentUser);
@@ -120,7 +121,7 @@ namespace DSAR.Controllers
             else if (await _userManager.IsInRoleAsync(currentUser, "ITManager"))
             {
                 data.UserId = currentUser.Id;
-                request = await _formRepo.HandleStep3Data(data, currentUser.UserId); // Fix: Ensure 'request' is of type 'FormData'
+                request = await _formRepo.HandleStep3Data(data); // Fix: Ensure 'request' is of type 'FormData'
                 _requestActionRepository.CreateITManager(data, currentUser, request);
 
                 emailResponse = await _requestRepository.SendEmailAsync(data, currentUser);
@@ -140,7 +141,7 @@ namespace DSAR.Controllers
             else if (await _userManager.IsInRoleAsync(currentUser, "ApplicationManager"))
             {
                 data.UserId = currentUser.Id;
-                request = await _formRepo.HandleStep3Data(data, currentUser.UserId); // Fix: Ensure 'request' is of type 'FormData'
+                request = await _formRepo.HandleStep3Data(data); // Fix: Ensure 'request' is of type 'FormData'
                 _requestActionRepository.CreateITManager(data, currentUser, request);
 
                 emailResponse = await _requestRepository.SendEmailAsync(data, currentUser);
@@ -158,7 +159,7 @@ namespace DSAR.Controllers
                 return RedirectToAction("Main", "Account");
             }
             data.UserId = currentUser.Id;
-            request = await _formRepo.HandleStep3Data(data, currentUser.UserId); // Fix: Ensure 'request' is of type 'FormData'
+            request = await _formRepo.HandleStep3Data(data); // Fix: Ensure 'request' is of type 'FormData'
 
             _requestActionRepository.Create(data, currentUser, request);
 
@@ -239,6 +240,17 @@ namespace DSAR.Controllers
 
         public async Task<IActionResult> ViewSubmission(int id, int levelId)
         {
+
+            var histories = await _historyRepository.GetHistoriesByRequestIdAsync(id);
+
+            var historyVm = histories.Select(h => new HistoryViewModel
+            {
+                CreationDate = h.CreationDate,
+                LevelName = h.Levels.LevelName,
+                StatusName = h.Status.StatusName,
+                RoleName = h.Role.Name,
+                Information = h.Information
+            }).ToList();
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
 
@@ -306,8 +318,8 @@ namespace DSAR.Controllers
                 Depend = form.Depend,
                 Field4 = form.Field4,
                 Field5 = form.Field5,
-                Field6 = form.Field6,
-                Attachments = form.Attachments?.ToList()
+                Attachments = form.Attachments?.ToList(),
+                History = historyVm
             };
 
             return View(viewModel);
@@ -550,22 +562,59 @@ namespace DSAR.Controllers
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
+
             var requests = await _requestActionRepository.GetRequestsStillInProcessByUserId(currentUser.Id);
-            if (requests.Count! > 0)
+            if (requests.Count > 0)
             {
                 TempData["Error"] = "You already have a pending request. Please wait until it is completed before submitting a new one.";
                 return RedirectToAction("Main", "Account");
             }
+
+            var snapshot = await _formRepo.GetCurrentSnapshotAsync(); // You'll create this method below
+            ViewBag.ShowTermsPopup = snapshot?.TermsAccepted == false;
+
             return View(await _formRepo.GetCurrentFormData());
         }
 
-        // STEP 1 - POST
+
+
+
         [HttpPost]
-        public async Task<IActionResult> Step1(RequestViewModel data, IFormFile Attachment)
+        public async Task<IActionResult> Step1(RequestViewModel data, List<IFormFile> Attachment1, string action)
         {
-            await _formRepo.HandleStep1Data(data, Attachment);
-            return RedirectToAction("Step2");
+            if (action == "save")
+            {
+                bool isSaved = await _formRepo.HandleStep1Data(data, Attachment1);
+                if (isSaved)
+                    return Json(new { success = true, message = "تم الحفظ بنجاح", attachmentName = data.Attachment1Name });
+                else
+                    return Json(new { success = false, message = "لم تقم بتعديل أي حقل أو إرفاق ملف." });
+            }
+            else if (action == "next")
+            {
+                await _formRepo.HandleStep1Data(data, Attachment1); // ensure saved
+                return RedirectToAction("Step2");
+            }
+            var vm = await _formRepo.GetCurrentFormData();
+            return View(vm);
         }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AcceptTerms()
+        {
+            try
+            {
+                await _formRepo.AcceptTermsAsync();
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest("Unable to accept terms");
+            }
+        }
+
 
         // STEP 2 - GET
         public async Task<IActionResult> Step2()
@@ -581,13 +630,28 @@ namespace DSAR.Controllers
             return View(await _formRepo.GetCurrentFormData());
         }
 
-        // STEP 2 - POST
+       
         [HttpPost]
-        public async Task<IActionResult> Step2(RequestViewModel data, IFormFile Attachment1, IFormFile Attachment2)
+        public async Task<IActionResult> Step2(RequestViewModel data, List<IFormFile> Attachment2, List<IFormFile> Attachment3, string action)
         {
-            await _formRepo.HandleStep2Data(data, Attachment1, Attachment2);
-            return RedirectToAction("Step4");
+            if (action == "save")
+            {
+                bool isSaved = await _formRepo.HandleStep2Data(data, Attachment2, Attachment3);
+                if (isSaved)
+                    return Json(new { success = true, message = "تم الحفظ بنجاح" });
+                else
+                    return Json(new { success = false, message = "لم تقم بتعديل أي حقل أو إرفاق ملف." });
+            }
+            else if (action == "next")
+            {
+                await _formRepo.HandleStep2Data(data, Attachment2, Attachment3); // save before navigating
+                return RedirectToAction("Step4");
+            }
+
+            var vm = await _formRepo.GetCurrentFormData();
+            return View(vm);
         }
+
 
         // STEP 3 - GET
         public async Task<IActionResult> Step3()
@@ -632,19 +696,59 @@ namespace DSAR.Controllers
 
         // STEP 4 - POST
         [HttpPost]
+        [HttpPost]
+        [HttpPost]
         public async Task<IActionResult> Step4(
-            RequestViewModel data,
-            IFormFile WorkflowFile,
-            IFormFile UploadsRequiredFile,
-            IFormFile DocumentsFile)
+    RequestViewModel data,
+    List<IFormFile> WorkflowFile,
+    List<IFormFile> UploadsRequiredFile,
+    List<IFormFile> DocumentsFile,
+    string action)
+
         {
-            await _formRepo.HandleStep4Data(
-                data,
-                WorkflowFile,
-                UploadsRequiredFile,
-                DocumentsFile
-            );
-            return RedirectToAction("StepDescriptions");
+            if (action == "save")
+            {
+                var (isSaved, workflowName, uploadsName, documentsName) = await _formRepo.HandleStep4Data(
+                    data,
+                    WorkflowFile,
+                    UploadsRequiredFile,
+                    DocumentsFile
+                );
+
+                if (isSaved)
+                {
+                    return Json(new
+                    {
+                        success = true,
+                        message = "تم الحفظ بنجاح",
+                        workflowName,
+                        uploadsName,
+                        documentsName
+                    });
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "لم تقم بتعديل أي حقل أو إرفاق ملف."
+                    });
+                }
+            }
+            else if (action == "next")
+            {
+                await _formRepo.HandleStep4Data(
+                    data,
+                    WorkflowFile,
+                    UploadsRequiredFile,
+                    DocumentsFile
+                );
+
+                return RedirectToAction("StepDescriptions");
+            }
+
+            var vm = await _formRepo.GetCurrentFormData();
+            return View(vm);
         }
 
         // STEP DESCRIPTIONS - GET
@@ -680,16 +784,29 @@ namespace DSAR.Controllers
 
         // STEP DESCRIPTIONS - POST
         [HttpPost]
-        public async Task<IActionResult> StepDescriptions(RequestViewModel model)
+        public async Task<IActionResult> StepDescriptions(RequestViewModel model, string action)
         {
-            await _formRepo.HandleDescriptions(model.Descriptions);
-            return RedirectToAction("Step3");
+            if (action == "save")
+            {
+                await _formRepo.HandleDescriptions(model.Descriptions);
+                return Json(new { success = true, message = "تم الحفظ بنجاح" });
+            }
+            else if (action == "next")
+            {
+                await _formRepo.HandleDescriptions(model.Descriptions);
+                return RedirectToAction("Step3");
+            }
+
+            return View(model); // fallback
         }
+
+
 
         public IActionResult Complete()
         {
             return View();
         }
+        [HttpGet]
         public async Task<IActionResult> DownloadAttachment(int attachmentId)
         {
             var attachment = await _formRepo.GetAttachmentById(attachmentId);
@@ -711,9 +828,16 @@ namespace DSAR.Controllers
         }
 
 
+        public async Task<IActionResult> DownloadSnapshotAttachment(int attachmentId)
+        {
+            var snapshotAttachment = await _formRepo.GetSnapshotAttachmentById(attachmentId);
+            if (snapshotAttachment == null) return NotFound();
 
+            var metadata = snapshotAttachment.SnapshotAttachmentMetadata;
 
-
+            return File(snapshotAttachment.Data, "application/octet-stream",
+                $"{metadata.FileName}{metadata.FileExtension}");
+        }
 
 
 
@@ -1470,6 +1594,8 @@ namespace DSAR.Controllers
 
             return View(historiesVm);
         }
+
+
 
     }
 

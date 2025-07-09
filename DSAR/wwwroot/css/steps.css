@@ -1,313 +1,246 @@
-﻿    body {
-        margin: 0;
-        background: linear-gradient(to right, #6dc1a8, #7ab8ea);
-        font-family: sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
+﻿body {
+    margin: 0;
+    background: linear-gradient(to right, #6dc1a8, #7ab8ea);
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
 
-    .form-container {
-        background-color: white;
-        width: 1288px;
-        height: 729px;
-        display: flex;
-        flex-direction: row;
-        padding: 40px;
-        box-sizing: border-box;
-        border-radius: 10px;
-        position: relative;
-        padding-bottom: 60px; /* space for arrows */
-    }
+/* === Shared Base === */
+.form-container,
+.popup-content {
+    background-color: white;
+    width: 1280px; /* Fixed for desktop */
+    height: 729px;
+    display: flex;
+    flex-direction: row;
+    padding: 40px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    position: relative;
+    padding-bottom: 60px; /* space for arrows */
+    margin: auto;
+}
 
-    .column {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
+.column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
 
-    .right-column {
-        width: 414px;
-        margin-left: 238px;
-    }
+.right-column {
+    width: 414px;
+    margin-left: 238px;
+}
 
-    .left-column {
-        width: 414px;
-    }
+.left-column {
+    width: 414px;
+}
 
-    input[type="text"],
-    select,
-    textarea {
-        width: 100%;
-        padding: 10px;
-        box-sizing: border-box;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        resize: none;
+input[type="text"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    resize: none;
+    box-sizing: border-box;
+}
 
-        font-size: 14px;
-    }
-    textarea {
-   
-        white-space: pre-wrap;
-        word-wrap: break-word;
-    }
-    .arrow {
-        position: absolute;
-        font-size: 32px;
-        cursor: pointer;
-        color: #00c9a7;
-        border: none;
-        background: transparent;
-        padding: 0;
-        outline: none;
-        bottom: -40px; /* pushes arrow below form */
-    }
+textarea {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
 
+.in1 {
+    height: 97px;
+}
 
-    .arrow-left {
-        left: 20px;
-        bottom: 5px;
-    }
+.in2 {
+    height: 160px;
+}
 
-    .arrow-right {
-        right: 20px;
-        bottom: 5px;
-    }
+.in3 {
+    height: 42px;
+}
 
+.arrow {
+    position: absolute;
+    font-size: 32px;
+    cursor: pointer;
+    color: #00c9a7;
+    background: transparent;
+    border: none;
+    padding: 0;
+    outline: none;
+}
 
+.arrow-left {
+    left: 20px;
+    bottom: 5px;
+}
 
-    .arrow img {
-        width: 32px;
-        height: 32px;
-        filter: brightness(0) saturate(100%) invert(52%) sepia(88%) saturate(350%) hue-rotate(120deg);
-    }
+.arrow-right {
+    right: 20px;
+    bottom: 5px;
+}
 
-    .in1 {
-        width: 414px;
-        height: 97px;
-    }
+.arrow img {
+    width: 32px;
+    height: 32px;
+    filter: brightness(0) saturate(100%) invert(52%) sepia(88%) saturate(350%) hue-rotate(120deg);
+}
 
-    .in2 {
-        width: 414px;
-        height: 160px;
-    }
+/* === Popup Section === */
+.popup-content h1 {
+    color: #333;
+    font-size: 28px;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
 
-    .in3 {
-        width: 414px;
-        height: 42px;
-    }
+.requirements {
+    list-style: none;
+    padding: 0;
+}
 
-    .radio-section {
-        margin-top: 30px; /* Adds space from the input above */
-        display: flex;
-        flex-direction: column;
-        gap: 10px; /* Space between label and radio buttons */
+    .requirements li {
+        color: #444;
         font-size: 18px;
-    }
-
-    .radio-options {
-        display: flex;
-        gap: 20px; /* Space between the two radio buttons */
-        align-items: center;
-    }
-
-    .popup-overlay {
-        position: fixed;
-        top: 0;
-        right: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-    }
-
-    .popup-content {
-        background: white;
-        width: 1288px;
-        height: 729px;
-        border-radius: 20px;
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        padding: 40px;
+        margin-bottom: 40px;
         position: relative;
+        padding-right: 20px;
     }
 
-        .popup-content h1 {
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 30px;
-            font-weight: 600;
+        .requirements li::before {
+            content: '-';
+            position: absolute;
+            right: 0;
         }
 
-    .requirements {
-        list-style: none;
-    }
+.checkbox-container {
+    margin-top: 95px;
+}
 
-        .requirements li {
-            color: #444;
-            font-size: 18px;
-            margin-bottom: 40px;
-            position: relative;
-            padding-right: 20px;
-        }
-
-            .requirements li::before {
-                content: '-';
-                position: absolute;
-                right: 0;
-            }
-
-    .checkbox-container {
-        margin-top: 95px;
-    }
-
-        .checkbox-container label {
-            display: flex;
-            align-items: center;
-            color: #444;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .checkbox-container input[type="checkbox"] {
-            margin-left: 10px;
-            width: 18px;
-            height: 18px;
-        }
-
-    .popup-buttons {
-        position: absolute;
-        bottom: 40px;
-        left: 40px;
+    .checkbox-container label {
         display: flex;
-        gap: 20px;
-    }
-
-    .popup-btn {
-        padding: 12px 30px;
-        border: none;
-        border-radius: 8px;
+        align-items: center;
         font-size: 16px;
-        font-weight: 500;
-        color: white;
+        color: #444;
         cursor: pointer;
-        transition: opacity 0.3s ease;
     }
 
-        .popup-btn:hover:not(:disabled) {
-            opacity: 0.9;
-        }
-
-    .back-btn {
-        background: #CC281B;
-        border-radius: 20px;
+    .checkbox-container input[type="checkbox"] {
+        margin-left: 10px;
+        width: 18px;
+        height: 18px;
     }
 
-    .confirm-btn {
-        background: #287067;
-        border-radius: 20px;
+.popup-buttons {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    display: flex;
+    gap: 20px;
+}
+
+.popup-btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+    .popup-btn:hover:not(:disabled) {
+        opacity: 0.9;
     }
 
-        .confirm-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
+.back-btn {
+    background: #CC281B;
+    border-radius: 20px;
+}
 
+.confirm-btn {
+    background: #287067;
+    border-radius: 20px;
+}
 
-    @media (max-width: 768px) {
-        body {
-            align-items: flex-start;
-            height: auto;
-            padding: 20px;
-        }
+    .confirm-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
 
-        .form-container,
-        .popup-content {
-            flex-direction: column;
-            width: 100%;
-            height: auto;
-            padding: 20px;
-            padding-bottom: 80px; /* space for arrows inside the white box */
-            box-sizing: border-box;
-        }
+/* === Mobile & Tablet === */
+@media (max-width: 1199px) {
+    body {
+        align-items: flex-start;
+        padding: 20px;
+        height: auto;
+    }
 
-        .arrow {
-            bottom: 20px; /* move inside the white background */
-        }
+    .form-container,
+    .popup-content {
+        width: 95vw;
+        height: auto;
+        flex-direction: column;
+        padding: 30px;
+        padding-bottom: 80px;
+    }
 
-        .arrow-left, .arrow-right {
-            bottom: 20px;
-        }
+    .right-column,
+    .left-column,
+    .in1,
+    .in2,
+    .in3 {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .arrow,
+    .arrow-left,
+    .arrow-right {
+        bottom: 20px;
+    }
 
         .arrow img {
             width: 28px;
             height: 28px;
         }
 
-        .right-column,
-        .left-column {
-            width: 100%;
-            margin-left: 0;
-        }
-
-        .in1,
-        .in2,
-        .in3 {
-            width: 100%;
-        }
-
-        .popup-buttons {
-            flex-direction: column;
-            position: static;
-            margin-top: 20px;
-            align-items: stretch;
-        }
-
-        .popup-btn {
-            width: 100%;
-        }
+    .popup-buttons {
+        position: static;
+        flex-direction: column;
+        margin-top: 20px;
+        align-items: stretch;
     }
 
-    @media (min-width: 500px) and (max-width: 1200px) {
-        .form-container,
-        .popup-content {
-            width: 95vw;
-            height: auto;
-            flex-direction: row;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            padding: 30px;
-            padding-bottom: 80px; /* ensure arrows are inside */
-            box-sizing: border-box;
-        }
-
-        .arrow {
-            bottom: 20px;
-        }
-
-        .arrow-left, .arrow-right {
-            bottom: 20px;
-        }
-
-        .right-column,
-        .left-column {
-            width: 45%;
-            margin-left: 0;
-        }
-
-        .in1,
-        .in2,
-        .in3 {
-            width: 100%;
-        }
-
-  
+    .popup-btn {
+        width: 100%;
     }
+}
+
+/* === Optional: Extra-small fix for mobile buttons === */
+@media (max-width: 576px) {
+    .popup-buttons {
+        gap: 10px;
+    }
+
+    .popup-btn {
+        padding: 10px;
+        font-size: 14px;
+    }
+}
+
+/* === Utility classes === */
 .required-wrapper {
     position: relative;
 }
@@ -319,5 +252,55 @@
     color: red;
     font-size: 18px;
     pointer-events: none;
-
 }
+
+.navigation-buttons button {
+    font-size: 16px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-left {
+    background-color: #ccc;
+    color: #333;
+}
+
+.btn-save {
+    background-color: #287067;
+    color: white;
+}
+
+.btn-next {
+    background-color: #00c9a7;
+    color: white;
+}
+
+.text-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.attached-files {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+    .attached-files li {
+        background-color: #f2f2f2;
+        padding: 4px 10px;
+        border-radius: 5px;
+        font-size: 13px;
+        max-width: 250px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
