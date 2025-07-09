@@ -26,9 +26,10 @@ namespace DSAR.Controllers
         private readonly UserManager<User> _userManager;
         private readonly iFormRepository _formRepo;
         private readonly IAppHistoryRepository _historyRepository;
+        private readonly IApproveRepository _approveRepository;
 
 
-        public RequestController(IRequestActionRepository requestActionRepository, IRequestRepository requestRepository, IUserRepository userRepository, ICaseStudyRepository caseStudyRepository, UserManager<User> userManager, iFormRepository formRepo, IAppHistoryRepository historyRepository)
+        public RequestController(IRequestActionRepository requestActionRepository, IRequestRepository requestRepository, IUserRepository userRepository, ICaseStudyRepository caseStudyRepository, UserManager<User> userManager, iFormRepository formRepo, IAppHistoryRepository historyRepository, IApproveRepository approveRepository)
         {
             _requestActionRepository = requestActionRepository;
             _requestRepository = requestRepository;
@@ -37,12 +38,13 @@ namespace DSAR.Controllers
             _caseStudyRepository = caseStudyRepository;
             _formRepo = formRepo;
             _historyRepository = historyRepository;
+            _approveRepository = approveRepository;
         }
 
         public async Task<IActionResult> MyRequest()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get logged-in user's ID
-            
+
             var requestAction = await _requestActionRepository.GetRequestsStillInProcessByUserId(userId); // Filtered list
             var viewModel = requestAction.Select(r => new RequestViewModel
             {
@@ -68,14 +70,14 @@ namespace DSAR.Controllers
         public async Task<IActionResult> Request(RequestViewModel data)
         {
             var currentUser = await _userManager.GetUserAsync(User);
-            FormData request; // Change type to 'FormData' to match the return type of 'SectionManagerHandleStep3Data' and 'HandleStep3Data'
+            FormData request;
             bool emailResponse;
             const int initialStatusId = 1; // "new submission" status
 
             if (await _userManager.IsInRoleAsync(currentUser, "SectionManager"))
             {
                 data.UserId = currentUser.Id;
-                request = await _formRepo.HandleStep3Data(data, currentUser.UserId); // Fix: Ensure 'request' is of type 'FormData'
+                request = await _formRepo.HandleStep3Data(data, currentUser.UserId);
                 _requestActionRepository.CreateSectionManager(data, currentUser, request);
 
                 emailResponse = await _requestRepository.SendEmailAsync(data, currentUser);
@@ -99,7 +101,7 @@ namespace DSAR.Controllers
             else if (await _userManager.IsInRoleAsync(currentUser, "DepartmentManager"))
             {
                 data.UserId = currentUser.Id;
-                request = await _formRepo.HandleStep3Data(data, currentUser.UserId); // Fix: Ensure 'request' is of type 'FormData'
+                request = await _formRepo.HandleStep3Data(data, currentUser.UserId);
                 _requestActionRepository.CreateDepartmentManager(data, currentUser, request);
 
                 emailResponse = await _requestRepository.SendEmailAsync(data, currentUser);
@@ -120,7 +122,7 @@ namespace DSAR.Controllers
             else if (await _userManager.IsInRoleAsync(currentUser, "ITManager"))
             {
                 data.UserId = currentUser.Id;
-                request = await _formRepo.HandleStep3Data(data, currentUser.UserId); // Fix: Ensure 'request' is of type 'FormData'
+                request = await _formRepo.HandleStep3Data(data, currentUser.UserId);
                 _requestActionRepository.CreateITManager(data, currentUser, request);
 
                 emailResponse = await _requestRepository.SendEmailAsync(data, currentUser);
@@ -140,7 +142,7 @@ namespace DSAR.Controllers
             else if (await _userManager.IsInRoleAsync(currentUser, "ApplicationManager"))
             {
                 data.UserId = currentUser.Id;
-                request = await _formRepo.HandleStep3Data(data, currentUser.UserId); // Fix: Ensure 'request' is of type 'FormData'
+                request = await _formRepo.HandleStep3Data(data, currentUser.UserId);
                 _requestActionRepository.CreateITManager(data, currentUser, request);
 
                 emailResponse = await _requestRepository.SendEmailAsync(data, currentUser);
@@ -158,7 +160,7 @@ namespace DSAR.Controllers
                 return RedirectToAction("Main", "Account");
             }
             data.UserId = currentUser.Id;
-            request = await _formRepo.HandleStep3Data(data, currentUser.UserId); // Fix: Ensure 'request' is of type 'FormData'
+            request = await _formRepo.HandleStep3Data(data, currentUser.UserId);
 
             _requestActionRepository.Create(data, currentUser, request);
 
@@ -169,7 +171,7 @@ namespace DSAR.Controllers
             }
             ////////////////////history///////////////////////////////////////
 
-             // "new submission" status
+            // "new submission" status
             await _historyRepository.CreateHistoryAsync(
                 currentUser,
                 request,
@@ -196,32 +198,27 @@ namespace DSAR.Controllers
 
             if (await _userManager.IsInRoleAsync(currentUser, "DepartmentManager"))
             {
-                // Get requests from managers
                 requests = await _requestRepository.GetRequestsFromManagersInDepartmentAsync(userId, currentUser.DepartmentId ?? 0);
             }
             else if (await _userManager.IsInRoleAsync(currentUser, "SectionManager"))
             {
-                // Get requests from normal users
                 requests = await _requestRepository.GetRequestsForManagerDepartmentAsync(userId, currentUser.SectionId ?? 0);
             }
             else if (await _userManager.IsInRoleAsync(currentUser, "ITManager"))
             {
-                // Get requests from normal users
                 requests = await _requestRepository.GetRequestsForITManager(userId, currentUser.DepartmentId ?? 0);
             }
             else if (await _userManager.IsInRoleAsync(currentUser, "Analyzer"))
             {
-                // Get requests from normal users
                 requests = await _requestRepository.GetRequestsForAnalyzer(userId, currentUser.DepartmentId ?? 0);
             }
             else if (await _userManager.IsInRoleAsync(currentUser, "ApplicationManager"))
             {
-                // Get requests from managers
                 requests = await _requestRepository.GetRequestsForApplicationManager(userId, currentUser.DepartmentId ?? 0);
-            } else
+            }
+            else
             {
-                // Not authorized
-                return Forbid();
+                return RedirectToAction("Account", "Main");
             }
 
             var viewModels = requests.Select(r => new RequestViewModel
@@ -237,7 +234,7 @@ namespace DSAR.Controllers
             return View(viewModels);
         }
 
-        public async Task<IActionResult> ViewSubmission(int id, int levelId)
+        public async Task<IActionResult> ViewSubmission(int id)
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
@@ -247,67 +244,21 @@ namespace DSAR.Controllers
 
             var requestAction = await _requestActionRepository.GetRequestActionByRequestIdAsync(request.RequestId);
             if (requestAction == null) return NotFound();
+           
 
-            int currentDepartmentId = currentUser.DepartmentId ?? 0;
-            int requestDepartmentId = requestAction.DepartmentId;
-
-            // Get roles
-            bool isSectionManager = await _userManager.IsInRoleAsync(currentUser, "SectionManager");
-            bool isDepartmentManager = await _userManager.IsInRoleAsync(currentUser, "DepartmentManager");
-            bool isITManager = await _userManager.IsInRoleAsync(currentUser, "ITManager");
-            bool isApplicationManager = await _userManager.IsInRoleAsync(currentUser, "ApplicationManager");
-            bool isAnalyzer = await _userManager.IsInRoleAsync(currentUser, "Analyzer");
-            bool isUser = await _userManager.IsInRoleAsync(currentUser, "User");
-
-            var form = await _formRepo.GetById(id);
-            if (form == null) return NotFound();
-
-            // ✅ Allow user to view only their own request
-            if (isUser && form.UserId != currentUser.Id)
-            {
-                return Forbid();
-            }
-
-            // ✅ Check department match for all managers/analyzers
-            if ((isSectionManager || isDepartmentManager || isITManager || isAnalyzer) &&
-                requestDepartmentId != currentDepartmentId)
-            {
-                return Forbid();
-            }
-
-            // ✅ Check LevelId permissions
-            if (isSectionManager && requestAction.LevelId != 1)
-                return Forbid();
-
-            if (isDepartmentManager && requestAction.LevelId != 2)
-                return Forbid();
-
-            if (isITManager && !(requestAction.LevelId == 3 || requestAction.LevelId == 7))
-                return Forbid();
-
-            if (isApplicationManager && !(requestAction.LevelId == 4 || requestAction.LevelId == 6))
-                return Forbid();
-
-            if (isAnalyzer && requestAction.LevelId != 5)
-                return Forbid();
-
-            // ✅ Final fallback check
-            if (!isUser && !isSectionManager && !isDepartmentManager && !isITManager && !isApplicationManager && !isAnalyzer)
-            {
-                return Forbid();
-            }
+            await _requestActionRepository.ProtectViewPages(id, currentUser, request, requestAction);
 
             var viewModel = new RequestViewModel
             {
-                RequestId = form.RequestId,
-                Field1 = form.Field1,
-                Field2 = form.Field2,
-                Field3 = form.Field3,
-                Depend = form.Depend,
-                Field4 = form.Field4,
-                Field5 = form.Field5,
-                Field6 = form.Field6,
-                Attachments = form.Attachments?.ToList()
+                RequestId = request.RequestId,
+                Field1 = request.Field1,
+                Field2 = request.Field2,
+                Field3 = request.Field3,
+                Depend = request.Depend,
+                Field4 = request.Field4,
+                Field5 = request.Field5,
+                Field6 = request.Field6,
+                Attachments = request.Attachments?.ToList()
             };
 
             return View(viewModel);
@@ -352,27 +303,35 @@ namespace DSAR.Controllers
                 return Forbid();
             }
 
-            // ✅ Check LevelId permissions
-            if (isSectionManager && requestAction.LevelId != 1)
+            var histories = await _historyRepository.GetHistoriesByRequestIdAsync(request.RequestId);
+            var lastHistory = histories.OrderByDescending(h => h.CreationDate).FirstOrDefault();
+            bool isLastActor = lastHistory != null && lastHistory.UserId == currentUser.Id;
+
+            // ... your role checks ...
+
+            if (isSectionManager && requestAction.LevelId != 1 && !isLastActor)
                 return Forbid();
 
-            if (isDepartmentManager && requestAction.LevelId != 2)
+            if (isDepartmentManager && requestAction.LevelId != 2 && !isLastActor)
                 return Forbid();
 
-            if (isITManager && !(requestAction.LevelId == 3 || requestAction.LevelId == 7))
+            if (isITManager && !(requestAction.LevelId == 3 || requestAction.LevelId == 7) && !isLastActor)
                 return Forbid();
 
-            if (isApplicationManager && !(requestAction.LevelId == 4 || requestAction.LevelId == 6))
+            if (isApplicationManager && !(requestAction.LevelId == 4 || requestAction.LevelId == 6) && !isLastActor)
                 return Forbid();
 
-            if (isAnalyzer && requestAction.LevelId != 5)
+            if (isAnalyzer && requestAction.LevelId != 5 && !isLastActor)
                 return Forbid();
 
-            // ✅ Final fallback check
-            if (!isUser && !isSectionManager && !isDepartmentManager && !isITManager && !isApplicationManager && !isAnalyzer)
+            // Get the last history entry for this request
+
+            // ✅ Final fallback check: allow if user is in any allowed role OR is the last actor
+            if (!isUser && !isSectionManager && !isDepartmentManager && !isITManager && !isApplicationManager && !isAnalyzer && !isLastActor)
             {
                 return Forbid();
             }
+
 
             var viewModel = new RequestViewModel
             {
@@ -406,6 +365,7 @@ namespace DSAR.Controllers
             var requestAction = await _requestActionRepository.GetRequestActionByRequestIdAsync(request.RequestId);
             if (requestAction == null) return NotFound();
 
+         
             int currentDepartmentId = currentUser.DepartmentId ?? 0;
             int requestDepartmentId = requestAction.DepartmentId;
 
@@ -433,27 +393,35 @@ namespace DSAR.Controllers
                 return Forbid();
             }
 
-            // ✅ Check LevelId permissions
-            if (isSectionManager && requestAction.LevelId != 1)
+            var histories = await _historyRepository.GetHistoriesByRequestIdAsync(request.RequestId);
+            var lastHistory = histories.OrderByDescending(h => h.CreationDate).FirstOrDefault();
+            bool isLastActor = lastHistory != null && lastHistory.UserId == currentUser.Id;
+
+            // ... your role checks ...
+
+            if (isSectionManager && requestAction.LevelId != 1 && !isLastActor)
                 return Forbid();
 
-            if (isDepartmentManager && requestAction.LevelId != 2)
+            if (isDepartmentManager && requestAction.LevelId != 2 && !isLastActor)
                 return Forbid();
 
-            if (isITManager && !(requestAction.LevelId == 3 || requestAction.LevelId == 7))
+            if (isITManager && !(requestAction.LevelId == 3 || requestAction.LevelId == 7) && !isLastActor)
                 return Forbid();
 
-            if (isApplicationManager && !(requestAction.LevelId == 4 || requestAction.LevelId == 6))
+            if (isApplicationManager && !(requestAction.LevelId == 4 || requestAction.LevelId == 6) && !isLastActor)
                 return Forbid();
 
-            if (isAnalyzer && requestAction.LevelId != 5)
+            if (isAnalyzer && requestAction.LevelId != 5 && !isLastActor)
                 return Forbid();
 
-            // ✅ Final fallback check
-            if (!isUser && !isSectionManager && !isDepartmentManager && !isITManager && !isApplicationManager && !isAnalyzer)
+            // Get the last history entry for this request
+
+            // ✅ Final fallback check: allow if user is in any allowed role OR is the last actor
+            if (!isUser && !isSectionManager && !isDepartmentManager && !isITManager && !isApplicationManager && !isAnalyzer && !isLastActor)
             {
                 return Forbid();
             }
+
 
             var viewModel = new RequestViewModel
             {
@@ -509,27 +477,35 @@ namespace DSAR.Controllers
                 return Forbid();
             }
 
-            // ✅ Check LevelId permissions
-            if (isSectionManager && requestAction.LevelId != 1)
+            var histories = await _historyRepository.GetHistoriesByRequestIdAsync(request.RequestId);
+            var lastHistory = histories.OrderByDescending(h => h.CreationDate).FirstOrDefault();
+            bool isLastActor = lastHistory != null && lastHistory.UserId == currentUser.Id;
+
+            // ... your role checks ...
+
+            if (isSectionManager && requestAction.LevelId != 1 && !isLastActor)
                 return Forbid();
 
-            if (isDepartmentManager && requestAction.LevelId != 2)
+            if (isDepartmentManager && requestAction.LevelId != 2 && !isLastActor)
                 return Forbid();
 
-            if (isITManager && !(requestAction.LevelId == 3 || requestAction.LevelId == 7))
+            if (isITManager && !(requestAction.LevelId == 3 || requestAction.LevelId == 7) && !isLastActor)
                 return Forbid();
 
-            if (isApplicationManager && !(requestAction.LevelId == 4 || requestAction.LevelId == 6))
+            if (isApplicationManager && !(requestAction.LevelId == 4 || requestAction.LevelId == 6) && !isLastActor)
                 return Forbid();
 
-            if (isAnalyzer && requestAction.LevelId != 5)
+            if (isAnalyzer && requestAction.LevelId != 5 && !isLastActor)
                 return Forbid();
 
-            // ✅ Final fallback check
-            if (!isUser && !isSectionManager && !isDepartmentManager && !isITManager && !isApplicationManager && !isAnalyzer)
+            // Get the last history entry for this request
+
+            // ✅ Final fallback check: allow if user is in any allowed role OR is the last actor
+            if (!isUser && !isSectionManager && !isDepartmentManager && !isITManager && !isApplicationManager && !isAnalyzer && !isLastActor)
             {
                 return Forbid();
             }
+
             var formData = await _formRepo.GetDescriptionsByRequestId(id);
             if (formData == null) return NotFound();
 
@@ -604,7 +580,7 @@ namespace DSAR.Controllers
         }
 
         // STEP 3 - POST
-        
+
         //public async Task<IActionResult> Step3(RequestViewModel data)
         //{
         //    var currentUser = await _userManager.GetUserAsync(User);
@@ -710,178 +686,60 @@ namespace DSAR.Controllers
             return RedirectToAction("Step1");
         }
 
-
-
-
-
-
-
-
-        //////////////////////
-        [Authorize(Roles = "SectionManager,DepartmentManager,ITManager,Analyzer")]
-        public async Task<IActionResult> MyRequest2()
+       
+        
+        [HttpGet]
+        public async Task<IActionResult> ApprovePageAsync(int requestId, int actionId)
         {
+            var requestAction = await _requestActionRepository.GetRequestActionByRequestIdAsync(requestId);
             var currentUser = await _userManager.GetUserAsync(User);
-            var userId = currentUser.Id;
-
-            List<DSAR.Models.FormData> requests;
-            var allForms = await _formRepo.GetAll();
-
-            if (await _userManager.IsInRoleAsync(currentUser, "DepartmentManager"))
-            {
-                // Get requests from managers
-                requests = await _requestRepository.GetRequestsFromManagersInDepartmentAsync(userId, currentUser.DepartmentId ?? 0);
-            }
-            else if (await _userManager.IsInRoleAsync(currentUser, "SectionManager"))
-            {
-                // Get requests from normal users
-                requests = await _requestRepository.GetRequestsForManagerDepartmentAsync(userId, currentUser.SectionId ?? 0);
-            }
-            else if (await _userManager.IsInRoleAsync(currentUser, "ITManager"))
-            {
-                // Get requests from normal users
-                requests = await _requestRepository.GetRequestsForITManager(userId, currentUser.DepartmentId ?? 0);
-            }
-            else if (await _userManager.IsInRoleAsync(currentUser, "Analyzer"))
-            {
-                // Get requests from normal users
-                requests = await _requestRepository.GetRequestsForAnalyzer(userId, currentUser.DepartmentId ?? 0);
-            }
-            else
-            {
-                // Not authorized
-                return Forbid();
-            }
-            //AutoMapper
-            var viewModels = requests.Select(r => new RequestViewModel
-            {
-                RequestId = r.RequestId,
-                FirstName = r.User.FirstName,
-                LastName = r.User.LastName,
-                DepartmentName = r.User.Department?.DepartmentName ?? "N/A"
-            }).ToList();
-
-            return View(viewModels);
-        }
-
-        public async Task<IActionResult> RequestDetails(int Id, int LevelId)
-        {
-            var currentUser = await _userManager.GetUserAsync(User);
-            var request = _requestRepository.GetById(Id);
-            if (request == null)
-                return NotFound();
-
-            // Load the related action
-            var requestAction = await _requestActionRepository.GetRequestActionByRequestIdAsync(request.RequestId);
-
-            var currentDepartmentId = currentUser.DepartmentId ?? 0;
-            var requestDepartmentId = request.RequestActions?.DepartmentId ?? 0; // or from requestAction.DepartmentId
+            int currentDepartmentId = currentUser.DepartmentId ?? 0;
+            int requestDepartmentId = requestAction.DepartmentId;
 
             bool isSectionManager = await _userManager.IsInRoleAsync(currentUser, "SectionManager");
             bool isDepartmentManager = await _userManager.IsInRoleAsync(currentUser, "DepartmentManager");
             bool isITManager = await _userManager.IsInRoleAsync(currentUser, "ITManager");
             bool isApplicationManager = await _userManager.IsInRoleAsync(currentUser, "ApplicationManager");
             bool isAnalyzer = await _userManager.IsInRoleAsync(currentUser, "Analyzer");
+            bool isUser = await _userManager.IsInRoleAsync(currentUser, "User");
 
+            var form = await _formRepo.GetById(requestId);
+            if (form == null) return NotFound();
 
-            //if (isSectionManager && requestDepartmentId != currentDepartmentId)
-            //{
-            //    return Forbid(); // Block if this manager is not responsible
-            //}
-            //else if (isDepartmentManager && requestDepartmentId != currentDepartmentId)
-            //{
-            //    return Forbid(); // Block if this manager is not responsible
-            //}
-            ////else if (isAdministrationManager && requestDepartmentId != currentDepartmentId)
-            ////{
-            ////    return Forbid(); // Block if this manager is not responsible
-            ////}
-            //else if (isAnalyzer && requestDepartmentId != currentDepartmentId)
-            //{
-            //    return Forbid(); // Block if this manager is not responsible
-            //}
-            //// else if (isSectionManager && requestAction?.StatusId != 1)
-            //// {
-            //// return Forbid(); // Block if this isn't the Big Manager's responsibility
-            //// }
-            //else if (isDepartmentManager && requestAction?.StatusId != 2)
-            //{
-            //    return Forbid(); // Block if this isn't the Big Manager's responsibility
-            //}
-            //else if (isAdministrationManager && requestAction?.StatusId != 3)
-            //{
-            //    return Forbid(); // Block if this isn't the Big Manager's responsibility
-            //}
-            //else if (!isSectionManager && !isDepartmentManager && !isAdministrationManager && !isAnalyzer)
-            //{
-            //    return Forbid(); // Not allowed at all
-            //}
-            var viewModel = new RequestViewModel
+            // ✅ Allow user to view only their own request
+            if (isUser && form.UserId != currentUser.Id)
             {
-                RequestId = request.RequestId,
-                LevelId = LevelId,
-                // Field mapping
-                //ServiceName = request.ServiceName,
-                //ServiceType = request.ServiceType,
-                //ServiceDescription = request.ServiceDescription,
-                //HasDependencies = request.HasDependencies,
-                //DependencyExplanation = request.DependencyExplanation,
-                //ProcedureNumber = request.ProcedureNumber,
-                //ProcedureFileUrl = request.ProcedureFileUrl,
+                return Forbid();
+            }
 
-                //// معلومات أولية عن الخدمة
-                //AllowedSubmissionCount = request.AllowedSubmissionCount,
-                //ServiceFee = request.ServiceFee,
-                //TargetAudience = request.TargetAudience,
-                //ResponsibleDepartment = request.ResponsibleDepartment,
-                //AvailableCities = request.AvailableCities,
+            // ✅ Check department match for all managers/analyzers
+            if ((isSectionManager || isDepartmentManager || isITManager || isAnalyzer) &&
+                requestDepartmentId != currentDepartmentId)
+            {
+                return Forbid();
+            }
 
-                //// صلاحيات المعتمدين
-                //ApproverDepartment = request.ApproverDepartment,
-                //ApproverName = request.ApproverName,
-                //ActionType = request.ActionType,
-                //// Duration = request.Duration,
-                //// DurationUnit = request.DurationUnit,
+            // ✅ Check LevelId permissions
+            if (isSectionManager && requestAction.LevelId != 1)
+                return Forbid();
 
-                //// مخرجات الخدمة
-                //FinalOutputDescription = request.FinalOutputDescription,
-                //// FinalOutputFile = request.FinalOutputFile,
+            if (isDepartmentManager && requestAction.LevelId != 2)
+                return Forbid();
 
-                //// النماذج المستخدمة
-                //FieldName = request.FieldName,
-                //FieldType = request.FieldType,
-                //FieldNotes = request.FieldNotes,
-                //IsFieldRequired = request.IsFieldRequired,
-                //FieldEnglishName = request.FieldEnglishName,
+            if (isITManager && !(requestAction.LevelId == 3 || requestAction.LevelId == 7))
+                return Forbid();
 
-                //// البيانات الاعتمادية
-                //FieldCategories = request.FieldCategories,
-                //FieldRelationships = request.FieldRelationships,
+            if (isApplicationManager && !(requestAction.LevelId == 4 || requestAction.LevelId == 6))
+                return Forbid();
 
-                //// الشروط العامة
-                //ServiceConditions = request.ServiceConditions,
+            if (isAnalyzer && requestAction.LevelId != 5)
+                return Forbid();
 
-                //// معلومات تفصيلية
-                //ExecutionPath = request.ExecutionPath,
-                //// ExecutionAttachment = request.ExecutionAttachment,
-                //ExecutionDuration = request.ExecutionDuration,
-                //// RequiredAttachments = request.RequiredAttachments,
-                //// CityApprovals = request.CityApprovals,
-
-                //// الربط الخارجي
-                //IntegratedSystems = request.IntegratedSystems,
-
-                // الدعم التقني / التنظيمي
-                // SupportingDocs = request.SupportingDocs
-                ActionId = requestAction?.ActionId ?? 0,
-            };
-
-            return View(viewModel);
-        }
-        [HttpGet]
-        [HttpGet]
-        public async Task<IActionResult> ApprovePageAsync(int requestId, int actionId)
-        {
+            // ✅ Final fallback check
+            if (!isUser && !isSectionManager && !isDepartmentManager && !isITManager && !isApplicationManager && !isAnalyzer)
+            {
+                return Forbid();
+            }
             var request = _requestRepository.GetById(requestId);
             if (request == null)
                 return NotFound();
@@ -925,281 +783,39 @@ namespace DSAR.Controllers
 
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null)
-                return Unauthorized();
+                return RedirectToAction("Account", "Main");
 
             var request = _requestRepository.GetById(requestId);
             if (request == null)
-                return NotFound();
+                return RedirectToAction("Account", "Main");
 
             if (await _userManager.IsInRoleAsync(currentUser, "DepartmentManager"))
             {
-                try
-                {
-                    var action = await _requestActionRepository.GetByIdAsync(actionId);
-                    if (action == null) return RedirectToAction("Main", "Account");
+                await _approveRepository.ApproveRequestByDepartmentManager(model, actionId, requestId, decision, currentUser, request);
 
-                    if (decision == "approve")
-                    {
-                        action.StatusId = 3; // Approved
-                        action.LevelId = 3;
-                        request.DepartmentNotes = model.DepartmentNotes;
-
-                        //history
-                        const int initialStatusId = 2; // "in progress" status
-                        await _historyRepository.CreateHistoryAsync(
-                            currentUser,
-                            request,
-                            initialStatusId,
-                            3,
-                            "Request approved by DepartmentManager"
-                        );
-                        //history
-                    }
-                    else if (decision == "decline")
-                    {
-                        action.StatusId = 4; // You can define 99 = Declined in your status table
-                        action.LevelId = 9;   // Stays the same
-                        request.DepartmentNotes = model.DepartmentNotes; // Optional
-                        //history
-                        const int initialStatusId = 4; // "rejected" status
-                        await _historyRepository.CreateHistoryAsync(
-                            currentUser,
-                            request,
-                            initialStatusId,
-                            9,
-                            "Request Rejected by DepartmentManager"
-                        );
-                        //history
-                    }
-
-                    _requestActionRepository.Update(action);
-                    _requestRepository.Update(request);
-
-                    TempData["Success"] = decision == "approve"
-                        ? "Request approved successfully."
-                        : "Request declined.";
-                }
-                catch (Exception ex)
-                {
-                    TempData["Error"] = $"Failed to process request: {ex.Message}";
-                }
             }
             else if (await _userManager.IsInRoleAsync(currentUser, "SectionManager"))
             {
-                try
-                {
-                    var action = await _requestActionRepository.GetByIdAsync(actionId);
-                    if (action == null) return RedirectToAction("Main", "Account");
-                    if (decision == "approve")
-                    {
-                        action.StatusId = 2;
-                        action.LevelId = 2;
-                        request.SectionNotes = model.SectionNotes;
-                        //history
-                        const int initialStatusId = 2; // "in progress" status
-                        await _historyRepository.CreateHistoryAsync(
-                            currentUser,
-                            request,
-                            initialStatusId,
-                            2,
-                            "Request approved by SecctionManager"
-                        );
-                        //history
-                    }
-                    else if (decision == "decline")
-                    {
-                        action.StatusId = 4; // You can define 99 = Declined in your status table
-                        action.LevelId = 9;   // Stays the same
-                        request.SectionNotes = model.SectionNotes; // Optional
-                          //history
-                        const int initialStatusId = 4; // "rejected" status
-                        await _historyRepository.CreateHistoryAsync(
-                            currentUser,
-                            request,
-                            initialStatusId,
-                            9,
-                            "Request Rejected by SecctionManager"
-                        );
-                        //history
-                    }
-                   
-                    _requestActionRepository.Update(action);
+                await _approveRepository.ApproveRequestBySectionManager(model, actionId, requestId, decision, currentUser, request);
 
-                    // ✅ Update section note
-                    if (await _userManager.IsInRoleAsync(currentUser, "DepartmentManager"))
-                    {
-                        request.DepartmentNotes = model.DepartmentNotes;
-                    }
-                    else if (await _userManager.IsInRoleAsync(currentUser, "SectionManager"))
-                    {
-                        request.SectionNotes = model.SectionNotes;
-                    }
-                    _requestRepository.Update(request);
-
-                    TempData["Success"] = "Request approved successfully.";
-                }
-                catch (Exception ex)
-                {
-                    TempData["Error"] = $"Failed to approve request: {ex.Message}";
-                }
             }
+
             else if (await _userManager.IsInRoleAsync(currentUser, "ITManager"))
             {
-                try
-                {
-                    var action = await _requestActionRepository.GetByIdAsync(actionId);
-                     if (decision == "approve")
-                    {
-                        if (action.LevelId == 3)
-                        {
-                            action.StatusId = 2;
-                            action.LevelId = 4;
-                            _requestActionRepository.Update(action);
+                await _approveRepository.ApproveRequestByITManager(model, actionId, requestId, decision, currentUser, request);
 
-                            //history
-                            const int initialStatusId = 2; // "in progress" status
-                            await _historyRepository.CreateHistoryAsync(
-                                currentUser,
-                                request,
-                                initialStatusId,
-                                4,
-                                "Request approved initially by ITManager"
-                            );
-                            //history
-                        }
-                        else if (action.LevelId == 7)
-                        {
-                            action.StatusId = 3;
-                            action.LevelId = 8;
-                            _requestActionRepository.Update(action);
-                            //history
-                            const int initialStatusId = 3; // "approved" status
-                            await _historyRepository.CreateHistoryAsync(
-                                currentUser,
-                                request,
-                                initialStatusId,
-                                8,
-                                "Request approved by ITManager"
-                            );
-                            //history
-                        }
-                    }
-                    else if (decision == "decline")
-                    {
-                        action.StatusId = 4; // You can define 99 = Declined in your status table
-                        action.LevelId = 9;   // Stays the same
-
-                        //history
-                        const int initialStatusId = 4; // "rejected" status
-                        await _historyRepository.CreateHistoryAsync(
-                            currentUser,
-                            request,
-                            initialStatusId,
-                            9,
-                            "Request Rejected by ITManager"
-                        );
-                        //history
-                    }
-
-
-                    // ✅ Optional: add note for administration
-                    // request.AdministrationNote = notes;
-                    _requestRepository.Update(request);
-
-                    TempData["Success"] = "Request approved successfully.";
-                }
-                catch (Exception ex)
-                {
-                    TempData["Error"] = $"Failed to approve request: {ex.Message}";
-                }
             }
             else if (await _userManager.IsInRoleAsync(currentUser, "ApplicationManager"))
             {
-                try
-                {
-                    var action = await _requestActionRepository.GetByIdAsync(actionId);
-                    if (action == null) return RedirectToAction("Main", "Account");
+                await _approveRepository.ApproveRequestByApplicationManager(model, actionId, requestId, decision, currentUser, request);
 
-                    
-                    if (decision == "approve")
-                    {
-                        action.LevelId = 7;
-                        _requestActionRepository.Update(action);
-
-                        // ✅ Optional: add note for administration
-                        // request.AdministrationNote = notes;
-                        _requestRepository.Update(request);
-                        //history
-                        const int initialStatusId = 2; // "in progress" status
-                        await _historyRepository.CreateHistoryAsync(
-                            currentUser,
-                            request,
-                            initialStatusId,
-                            7,
-                            "Request approved by ApplicationManager"
-                        );
-                        //history
-                    }
-                    else if (decision == "decline")
-                    {
-                        action.StatusId = 4; // You can define 99 = Declined in your status table
-                        action.LevelId = 9;   // Stays the same
-                        _requestRepository.Update(request);
-                        //history
-                        const int initialStatusId = 4; // "rejected" status
-                        await _historyRepository.CreateHistoryAsync(
-                            currentUser,
-                            request,
-                            initialStatusId,
-                            9,
-                            "Request Rejected by ApplicationsManager"
-                        );
-                        //history
-                    }
-
-                    TempData["Success"] = "Request approved successfully.";
-                }
-                catch (Exception ex)
-                {
-                    TempData["Error"] = $"Failed to approve request: {ex.Message}";
-                }
             }
-            else
-            {
-                return Forbid();
-            }
-
+           
             return RedirectToAction("Main", "Account");
+
         }
 
-        [Authorize(Roles = "ApplicationManager")]
-        public async Task<IActionResult> ApplicationRequest(int requestId, int levelId)
-        {
-            var currentUser = await _userManager.GetUserAsync(User);
-            var userId = currentUser.Id;
 
-            List<FormData> requests;
-
-            if (await _userManager.IsInRoleAsync(currentUser, "ApplicationManager"))
-            {
-                // Get requests from managers
-                requests = await _requestRepository.GetRequestsForApplicationManager(userId, currentUser.DepartmentId ?? 0);
-            }
-            else
-            {
-                // Not authorized
-                return Forbid();
-            }
-            var viewModels = requests.Select(r => new RequestViewModel
-            {
-                RequestId = r.RequestId,
-                LevelId = r.RequestActions.LevelId,
-                FirstName = r.User.FirstName,
-                LastName = r.User.LastName,
-                DepartmentName = r.User.Department?.DepartmentName ?? "N/A"
-            }).ToList();
-            return View(viewModels);
-        }
 
         public async Task<IActionResult> AnalyzerUsers(int requestId)
         {
@@ -1217,23 +833,14 @@ namespace DSAR.Controllers
             return View(viewModels);
         }
 
-        //[HttpPost]
-        //public IActionResult AnalyzerConfirm(int requestId, string userId)
-        //{
-        //    _caseStudyRepository.CreateCaseStudy(userId, requestId);
-        //    return RedirectToAction("MyRequest2"); // or appropriate view
-        //}
-
         public async Task<IActionResult> ConfirmAnalyzer(int requestId, string userId)
         {
             var currentUser = await _userManager.GetUserAsync(User);
             var request = _requestRepository.GetById(requestId);
             if (request == null)
                 return NotFound();
-            // Step 1: Create CaseStudy record
             _caseStudyRepository.CreateCaseStudy(userId, requestId);
 
-            // Step 2: Retrieve the related action entry
             var existingAction = await _requestActionRepository.GetRequestActionByRequestIdAsync(requestId);
 
             if (existingAction != null)
@@ -1256,7 +863,7 @@ namespace DSAR.Controllers
 
             return RedirectToAction("Main", "Account");
         }
-       
+
         [HttpGet]
         public async Task<IActionResult> CaseStudy(int requestId)
         {
@@ -1268,7 +875,6 @@ namespace DSAR.Controllers
 
             var request = await _requestRepository.GetByIdAsync(requestId);
 
-            // 🔽 NEW: Load attachments
             var attachments = await _caseStudyRepository.GetAttachmentsByCaseStudyIdAsync(caseStudy.CaseId);
 
             var viewModel = new CaseStudyViewModel
@@ -1283,7 +889,6 @@ namespace DSAR.Controllers
                 SectionNotes = request?.SectionNotes,
                 DepartmentNotes = request?.DepartmentNotes,
 
-                // 🔽 Assign loaded attachments
                 Attachments = attachments.Select(a => new AttachmentViewModel
                 {
                     Id = a.Id,
@@ -1301,7 +906,8 @@ namespace DSAR.Controllers
         public async Task<IActionResult> CaseStudy(CaseStudyViewModel model, IFormFile CaseStudyAttachment)
         {
             var caseStudy = await _caseStudyRepository.GetByIdAsync(model.CaseId);
-            if (caseStudy == null) return NotFound();
+            if (caseStudy == null) RedirectToAction("Account", "Main");
+
 
             caseStudy.WorkTeam = model.WorkTeam;
             caseStudy.restriction = model.restriction;
@@ -1311,13 +917,18 @@ namespace DSAR.Controllers
 
             if (CaseStudyAttachment != null && CaseStudyAttachment.Length > 0)
             {
-                // Add or update attachment in repo
                 await _caseStudyRepository.AddAttachmentAsync(caseStudy.CaseId, CaseStudyAttachment);
             }
 
             _caseStudyRepository.Update(caseStudy);
 
             var requestId = caseStudy.RequestId;
+            var request = _requestRepository.GetById(requestId);
+            if (request == null) RedirectToAction("Account", "Main");
+
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) RedirectToAction("Account", "Main");
+
             var existingAction = await _requestActionRepository.GetRequestActionByRequestIdAsync(requestId);
 
             if (existingAction != null)
@@ -1326,11 +937,6 @@ namespace DSAR.Controllers
                 existingAction.StatusId = 2;
                 _requestActionRepository.Update(existingAction);
                 // history
-
-                var request = _requestRepository.GetById(requestId);
-                if (request == null)
-                    return NotFound();
-                var currentUser = await _userManager.GetUserAsync(User);
 
                 const int initialStatusId = 2; // "in progress" status
                 await _historyRepository.CreateHistoryAsync(
@@ -1345,10 +951,9 @@ namespace DSAR.Controllers
 
             return RedirectToAction("Main", "Account");
         }
-        public async Task<IActionResult> CancelRequest(int actionId, int requestId)
+        public async Task<IActionResult> CancelRequest(int actionId)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-       
+
             var action = await _requestActionRepository.GetByIdAsync(actionId);
             if (action == null) return RedirectToAction("Main", "Account");
 
@@ -1362,15 +967,15 @@ namespace DSAR.Controllers
             return RedirectToAction("Main", "Account");
         }
 
-           public async Task<IActionResult> DownloadCaseStudyAttachment(int attachmentId)
-{
-    var attachment = await _caseStudyRepository.GetAttachmentDataByIdAsync(attachmentId);
-    if (attachment == null) return NotFound();
+        public async Task<IActionResult> DownloadCaseStudyAttachment(int attachmentId)
+        {
+            var attachment = await _caseStudyRepository.GetAttachmentDataByIdAsync(attachmentId);
+            if (attachment == null) return NotFound();
 
-    var meta = attachment.CaseStudyAttachmentMetadata;
+            var meta = attachment.CaseStudyAttachmentMetadata;
 
-    return File(attachment.Data, "application/octet-stream", $"{meta.FileName}{meta.FileExtension}");
-}
+            return File(attachment.Data, "application/octet-stream", $"{meta.FileName}{meta.FileExtension}");
+        }
 
         public async Task<IActionResult> CompeleteRequest()
         {
@@ -1391,11 +996,11 @@ namespace DSAR.Controllers
             return View(viewModel);
         }
 
-        public async Task<IActionResult> GetAllRequests()
+        public IActionResult GetAllRequests()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get logged-in user's ID
 
-            var requestAction =  _requestActionRepository.GetAllByUserId(userId); // Filtered list
+            var requestAction = _requestActionRepository.GetAllByUserId(userId); // Filtered list
             var viewModel = requestAction.Select(r => new RequestViewModel
             {
                 RequestId = r.RequestId,
@@ -1418,10 +1023,10 @@ namespace DSAR.Controllers
             {
                 RequestId = r.RequestId,
                 StatusName = r.Status?.StatusName,
-               // DepartmentName = r.Department?.DepartmentName,
+                // DepartmentName = r.Department?.DepartmentName,
                 RequestNumber = r.FormData.RequestNumber,
                 LevelId = r.LevelId,
-               // ActionId = r.ActionId
+                // ActionId = r.ActionId
 
             }).ToList();
 

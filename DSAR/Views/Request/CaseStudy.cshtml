@@ -62,20 +62,9 @@
             </label>
         </div>
 
-        <input type="hidden" asp-for="CaseId" />
-        <input type="hidden" asp-for="UserId" />
-        <input type="hidden" asp-for="RequestId" />
-
-        @if (User.IsInRole("ApplicationManager") || User.IsInRole("AdministrationManager"))
-        {
-            <div class="buttons">
-                <button type="button" class="btn reject-btn">رفض الطلب</button>
-                <button type="submit" class="btn accept-btn">قبول الطلب</button>
-            </div>
-        }
 
         <div class="buttons">
-            <button type="submit" class="btn accept-btn">قبول الطلب</button>
+            <input asp-route-caseId="@Model.CaseId" asp-route-userId="@Model.UserId" asp-route-requestId="@Model.RequestId" class="btn accept-btn" type="submit" value="قبول الطلب" />
         </div>
     </form>
 </body>

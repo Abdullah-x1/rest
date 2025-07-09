@@ -23,5 +23,9 @@ namespace DSAR.Interfaces
         Task<List<RequestActions>> GetCompeleteRequestsByUserId(string UserId);
         Task<List<RequestActions>> GetRequestsStillInProcessByUserId(string UserId);
 
+        Task ProtectViewPages(int Id, User currentUser, FormData request,RequestActions requestActions);
+
+
+
     }
 }

@@ -2,6 +2,7 @@
 using DSAR.Data;
 using DSAR.Interfaces;
 using DSAR.Models;
+using DSAR.Repository;
 using DSAR.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +13,14 @@ namespace DSAR.Repositories
     {
         private readonly AppDbContext _context;
         private readonly UserManager<User> _userManager;
-        public RequestActionRepository(AppDbContext context, UserManager<User> userManager)
+        private readonly iFormRepository _formRepo;
+        private readonly IAppHistoryRepository _historyRepository;
+        public RequestActionRepository(AppDbContext context, UserManager<User> userManager, iFormRepository formRepo, IAppHistoryRepository historyRepository)
         {
             _context = context;
             _userManager = userManager;
+            _formRepo = formRepo;
+            _historyRepository = historyRepository;
         }
 
         public RequestActions Create(RequestViewModel viewModel, User currentUser, FormData request)
@@ -191,5 +196,75 @@ namespace DSAR.Repositories
                 .ToListAsync();
 
         }
+
+        public async Task ProtectViewPages(int Id, User currentUser, FormData request, RequestActions requestActions)
+        {
+            int currentDepartmentId = currentUser.DepartmentId ?? 0;
+            int requestDepartmentId = requestActions.DepartmentId;
+
+            // Get roles
+            bool isSectionManager = await _userManager.IsInRoleAsync(currentUser, "SectionManager");
+            bool isDepartmentManager = await _userManager.IsInRoleAsync(currentUser, "DepartmentManager");
+            bool isITManager = await _userManager.IsInRoleAsync(currentUser, "ITManager");
+            bool isApplicationManager = await _userManager.IsInRoleAsync(currentUser, "ApplicationManager");
+            bool isAnalyzer = await _userManager.IsInRoleAsync(currentUser, "Analyzer");
+            bool isUser = await _userManager.IsInRoleAsync(currentUser, "User");
+
+            
+
+            // ✅ Allow user to view only their own request
+            if (isUser && request.UserId != currentUser.Id)
+            {
+                Forbid();
+            }
+
+            // ✅ Check department match for all managers/analyzers
+            if ((isSectionManager || isDepartmentManager || isITManager || isAnalyzer) &&
+                requestDepartmentId != currentDepartmentId)
+            {
+                Forbid();
+            }
+
+            // Get all history entries for this request
+            var histories = await _historyRepository.GetHistoriesByRequestIdAsync(request.RequestId);
+            bool isAnyActor = histories.Any(h => h.UserId == currentUser.Id);
+
+            // ... your role checks ...
+
+            if (isSectionManager && requestActions.LevelId != 1 && !isAnyActor)
+                Forbid();
+
+            if (isDepartmentManager && requestActions.LevelId != 2 && !isAnyActor)
+                Forbid();
+
+            if (isITManager && !(requestActions.LevelId == 3 || requestActions.LevelId == 7) && !isAnyActor)
+                Forbid();
+
+            if (isApplicationManager && !(requestActions.LevelId == 4 || requestActions.LevelId == 6) && !isAnyActor)
+                Forbid();
+
+            if (isAnalyzer && requestActions.LevelId != 5 && !isAnyActor)
+                Forbid();
+
+            // Final fallback
+            if (!isUser && !isSectionManager && !isDepartmentManager && !isITManager && !isApplicationManager && !isAnalyzer && !isAnyActor)
+            {
+                Forbid();
+            }
+
+            // Get the last history entry for this request
+
+            // ✅ Final fallback check: allow if user is in any allowed role OR is the last actor
+            if (!isUser && !isSectionManager && !isDepartmentManager && !isITManager && !isApplicationManager && !isAnalyzer && !isAnyActor)
+            {
+                Forbid();
+            }
+        }
+
+        private void Forbid()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
+

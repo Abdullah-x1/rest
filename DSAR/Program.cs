@@ -49,6 +49,7 @@ builder.Services.AddTransient<IRequestRepository, RequestRepository>();
 builder.Services.AddTransient<ICaseStudyRepository, CaseStudyRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IAppHistoryRepository, AppHistoryRepository>();
+builder.Services.AddTransient<IApproveRepository, ApproveRepository>();
 
 //Email
 

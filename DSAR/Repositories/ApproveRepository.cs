@@ -1,0 +1,234 @@
+﻿using Azure.Core;
+using DSAR.Interfaces;
+using DSAR.Models;
+using DSAR.ViewModels;
+using Microsoft.AspNetCore.Identity;
+
+namespace DSAR.Repositories
+{
+    public class ApproveRepository : IApproveRepository
+    {
+        private readonly IRequestActionRepository _requestActionRepository;
+        private readonly IRequestRepository _requestRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly ICaseStudyRepository _caseStudyRepository;
+        //private readonly UserManager<User> _userManager;
+        //private readonly iFormRepository _formRepo;
+        private readonly IAppHistoryRepository _historyRepository;
+        private readonly UserManager<User> _userManager;
+
+
+        public ApproveRepository(IRequestActionRepository requestActionRepository, IRequestRepository requestRepository, IUserRepository userRepository, ICaseStudyRepository caseStudyRepository, IAppHistoryRepository historyRepository, UserManager<User> userManager)
+        {
+            _requestActionRepository = requestActionRepository;
+            _requestRepository = requestRepository;
+            _userRepository = userRepository;
+            //_userManager = userManager;
+            _caseStudyRepository = caseStudyRepository;
+            //_formRepo = formRepo;
+            _historyRepository = historyRepository;
+            _userManager = userManager;
+        }
+
+        public async Task ApproveRequestByDepartmentManager(RequestViewModel model, int actionId, int requestId, string decision, User currentUser, FormData request)
+        {
+
+            var action = await _requestActionRepository.GetByIdAsync(actionId);
+            //if (action == null) return RedirectToAction("Main", "Account");
+
+            if (decision == "approve")
+            {
+                action.StatusId = 3; // Approved
+                action.LevelId = 3;
+                request.DepartmentNotes = model.DepartmentNotes;
+
+                //history
+                const int initialStatusId = 2; // "in progress" status
+                await _historyRepository.CreateHistoryAsync(
+                    currentUser,
+                    request,
+                    initialStatusId,
+                    3,
+                    "Request approved by DepartmentManager"
+                );
+                //history
+            }
+            else if (decision == "decline")
+            {
+                action.StatusId = 4; // You can define 99 = Declined in your status table
+                action.LevelId = 9;   // Stays the same
+                request.DepartmentNotes = model.DepartmentNotes; // Optional
+                                                                 //history
+                const int initialStatusId = 4; // "rejected" status
+                await _historyRepository.CreateHistoryAsync(
+                    currentUser,
+                    request,
+                    initialStatusId,
+                    9,
+                    "Request Rejected by DepartmentManager"
+                );
+                //history
+            }
+
+            _requestActionRepository.Update(action);
+            _requestRepository.Update(request);
+
+        }
+
+        public async Task ApproveRequestBySectionManager(RequestViewModel model, int actionId, int requestId, string decision, User currentUser, FormData request)
+        {
+
+            var action = await _requestActionRepository.GetByIdAsync(actionId);
+            // if (action == null) return RedirectToAction("Main", "Account");
+            if (decision == "approve")
+            {
+                action.StatusId = 2;
+                action.LevelId = 2;
+                request.SectionNotes = model.SectionNotes;
+                //history
+                const int initialStatusId = 2; // "in progress" status
+                await _historyRepository.CreateHistoryAsync(
+                    currentUser,
+                    request,
+                    initialStatusId,
+                    2,
+                    "Request approved by SecctionManager"
+                );
+                //history
+            }
+            else if (decision == "decline")
+            {
+                action.StatusId = 4; // You can define 99 = Declined in your status table
+                action.LevelId = 9;   // Stays the same
+                request.SectionNotes = model.SectionNotes; // Optional
+                                                           //history
+                const int initialStatusId = 4; // "rejected" status
+                await _historyRepository.CreateHistoryAsync(
+                    currentUser,
+                    request,
+                    initialStatusId,
+                    9,
+                    "Request Rejected by SecctionManager"
+                );
+                //history
+            }
+
+            _requestActionRepository.Update(action);
+
+            // ✅ Update section note
+            if (await _userManager.IsInRoleAsync(currentUser, "DepartmentManager"))
+            {
+                request.DepartmentNotes = model.DepartmentNotes;
+            }
+            else if (await _userManager.IsInRoleAsync(currentUser, "SectionManager"))
+            {
+                request.SectionNotes = model.SectionNotes;
+            }
+            _requestRepository.Update(request);
+        }
+        public async Task ApproveRequestByITManager(RequestViewModel model, int actionId, int requestId, string decision, User currentUser, FormData request)
+        {
+                var action = await _requestActionRepository.GetByIdAsync(actionId);
+                if (decision == "approve")
+                {
+                    if (action.LevelId == 3)
+                    {
+                        action.StatusId = 2;
+                        action.LevelId = 4;
+                        _requestActionRepository.Update(action);
+
+                        //history
+                        const int initialStatusId = 2; // "in progress" status
+                        await _historyRepository.CreateHistoryAsync(
+                            currentUser,
+                            request,
+                            initialStatusId,
+                            4,
+                            "Request approved initially by ITManager"
+                        );
+                        //history
+                    }
+                    else if (action.LevelId == 7)
+                    {
+                        action.StatusId = 3;
+                        action.LevelId = 8;
+                        _requestActionRepository.Update(action);
+                        //history
+                        const int initialStatusId = 3; // "approved" status
+                        await _historyRepository.CreateHistoryAsync(
+                            currentUser,
+                            request,
+                            initialStatusId,
+                            8,
+                            "Request approved by ITManager"
+                        );
+                        //history
+                    }
+                }
+                else if (decision == "decline")
+                {
+                    action.StatusId = 4; // You can define 99 = Declined in your status table
+                    action.LevelId = 9;   // Stays the same
+
+                    //history
+                    const int initialStatusId = 4; // "rejected" status
+                    await _historyRepository.CreateHistoryAsync(
+                        currentUser,
+                        request,
+                        initialStatusId,
+                        9,
+                        "Request Rejected by ITManager"
+                    );
+                    //history
+                }
+                // ✅ Optional: add note for administration
+                // request.AdministrationNote = notes;
+                _requestRepository.Update(request);
+        }
+        public async Task ApproveRequestByApplicationManager(RequestViewModel model, int actionId, int requestId, string decision, User currentUser, FormData request)
+        {
+          
+                var action = await _requestActionRepository.GetByIdAsync(actionId);
+                //if (action == null) return RedirectToAction("Main", "Account");
+
+
+                if (decision == "approve")
+                {
+                    action.LevelId = 7;
+                    _requestActionRepository.Update(action);
+
+                    // ✅ Optional: add note for administration
+                    // request.AdministrationNote = notes;
+                    _requestRepository.Update(request);
+                    //history
+                    const int initialStatusId = 2; // "in progress" status
+                    await _historyRepository.CreateHistoryAsync(
+                        currentUser,
+                        request,
+                        initialStatusId,
+                        7,
+                        "Request approved by ApplicationManager"
+                    );
+                    //history
+                }
+                else if (decision == "decline")
+                {
+                    action.StatusId = 4; // You can define 99 = Declined in your status table
+                    action.LevelId = 9;   // Stays the same
+                    _requestRepository.Update(request);
+                    //history
+                    const int initialStatusId = 4; // "rejected" status
+                    await _historyRepository.CreateHistoryAsync(
+                        currentUser,
+                        request,
+                        initialStatusId,
+                        9,
+                        "Request Rejected by ApplicationsManager"
+                    );
+                    //history
+                }
+
+        }
+
+    }
+}
