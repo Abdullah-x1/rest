@@ -1,12 +1,14 @@
 ﻿body {
     margin: 0;
+    padding: 0;
     background: linear-gradient(to right, #6dc1a8, #7ab8ea);
     font-family: sans-serif;
+    direction: rtl;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    direction: rtl;
+    gap: 20px;
 }
 
 .form-container {
@@ -135,3 +137,100 @@ label {
     height: 32px;
     filter: brightness(0) saturate(100%) invert(52%) sepia(88%) saturate(350%) hue-rotate(120deg);
 }
+.sidebar {
+    width: 280px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 25px;
+    box-sizing: border-box;
+    direction: rtl;
+    height: 729px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow-y: auto;
+}
+
+.sidebar-title {
+    font-size: 18px;
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #6dc1a8;
+    text-align: center;
+}
+
+    .sidebar table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    .sidebar th {
+        padding: 12px 8px;
+        border-bottom: 2px solid #6dc1a8;
+        text-align: right;
+        font-size: 14px;
+        color: #2c3e50;
+        font-weight: 600;
+    }
+
+    .sidebar td {
+        padding: 10px 8px;
+        border-bottom: 1px solid #eee;
+        text-align: right;
+        font-size: 14px;
+        color: #555;
+    }
+
+    .sidebar tr:hover td {
+        background-color: #f8f9fa;
+    }
+
+.form-container {
+    background-color: white;
+    width: 1288px;
+    height: 729px;
+    display: flex;
+    flex-direction: row;
+    padding: 40px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    position: relative;
+    flex-shrink: 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.right-column {
+    width: 414px;
+    /* margin-left removed */
+}
+
+.left-column {
+    width: 414px;
+}
+.page-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    gap: 1px; /* reduce gap for tighter layout */
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+
+.sidebar {
+    width: 400px;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 25px;
+    box-sizing: border-box;
+    direction: rtl;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    max-height: calc(3 * 40px + 25px * 2 + 40px);
+    overflow-y: auto;
+    transition: height 0.3s ease;
+    /* REMOVE absolute positioning */
+}
+

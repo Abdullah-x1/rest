@@ -1,6 +1,6 @@
 @model DSAR.ViewModels.RequestViewModel
 @{
-    Layout = null;
+   
 }
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -9,11 +9,15 @@
     <title>Step Descriptions</title>
     <link rel="stylesheet" href="~/css/StepDescription.css" asp-append-version="true" />
     <script src="~/css/Script.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/form-handler.js" asp-append-version="true"></script>
+
 
 
 </head>
 <body>
-    <form asp-action="StepDescriptions" method="post" class="form-container">
+    <form asp-action="StepDescriptions" method="post" id="form" class="form-container" enctype="multipart/form-data">
         <h3 style="text-align: center; margin-bottom: 20px;">صلاحيات المعتمدين</h3>
 
         <div class="table-container">
@@ -38,19 +42,26 @@
             <button type="button" class="btn btn-success" onclick="addRow()">+ إضافة صف</button>
             <button type="button" class="btn btn-danger" onclick="deleteLastRow()">حذف صف</button>
         </div>
-        <button type="button" class="arrow arrow-left" onclick="location.href='@Url.Action("Step2", "Request")'">
-            <img src="~/images/arrowL.png" alt="السابق" />
-        </button>
-        @if (User.IsInRole("ApplicationManager"))
-        {
-            <a asp-action="AnalyzerUsers" asp-route-requestId="@Model.FormId">Choose Analyzer</a>
-        }
-        @if (!User.IsInRole("ApplicationManager"))
-        {
-            <button type="submit" class="arrow arrow-right">
-                <img src="~/images/arrowR.png" alt="التالي" />
-            </button>
-        }
+
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <div>
+                <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("Step4", "Request")'">السابق</button>
+            </div>
+
+            <div class="d-flex gap-2">
+                @if (!User.IsInRole("ApplicationManager"))
+                {
+                    <button type="submit" name="action" value="next" class="btn btn-primary">التالي</button>
+                    <button type="button" id="saveButton" name="action" value="save" class="btn btn-success">حفظ</button>
+
+                }
+
+                @if (User.IsInRole("ApplicationManager"))
+                {
+                    <a asp-action="AnalyzerUsers" asp-route-requestId="@Model.FormId" class="btn btn-info">Choose Analyzer</a>
+                }
+            </div>
+        </div>
 
 
     </form>
@@ -62,6 +73,44 @@
         }
     </style>
 
-    
+    <script>
+        let index = document.querySelectorAll("#tableBody tr").length;
+        function addRow() {
+            const tableBody = document.getElementById("tableBody");
+            const buttonContainer = document.querySelector(".button-container");
+            if (tableBody.rows.length < 20) { // Maximum 10 rows
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                            <td><input name="Descriptions[${index}].Description1" class="form-control" /></td>
+                            <td><input name="Descriptions[${index}].Description2" class="form-control" /></td>
+                        `;
+                tableBody.appendChild(row);
+                index++;
+            }
+            // Disable add button if max rows reached
+            if (tableBody.rows.length >= 20) {
+                document.querySelector(".btn-success").disabled = true;
+            }
+        }
+
+        function deleteLastRow() {
+            const tableBody = document.getElementById("tableBody");
+            if (tableBody.rows.length > 1) { // Keep at least 4 rows
+                tableBody.deleteRow(tableBody.rows.length - 1);
+                index--;
+                // Re-enable add button if below max rows
+                if (tableBody.rows.length < 20) {
+                    document.querySelector(".btn-success").disabled = false;
+                }
+            }
+        }</script>
+    <script>
+        setupAjaxSave(
+            'form', // or '#yourFormId' if you give your form an ID
+            '#saveButton',
+            '@Url.Action("StepDescriptions", "Request")'
+        );
+    </script>
+
 </body>
 </html> 

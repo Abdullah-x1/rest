@@ -9,7 +9,7 @@ namespace DSAR.ViewModels
         public int RequestId { get; set; }
         public int ReuqestNumber { get; set; }
         public string UserId { get; set; }
-        public Double RequestNumber { get; set; }
+        public string RequestNumber { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string DepartmentName { get; set; }
@@ -77,23 +77,40 @@ namespace DSAR.ViewModels
         public string? FilePath { get; set; } // Store file name or path
 
         [NotMapped]
-
-        public IFormFile? Attachment1 { get; set; }
-
-        [NotMapped]
-        public IFormFile? Attachment2 { get; set; }
+        public List<IFormFile> Attachment1 { get; set; }
 
         [NotMapped]
-        public IFormFile? Attachment3 { get; set; }
+        public List<IFormFile> Attachment2 { get; set; }
 
         [NotMapped]
-        public IFormFile? WorkflowFile { get; set; }
+        public List<IFormFile> Attachment3 { get; set; }
 
         [NotMapped]
-        public IFormFile? UploadsRequiredFile { get; set; }
+        public List<IFormFile> WorkflowFile { get; set; }
 
         [NotMapped]
-        public IFormFile? DocumentsFile { get; set; }
+        public List<IFormFile> UploadsRequiredFile { get; set; }
+
+        [NotMapped]
+        public List<IFormFile> DocumentsFile { get; set; }
+
+        public List<int> Attachment1Id { get; set; } = new();
+        public List<string> Attachment1Name { get; set; } = new();
+
+        public List<int> Attachment2Id { get; set; }
+        public List<string> Attachment2Name { get; set; }
+
+        public List<int> Attachment3Id { get; set; }
+        public List<string> Attachment3Name { get; set; }
+
+        public List<int> WorkflowAttachmentId { get; set; }
+        public List<string> WorkflowName { get; set; }
+
+        public List<int> UploadsRequiredAttachmentId { get; set; }
+        public List<string> UploadsRequiredName { get; set; }
+
+        public List<int> DocumentsAttachmentId { get; set; }
+        public List<string> DocumentsName { get; set; }
 
         //Descriptions
         public List<DescriptionEntry> Descriptions { get; set; } = new();
@@ -104,6 +121,7 @@ namespace DSAR.ViewModels
         public string? SectionNotes { get; set; }
         public string? DepartmentNotes { get; set; }
 
+        public IEnumerable<HistoryViewModel> History { get; set; }
 
 
 

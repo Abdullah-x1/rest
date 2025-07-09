@@ -321,3 +321,52 @@
     pointer-events: none;
 
 }
+.navigation-buttons button {
+    font-size: 16px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-left {
+    background-color: #ccc;
+    color: #333;
+}
+
+.btn-save {
+    background-color: #287067;
+    color: white;
+}
+
+.btn-next {
+    background-color: #00c9a7;
+    color: white;
+}
+.text-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.attached-files {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+    .attached-files li {
+        background-color: #f2f2f2;
+        padding: 4px 10px;
+        border-radius: 5px;
+        font-size: 13px;
+        max-width: 250px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }

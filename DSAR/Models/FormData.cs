@@ -11,7 +11,7 @@ namespace DSAR.Models
         //change to CreatedBy
         [Required, ForeignKey(nameof(User))]
         public string UserId { get; set; }
-        public Double RequestNumber { get; set; }
+        public string RequestNumber { get; set; }
         public CaseStudy CaseStudy { get; set; } //nav
         public ICollection<History> Histories { get; set; }
 
@@ -49,7 +49,7 @@ namespace DSAR.Models
         public string? DepartmentHeadName { get; set; }
         public string? AdditionalNotes { get; set; } //
         public string? FilePath { get; set; } // Store file name or path
-
+        public bool TermsAccepted { get; set; }
         [NotMapped]
 
         public IFormFile? Attachment1 { get; set; }

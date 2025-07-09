@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DSAR.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250707105630_15")]
-    partial class _15
+    [Migration("20250713204137_new4")]
+    partial class new4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -328,6 +328,9 @@ namespace DSAR.Migrations
                     b.Property<string>("TargetAudience")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("TermsAccepted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Timeline")
                         .HasColumnType("nvarchar(max)");
 
@@ -598,7 +601,10 @@ namespace DSAR.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SessionId")
+                    b.Property<bool>("TermsAccepted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
