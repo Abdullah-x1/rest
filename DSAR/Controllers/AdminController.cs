@@ -116,8 +116,8 @@ namespace DSAR.Controllers
                 LastName = user.LastName,
                 Email = user.Email,
                 CityId = user.CityId,
-                SectionId = user.SectionId ?? 0,
-                DepartmentId = user.DepartmentId ?? 0,
+                SectionId = user.SectionId,
+                DepartmentId = user.DepartmentId,
                 SectorId = user.SectorId ?? 0,
                 Role = roles.FirstOrDefault(),
 

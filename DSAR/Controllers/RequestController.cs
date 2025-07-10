@@ -198,23 +198,23 @@ namespace DSAR.Controllers
 
             if (await _userManager.IsInRoleAsync(currentUser, "DepartmentManager"))
             {
-                requests = await _requestRepository.GetRequestsFromManagersInDepartmentAsync(userId, currentUser.DepartmentId ?? 0);
+                requests = await _requestRepository.GetRequestsFromManagersInDepartmentAsync(userId, currentUser.DepartmentId);
             }
             else if (await _userManager.IsInRoleAsync(currentUser, "SectionManager"))
             {
-                requests = await _requestRepository.GetRequestsForManagerDepartmentAsync(userId, currentUser.SectionId ?? 0);
+                requests = await _requestRepository.GetRequestsForManagerDepartmentAsync(userId, currentUser.SectionId);
             }
             else if (await _userManager.IsInRoleAsync(currentUser, "ITManager"))
             {
-                requests = await _requestRepository.GetRequestsForITManager(userId, currentUser.DepartmentId ?? 0);
+                requests = await _requestRepository.GetRequestsForITManager(userId, currentUser.DepartmentId);
             }
             else if (await _userManager.IsInRoleAsync(currentUser, "Analyzer"))
             {
-                requests = await _requestRepository.GetRequestsForAnalyzer(userId, currentUser.DepartmentId ?? 0);
+                requests = await _requestRepository.GetRequestsForAnalyzer(userId, currentUser.DepartmentId);
             }
             else if (await _userManager.IsInRoleAsync(currentUser, "ApplicationManager"))
             {
-                requests = await _requestRepository.GetRequestsForApplicationManager(userId, currentUser.DepartmentId ?? 0);
+                requests = await _requestRepository.GetRequestsForApplicationManager(userId, currentUser.DepartmentId);
             }
             else
             {
@@ -239,26 +239,34 @@ namespace DSAR.Controllers
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
 
+            var form = await _formRepo.GetById(id);
+            if (form == null) return NotFound();
+
             var request = _requestRepository.GetById(id);
             if (request == null) return NotFound();
 
             var requestAction = await _requestActionRepository.GetRequestActionByRequestIdAsync(request.RequestId);
             if (requestAction == null) return NotFound();
-           
 
-            await _requestActionRepository.ProtectViewPages(id, currentUser, request, requestAction);
+
+            var allowed = await _requestActionRepository.ProtectViewPages(id, currentUser, request, requestAction);
+            if (!allowed)
+            {
+                // Redirect to Main page if not allowed
+                return RedirectToAction("Main", "Account");
+            }
 
             var viewModel = new RequestViewModel
             {
-                RequestId = request.RequestId,
-                Field1 = request.Field1,
-                Field2 = request.Field2,
-                Field3 = request.Field3,
-                Depend = request.Depend,
-                Field4 = request.Field4,
-                Field5 = request.Field5,
-                Field6 = request.Field6,
-                Attachments = request.Attachments?.ToList()
+                RequestId = form.RequestId,
+                Field1 = form.Field1,
+                Field2 = form.Field2,
+                Field3 = form.Field3,
+                Depend = form.Depend,
+                Field4 = form.Field4,
+                Field5 = form.Field5,
+                Field6 = form.Field6,
+                Attachments = form.Attachments?.ToList()
             };
 
             return View(viewModel);
@@ -270,66 +278,20 @@ namespace DSAR.Controllers
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
 
+            var form = await _formRepo.GetById(id);
+            if (form == null) return NotFound();
             var request = _requestRepository.GetById(id);
             if (request == null) return NotFound();
 
             var requestAction = await _requestActionRepository.GetRequestActionByRequestIdAsync(request.RequestId);
             if (requestAction == null) return NotFound();
 
-            int currentDepartmentId = currentUser.DepartmentId ?? 0;
-            int requestDepartmentId = requestAction.DepartmentId;
 
-            // Get roles
-            bool isSectionManager = await _userManager.IsInRoleAsync(currentUser, "SectionManager");
-            bool isDepartmentManager = await _userManager.IsInRoleAsync(currentUser, "DepartmentManager");
-            bool isITManager = await _userManager.IsInRoleAsync(currentUser, "ITManager");
-            bool isApplicationManager = await _userManager.IsInRoleAsync(currentUser, "ApplicationManager");
-            bool isAnalyzer = await _userManager.IsInRoleAsync(currentUser, "Analyzer");
-            bool isUser = await _userManager.IsInRoleAsync(currentUser, "User");
-
-            var form = await _formRepo.GetById(id);
-            if (form == null) return NotFound();
-
-            // ✅ Allow user to view only their own request
-            if (isUser && form.UserId != currentUser.Id)
+            var allowed = await _requestActionRepository.ProtectViewPages(id, currentUser, request, requestAction);
+            if (!allowed)
             {
-                return Forbid();
-            }
-
-            // ✅ Check department match for all managers/analyzers
-            if ((isSectionManager || isDepartmentManager || isITManager || isAnalyzer) &&
-                requestDepartmentId != currentDepartmentId)
-            {
-                return Forbid();
-            }
-
-            var histories = await _historyRepository.GetHistoriesByRequestIdAsync(request.RequestId);
-            var lastHistory = histories.OrderByDescending(h => h.CreationDate).FirstOrDefault();
-            bool isLastActor = lastHistory != null && lastHistory.UserId == currentUser.Id;
-
-            // ... your role checks ...
-
-            if (isSectionManager && requestAction.LevelId != 1 && !isLastActor)
-                return Forbid();
-
-            if (isDepartmentManager && requestAction.LevelId != 2 && !isLastActor)
-                return Forbid();
-
-            if (isITManager && !(requestAction.LevelId == 3 || requestAction.LevelId == 7) && !isLastActor)
-                return Forbid();
-
-            if (isApplicationManager && !(requestAction.LevelId == 4 || requestAction.LevelId == 6) && !isLastActor)
-                return Forbid();
-
-            if (isAnalyzer && requestAction.LevelId != 5 && !isLastActor)
-                return Forbid();
-
-            // Get the last history entry for this request
-
-            // ✅ Final fallback check: allow if user is in any allowed role OR is the last actor
-            if (!isUser && !isSectionManager && !isDepartmentManager && !isITManager && !isApplicationManager && !isAnalyzer && !isLastActor)
-            {
-                return Forbid();
+                // Redirect to Main page if not allowed
+                return RedirectToAction("Main", "Account");
             }
 
 
@@ -359,67 +321,20 @@ namespace DSAR.Controllers
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
 
+            var form = await _formRepo.GetById(id);
+            if (form == null) return NotFound();
             var request = _requestRepository.GetById(id);
             if (request == null) return NotFound();
 
             var requestAction = await _requestActionRepository.GetRequestActionByRequestIdAsync(request.RequestId);
             if (requestAction == null) return NotFound();
 
-         
-            int currentDepartmentId = currentUser.DepartmentId ?? 0;
-            int requestDepartmentId = requestAction.DepartmentId;
 
-            // Get roles
-            bool isSectionManager = await _userManager.IsInRoleAsync(currentUser, "SectionManager");
-            bool isDepartmentManager = await _userManager.IsInRoleAsync(currentUser, "DepartmentManager");
-            bool isITManager = await _userManager.IsInRoleAsync(currentUser, "ITManager");
-            bool isApplicationManager = await _userManager.IsInRoleAsync(currentUser, "ApplicationManager");
-            bool isAnalyzer = await _userManager.IsInRoleAsync(currentUser, "Analyzer");
-            bool isUser = await _userManager.IsInRoleAsync(currentUser, "User");
-
-            var form = await _formRepo.GetById(id);
-            if (form == null) return NotFound();
-
-            // ✅ Allow user to view only their own request
-            if (isUser && form.UserId != currentUser.Id)
+            var allowed = await _requestActionRepository.ProtectViewPages(id, currentUser, request, requestAction);
+            if (!allowed)
             {
-                return Forbid();
-            }
-
-            // ✅ Check department match for all managers/analyzers
-            if ((isSectionManager || isDepartmentManager || isITManager || isAnalyzer) &&
-                requestDepartmentId != currentDepartmentId)
-            {
-                return Forbid();
-            }
-
-            var histories = await _historyRepository.GetHistoriesByRequestIdAsync(request.RequestId);
-            var lastHistory = histories.OrderByDescending(h => h.CreationDate).FirstOrDefault();
-            bool isLastActor = lastHistory != null && lastHistory.UserId == currentUser.Id;
-
-            // ... your role checks ...
-
-            if (isSectionManager && requestAction.LevelId != 1 && !isLastActor)
-                return Forbid();
-
-            if (isDepartmentManager && requestAction.LevelId != 2 && !isLastActor)
-                return Forbid();
-
-            if (isITManager && !(requestAction.LevelId == 3 || requestAction.LevelId == 7) && !isLastActor)
-                return Forbid();
-
-            if (isApplicationManager && !(requestAction.LevelId == 4 || requestAction.LevelId == 6) && !isLastActor)
-                return Forbid();
-
-            if (isAnalyzer && requestAction.LevelId != 5 && !isLastActor)
-                return Forbid();
-
-            // Get the last history entry for this request
-
-            // ✅ Final fallback check: allow if user is in any allowed role OR is the last actor
-            if (!isUser && !isSectionManager && !isDepartmentManager && !isITManager && !isApplicationManager && !isAnalyzer && !isLastActor)
-            {
-                return Forbid();
+                // Redirect to Main page if not allowed
+                return RedirectToAction("Main", "Account");
             }
 
 
@@ -444,66 +359,20 @@ namespace DSAR.Controllers
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
 
+            var form = await _formRepo.GetById(id);
+            if (form == null) return NotFound();
             var request = _requestRepository.GetById(id);
             if (request == null) return NotFound();
 
             var requestAction = await _requestActionRepository.GetRequestActionByRequestIdAsync(request.RequestId);
             if (requestAction == null) return NotFound();
 
-            int currentDepartmentId = currentUser.DepartmentId ?? 0;
-            int requestDepartmentId = requestAction.DepartmentId;
 
-            // Get roles
-            bool isSectionManager = await _userManager.IsInRoleAsync(currentUser, "SectionManager");
-            bool isDepartmentManager = await _userManager.IsInRoleAsync(currentUser, "DepartmentManager");
-            bool isITManager = await _userManager.IsInRoleAsync(currentUser, "ITManager");
-            bool isApplicationManager = await _userManager.IsInRoleAsync(currentUser, "ApplicationManager");
-            bool isAnalyzer = await _userManager.IsInRoleAsync(currentUser, "Analyzer");
-            bool isUser = await _userManager.IsInRoleAsync(currentUser, "User");
-
-            var form = await _formRepo.GetById(id);
-            if (form == null) return NotFound();
-
-            // ✅ Allow user to view only their own request
-            if (isUser && form.UserId != currentUser.Id)
+            var allowed = await _requestActionRepository.ProtectViewPages(id, currentUser, request, requestAction);
+            if (!allowed)
             {
-                return Forbid();
-            }
-
-            // ✅ Check department match for all managers/analyzers
-            if ((isSectionManager || isDepartmentManager || isITManager || isAnalyzer) &&
-                requestDepartmentId != currentDepartmentId)
-            {
-                return Forbid();
-            }
-
-            var histories = await _historyRepository.GetHistoriesByRequestIdAsync(request.RequestId);
-            var lastHistory = histories.OrderByDescending(h => h.CreationDate).FirstOrDefault();
-            bool isLastActor = lastHistory != null && lastHistory.UserId == currentUser.Id;
-
-            // ... your role checks ...
-
-            if (isSectionManager && requestAction.LevelId != 1 && !isLastActor)
-                return Forbid();
-
-            if (isDepartmentManager && requestAction.LevelId != 2 && !isLastActor)
-                return Forbid();
-
-            if (isITManager && !(requestAction.LevelId == 3 || requestAction.LevelId == 7) && !isLastActor)
-                return Forbid();
-
-            if (isApplicationManager && !(requestAction.LevelId == 4 || requestAction.LevelId == 6) && !isLastActor)
-                return Forbid();
-
-            if (isAnalyzer && requestAction.LevelId != 5 && !isLastActor)
-                return Forbid();
-
-            // Get the last history entry for this request
-
-            // ✅ Final fallback check: allow if user is in any allowed role OR is the last actor
-            if (!isUser && !isSectionManager && !isDepartmentManager && !isITManager && !isApplicationManager && !isAnalyzer && !isLastActor)
-            {
-                return Forbid();
+                // Redirect to Main page if not allowed
+                return RedirectToAction("Main", "Account");
             }
 
             var formData = await _formRepo.GetDescriptionsByRequestId(id);
@@ -662,10 +531,7 @@ namespace DSAR.Controllers
             return RedirectToAction("Step3");
         }
 
-        public IActionResult Complete()
-        {
-            return View();
-        }
+        
         public async Task<IActionResult> DownloadAttachment(int attachmentId)
         {
             var attachment = await _formRepo.GetAttachmentById(attachmentId);
@@ -691,58 +557,30 @@ namespace DSAR.Controllers
         [HttpGet]
         public async Task<IActionResult> ApprovePageAsync(int requestId, int actionId)
         {
-            var requestAction = await _requestActionRepository.GetRequestActionByRequestIdAsync(requestId);
             var currentUser = await _userManager.GetUserAsync(User);
-            int currentDepartmentId = currentUser.DepartmentId ?? 0;
-            int requestDepartmentId = requestAction.DepartmentId;
+            if (currentUser == null)
+                return Unauthorized();
 
-            bool isSectionManager = await _userManager.IsInRoleAsync(currentUser, "SectionManager");
-            bool isDepartmentManager = await _userManager.IsInRoleAsync(currentUser, "DepartmentManager");
-            bool isITManager = await _userManager.IsInRoleAsync(currentUser, "ITManager");
-            bool isApplicationManager = await _userManager.IsInRoleAsync(currentUser, "ApplicationManager");
-            bool isAnalyzer = await _userManager.IsInRoleAsync(currentUser, "Analyzer");
+            // ❌ Block regular users from accessing this page
             bool isUser = await _userManager.IsInRoleAsync(currentUser, "User");
-
-            var form = await _formRepo.GetById(requestId);
-            if (form == null) return NotFound();
-
-            // ✅ Allow user to view only their own request
-            if (isUser && form.UserId != currentUser.Id)
-            {
-                return Forbid();
-            }
-
-            // ✅ Check department match for all managers/analyzers
-            if ((isSectionManager || isDepartmentManager || isITManager || isAnalyzer) &&
-                requestDepartmentId != currentDepartmentId)
-            {
-                return Forbid();
-            }
-
-            // ✅ Check LevelId permissions
-            if (isSectionManager && requestAction.LevelId != 1)
+            if (isUser)
                 return Forbid();
 
-            if (isDepartmentManager && requestAction.LevelId != 2)
-                return Forbid();
-
-            if (isITManager && !(requestAction.LevelId == 3 || requestAction.LevelId == 7))
-                return Forbid();
-
-            if (isApplicationManager && !(requestAction.LevelId == 4 || requestAction.LevelId == 6))
-                return Forbid();
-
-            if (isAnalyzer && requestAction.LevelId != 5)
-                return Forbid();
-
-            // ✅ Final fallback check
-            if (!isUser && !isSectionManager && !isDepartmentManager && !isITManager && !isApplicationManager && !isAnalyzer)
-            {
-                return Forbid();
-            }
             var request = _requestRepository.GetById(requestId);
             if (request == null)
                 return NotFound();
+
+            var requestAction = await _requestActionRepository.GetRequestActionByRequestIdAsync(requestId);
+            if (requestAction == null)
+                return NotFound();
+
+            var allowed = await _approveRepository.ProtectApprovePage(requestId, currentUser, request, requestAction);
+            if (!allowed)
+            {
+                // Redirect to Main page if not allowed
+                return RedirectToAction("Main", "Account");
+            }
+
 
             var caseStudy = await _caseStudyRepository.GetByRequestIdAsync(requestId);
 
@@ -848,7 +686,7 @@ namespace DSAR.Controllers
 
                 existingAction.StatusId = 5;
                 existingAction.LevelId = 5;
-                _requestActionRepository.Update(existingAction);
+                _requestActionRepository.UpdateLevel(existingAction);
                 //history
                 const int initialStatusId = 2; // "in progress" status
                 await _historyRepository.CreateHistoryAsync(
@@ -864,6 +702,7 @@ namespace DSAR.Controllers
             return RedirectToAction("Main", "Account");
         }
 
+        [Authorize(Roles = "Analyzer")]
         [HttpGet]
         public async Task<IActionResult> CaseStudy(int requestId)
         {
@@ -935,7 +774,7 @@ namespace DSAR.Controllers
             {
                 existingAction.LevelId = 6;
                 existingAction.StatusId = 2;
-                _requestActionRepository.Update(existingAction);
+                _requestActionRepository.UpdateLevel(existingAction);
                 // history
 
                 const int initialStatusId = 2; // "in progress" status
@@ -959,12 +798,16 @@ namespace DSAR.Controllers
 
             if (action.LevelId == 1)
             {
-                action.StatusId = 3; // Approved
+                action.StatusId = 3;
                 action.LevelId = 9;
-                _requestActionRepository.Update(action);
+                _requestActionRepository.UpdateLevel(action);
+            }
+            else
+            {
+                TempData["Error"] = "You can only cancel requests that are at the initial submission stage.";
             }
 
-            return RedirectToAction("Main", "Account");
+                return RedirectToAction("Main", "Account");
         }
 
         public async Task<IActionResult> DownloadCaseStudyAttachment(int attachmentId)

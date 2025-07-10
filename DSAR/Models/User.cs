@@ -12,9 +12,9 @@ namespace DSAR.Models
 
         public string UserId { get; set; }
         [ForeignKey("Department")]
-        public int? DepartmentId { get; set; }
+        public int DepartmentId { get; set; }
         [ForeignKey("Section")]
-        public int? SectionId { get; set; }
+        public int SectionId { get; set; }
         [ForeignKey("City")]
         public int CityId { get; set; }
 

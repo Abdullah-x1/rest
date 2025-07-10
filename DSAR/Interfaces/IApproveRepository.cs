@@ -11,6 +11,6 @@ namespace DSAR.Interfaces
         Task ApproveRequestByITManager(RequestViewModel model, int actionId, int requestId, string decision, User currentUser, FormData request);
         Task ApproveRequestByApplicationManager(RequestViewModel model, int actionId, int requestId, string decision, User currentUser, FormData request);
 
-        
+        Task<bool> ProtectApprovePage(int requestId, User currentUser, FormData form, RequestActions requestAction);
     }
 }

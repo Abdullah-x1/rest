@@ -70,7 +70,7 @@ namespace DSAR.Repositories
                 //history
             }
 
-            _requestActionRepository.Update(action);
+            _requestActionRepository.UpdateLevel(action);
             _requestRepository.Update(request);
 
         }
@@ -113,7 +113,7 @@ namespace DSAR.Repositories
                 //history
             }
 
-            _requestActionRepository.Update(action);
+            _requestActionRepository.UpdateLevel(action);
 
             // ✅ Update section note
             if (await _userManager.IsInRoleAsync(currentUser, "DepartmentManager"))
@@ -135,7 +135,7 @@ namespace DSAR.Repositories
                     {
                         action.StatusId = 2;
                         action.LevelId = 4;
-                        _requestActionRepository.Update(action);
+                        _requestActionRepository.UpdateLevel(action);
 
                         //history
                         const int initialStatusId = 2; // "in progress" status
@@ -152,7 +152,7 @@ namespace DSAR.Repositories
                     {
                         action.StatusId = 3;
                         action.LevelId = 8;
-                        _requestActionRepository.Update(action);
+                        _requestActionRepository.UpdateLevel(action);
                         //history
                         const int initialStatusId = 3; // "approved" status
                         await _historyRepository.CreateHistoryAsync(
@@ -195,7 +195,7 @@ namespace DSAR.Repositories
                 if (decision == "approve")
                 {
                     action.LevelId = 7;
-                    _requestActionRepository.Update(action);
+                    _requestActionRepository.UpdateLevel(action);
 
                     // ✅ Optional: add note for administration
                     // request.AdministrationNote = notes;
@@ -228,6 +228,48 @@ namespace DSAR.Repositories
                     //history
                 }
 
+        }
+        public async Task<bool> ProtectApprovePage(int requestId, User currentUser, FormData request, RequestActions requestAction)
+        {
+            int currentDepartmentId = currentUser.DepartmentId;
+            int requestDepartmentId = requestAction.DepartmentId;
+
+            // Check manager roles
+            bool isSectionManager = await _userManager.IsInRoleAsync(currentUser, "SectionManager");
+            bool isDepartmentManager = await _userManager.IsInRoleAsync(currentUser, "DepartmentManager");
+            bool isITManager = await _userManager.IsInRoleAsync(currentUser, "ITManager");
+            bool isApplicationManager = await _userManager.IsInRoleAsync(currentUser, "ApplicationManager");
+            bool isAnalyzer = await _userManager.IsInRoleAsync(currentUser, "Analyzer");
+
+            // ✅ Check if manager is allowed to access based on department
+            if ((isSectionManager || isDepartmentManager || isITManager || isApplicationManager || isAnalyzer)
+                && requestDepartmentId != currentDepartmentId)
+            {
+                return false;
+            }
+
+            // ✅ Allow only the correct manager level to access
+            if (isSectionManager && requestAction.LevelId != 1)
+                return false;
+
+            if (isDepartmentManager && requestAction.LevelId != 2)
+                return false;
+
+            if (isITManager && !(requestAction.LevelId == 3 || requestAction.LevelId == 7))
+                return false;
+
+            if (isApplicationManager && !(requestAction.LevelId == 4 || requestAction.LevelId == 6))
+                return false;
+
+            if (isAnalyzer && requestAction.LevelId != 5)
+                return false;
+
+            // Final fallback — no matching role
+            if (!isSectionManager && !isDepartmentManager && !isITManager && !isApplicationManager && !isAnalyzer)
+                return false;
+
+            // If all checks pass, return true
+            return true;
         }
 
     }

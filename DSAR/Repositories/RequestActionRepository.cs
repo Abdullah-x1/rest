@@ -31,8 +31,8 @@ namespace DSAR.Repositories
             {
                 RequestId = request.RequestId,
                 UserId = currentUser.Id,
-                DepartmentId = currentUser.DepartmentId ?? 0,
-                SectionId = currentUser.SectionId ?? 0,
+                DepartmentId = currentUser.DepartmentId,
+                SectionId = currentUser.SectionId,
                 StatusId = 1,
                 LevelId = 1
             };
@@ -49,8 +49,8 @@ namespace DSAR.Repositories
             {
                 RequestId = request.RequestId,
                 UserId = currentUser.Id,
-                DepartmentId = currentUser.DepartmentId ?? 0,
-                SectionId = currentUser.SectionId ?? 0,
+                DepartmentId = currentUser.DepartmentId,
+                SectionId = currentUser.SectionId,
                 StatusId = 1,
                 LevelId = 2
             };
@@ -68,8 +68,8 @@ namespace DSAR.Repositories
             {
                 RequestId = request.RequestId,
                 UserId = currentUser.Id,
-                DepartmentId = currentUser.DepartmentId ?? 0,
-                SectionId = currentUser.SectionId ?? 0,
+                DepartmentId = currentUser.DepartmentId,
+                SectionId = currentUser.SectionId,
                 StatusId = 1,
                 LevelId = 3
             };
@@ -87,8 +87,8 @@ namespace DSAR.Repositories
             {
                 RequestId = request.RequestId,
                 UserId = currentUser.Id,
-                DepartmentId = currentUser.DepartmentId ?? 0,
-                SectionId = currentUser.SectionId ?? 0,
+                DepartmentId = currentUser.DepartmentId,
+                SectionId = currentUser.SectionId,
                 StatusId = 1,
                 LevelId = 4
             };
@@ -143,7 +143,7 @@ namespace DSAR.Repositories
             _context.SaveChanges();
         }
 
-        public void Update(RequestActions request)
+        public void UpdateLevel(RequestActions request)
         {
             // Fix for CS0136 and CS0841: Rename the variable to avoid conflict with the parameter name.
             var existingRequest = _context.RequestActions.Find(request.ActionId);
@@ -197,9 +197,9 @@ namespace DSAR.Repositories
 
         }
 
-        public async Task ProtectViewPages(int Id, User currentUser, FormData request, RequestActions requestActions)
+        public async Task<bool> ProtectViewPages(int id, User currentUser, FormData request, RequestActions requestActions)
         {
-            int currentDepartmentId = currentUser.DepartmentId ?? 0;
+            int currentDepartmentId = currentUser.DepartmentId;
             int requestDepartmentId = requestActions.DepartmentId;
 
             // Get roles
@@ -209,47 +209,45 @@ namespace DSAR.Repositories
             bool isApplicationManager = await _userManager.IsInRoleAsync(currentUser, "ApplicationManager");
             bool isAnalyzer = await _userManager.IsInRoleAsync(currentUser, "Analyzer");
             bool isUser = await _userManager.IsInRoleAsync(currentUser, "User");
+            var histories = await _historyRepository.GetHistoriesByRequestIdAsync(request.RequestId);
+            bool isAnyActor = histories.Any(h => h.UserId == currentUser.Id);
 
-            
-
-            // ✅ Allow user to view only their own request
             if (isUser && request.UserId != currentUser.Id)
             {
-                Forbid();
+                return false;
             }
 
             // ✅ Check department match for all managers/analyzers
             if ((isSectionManager || isDepartmentManager || isITManager || isAnalyzer) &&
                 requestDepartmentId != currentDepartmentId)
             {
-                Forbid();
+                return false;
             }
 
             // Get all history entries for this request
-            var histories = await _historyRepository.GetHistoriesByRequestIdAsync(request.RequestId);
-            bool isAnyActor = histories.Any(h => h.UserId == currentUser.Id);
+
 
             // ... your role checks ...
 
             if (isSectionManager && requestActions.LevelId != 1 && !isAnyActor)
-                Forbid();
+                return false;
 
             if (isDepartmentManager && requestActions.LevelId != 2 && !isAnyActor)
-                Forbid();
+                return false;
 
             if (isITManager && !(requestActions.LevelId == 3 || requestActions.LevelId == 7) && !isAnyActor)
-                Forbid();
+                return false;
 
             if (isApplicationManager && !(requestActions.LevelId == 4 || requestActions.LevelId == 6) && !isAnyActor)
-                Forbid();
+                return false;
 
             if (isAnalyzer && requestActions.LevelId != 5 && !isAnyActor)
-                Forbid();
+                return false;
 
             // Final fallback
             if (!isUser && !isSectionManager && !isDepartmentManager && !isITManager && !isApplicationManager && !isAnalyzer && !isAnyActor)
             {
-                Forbid();
+                return false;
             }
 
             // Get the last history entry for this request
@@ -257,14 +255,13 @@ namespace DSAR.Repositories
             // ✅ Final fallback check: allow if user is in any allowed role OR is the last actor
             if (!isUser && !isSectionManager && !isDepartmentManager && !isITManager && !isApplicationManager && !isAnalyzer && !isAnyActor)
             {
-                Forbid();
+                return false;
             }
+
+            return true;
         }
 
-        private void Forbid()
-        {
-            throw new NotImplementedException();
-        }
+     
     }
 }
 

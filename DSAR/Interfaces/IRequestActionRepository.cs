@@ -9,7 +9,7 @@ namespace DSAR.Interfaces
         IEnumerable<RequestActions> GetAll();
         RequestActions GetById(string Id);
         //void Create(RequestActions request);
-        void Update(RequestActions request);
+        void UpdateLevel(RequestActions request);
         void Delete(string Id);
         void Save();
         public RequestActions Create(RequestViewModel viewModel,User currentUser, FormData request);
@@ -23,7 +23,7 @@ namespace DSAR.Interfaces
         Task<List<RequestActions>> GetCompeleteRequestsByUserId(string UserId);
         Task<List<RequestActions>> GetRequestsStillInProcessByUserId(string UserId);
 
-        Task ProtectViewPages(int Id, User currentUser, FormData request,RequestActions requestActions);
+        Task<bool> ProtectViewPages(int Id, User currentUser, FormData form, RequestActions requestActions);
 
 
 
