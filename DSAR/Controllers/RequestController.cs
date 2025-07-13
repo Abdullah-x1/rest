@@ -318,7 +318,7 @@ namespace DSAR.Controllers
                 RepeatLimit = form.RepeatLimit,
                 DepartmentName = form.Department.DepartmentName,
                 Fees = form.Fees,
-                Cities = form.Cities,
+                CityId = form.CityId,
                 TargetAudience = form.TargetAudience,
                 DepName = form.Departments,
                 ExpectedOutput1 = form.ExpectedOutput1,

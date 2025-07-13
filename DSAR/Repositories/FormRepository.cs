@@ -22,6 +22,8 @@ namespace DSAR.Repository
         private readonly AppDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IRequestRepository _requestRepository;
+        private readonly ICityRepository _cityRepository;
+
 
         private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
         {
@@ -29,11 +31,12 @@ namespace DSAR.Repository
             WriteIndented = false
         };
 
-        public FormRepository(AppDbContext context, IHttpContextAccessor httpContextAccessor,IRequestRepository requestRepository)
+        public FormRepository(AppDbContext context, IHttpContextAccessor httpContextAccessor, IRequestRepository requestRepository,ICityRepository cityRepository)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             _requestRepository = requestRepository;
+            _cityRepository = cityRepository;
         }
 
         #region Main Form Operations
@@ -173,9 +176,9 @@ namespace DSAR.Repository
                 Field6 = formData.Field6,
                 RepeatLimit = formData.RepeatLimit,
                 Fees = formData.Fees,
-                Cities = formData.Cities,
+                //Cities = formData.Cities,
                 TargetAudience = formData.TargetAudience,
-                
+
                 ExpectedOutput1 = formData.ExpectedOutput1,
                 ExpectedOutput2 = formData.ExpectedOutput2,
                 ApprovedTemplate = formData.ApprovedTemplate,
@@ -190,11 +193,17 @@ namespace DSAR.Repository
                 DepartmentHeadName = formData.DepartmentHeadName,
                 AdditionalNotes = formData.AdditionalNotes,
                 Departments = _requestRepository.GetAllDepartments()
-    .Select(d => new SelectListItem
-    {
-        Value = d.DepartmentId.ToString(),       // or d.DepartmentId, depending on your model
-        Text = d.DepartmentName             // or d.DepartmentName or similar
-    }).ToList()
+                .Select(d => new SelectListItem
+                {
+                    Value = d.DepartmentId.ToString(),
+                    Text = d.DepartmentName
+                }).ToList(),
+                Cities = _cityRepository.GetAll()
+                .Select(d => new SelectListItem
+                {
+                    Value = d.CityId.ToString(),
+                    Text = d.CityName
+                }).ToList()
 
             };
             requestViewModel.Attachment1Id = snapshot.Attachments
@@ -319,7 +328,7 @@ namespace DSAR.Repository
             currentData.Email = data.Email;
             currentData.RepeatLimit = data.RepeatLimit;
             currentData.Fees = data.Fees;
-            currentData.Cities = data.Cities;
+            currentData.CityId = data.CityId;
             currentData.TargetAudience = data.TargetAudience;
             currentData.DepartmentId = data.DepartmentId;
             currentData.ExpectedOutput1 = data.ExpectedOutput1;
@@ -366,7 +375,7 @@ namespace DSAR.Repository
                    current.Email != incoming.Email ||
                    current.RepeatLimit != incoming.RepeatLimit ||
                    current.Fees != incoming.Fees ||
-                   current.Cities != incoming.Cities ||
+                   current.CityId != incoming.CityId ||
                    current.TargetAudience != incoming.TargetAudience ||
                    current.DepartmentId != incoming.DepartmentId ||
                    current.ExpectedOutput1 != incoming.ExpectedOutput1 ||
@@ -381,7 +390,7 @@ namespace DSAR.Repository
         {
             var snapshot = await GetOrCreateSnapshotAsync();
             var snapshotData = snapshot.GetFormData(_jsonOptions);
-            
+
 
             // Map all properties from JSON to the final form data
             data.Name = snapshotData.Name;
@@ -396,7 +405,7 @@ namespace DSAR.Repository
             data.Field6 = snapshotData.Field6;
             data.RepeatLimit = snapshotData.RepeatLimit;
             data.Fees = snapshotData.Fees;
-            data.Cities = snapshotData.Cities;
+            data.CityId = snapshotData.CityId;
             data.TargetAudience = snapshotData.TargetAudience;
             data.DepartmentId = snapshotData.DepartmentId;
             data.ExpectedOutput1 = snapshotData.ExpectedOutput1;
@@ -412,7 +421,7 @@ namespace DSAR.Repository
             data.Cities2 = snapshotData.Cities2;
             data.DepartmentHeadName = snapshotData.DepartmentHeadName;
             data.AdditionalNotes = snapshotData.AdditionalNotes;
-            
+
 
             // Handle attachments
             foreach (var attachment in snapshot.Attachments)
@@ -441,13 +450,13 @@ namespace DSAR.Repository
                 Field1 = data.Field1,
                 Field2 = data.Field2,
                 Field3 = data.Field3,
-                Depend =    data.Depend,
+                Depend = data.Depend,
                 Field4 = data.Field4,
                 Field5 = data.Field5,
                 Field6 = data.Field6,
                 RepeatLimit = data.RepeatLimit,
                 Fees = data.Fees,
-                Cities = data.Cities,
+                CityId = data.CityId,
                 TargetAudience = data.TargetAudience,
                 DepartmentId = data.DepartmentId,
                 ExpectedOutput1 = data.ExpectedOutput1,
@@ -467,11 +476,9 @@ namespace DSAR.Repository
                 SectionNotes = data.SectionNotes,
                 DepartmentNotes = data.DepartmentNotes,
                 Attachments = data.Attachments,
-                
+
             };
-            // Fix for CS0029: Cannot implicitly convert type 'string' to 'int'
-            // The issue is that `RequestNumber` is defined as an `int` in the `FormData` class, but the code is attempting to assign a string value to it.
-            // To resolve this, we need to either change the type of `RequestNumber` to `string` in the `FormData` class or modify the assignment to ensure it matches the `int` type.
+
             int userRequestCount = await _context.Forms
                 .Include(r => r.User)
             .Where(r => r.User.UserId == UserId)
@@ -667,7 +674,7 @@ namespace DSAR.Repository
             if (!allowedExtensions.Contains(extension))
                 throw new InvalidOperationException($"Unsupported file type: {extension}");
 
-        
+
 
             // Remove any existing attachments for this field
             var existing = snapshot.Attachments

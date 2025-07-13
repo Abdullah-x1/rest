@@ -11,6 +11,7 @@ namespace DSAR.Models
         //change to CreatedBy
         [Required, ForeignKey(nameof(User))]
         public string UserId { get; set; }
+        public int CityId { get; set; }
         public int DepartmentId { get; set; }
         public Double RequestNumber { get; set; }
         public CaseStudy CaseStudy { get; set; } //nav

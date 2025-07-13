@@ -52,8 +52,8 @@ namespace DSAR.ViewModels
         [Required(ErrorMessage = "الرسوم مطلوبه")]
 
         public string Fees { get; set; }
-        public string? Cities { get; set; }
-        [Required(ErrorMessage = "الفئة المستهدفة مطلوبه")]
+        //public string? Cities { get; set; }
+        //[Required(ErrorMessage = "الفئة المستهدفة مطلوبه")]
 
         public string TargetAudience { get; set; }
         [Required(ErrorMessage = " اسم الإدارة مطلوب")]
@@ -135,6 +135,8 @@ namespace DSAR.ViewModels
         public int DepartmentId { get; set; }
 
         public List<SelectListItem> Departments { get; set; } = new List<SelectListItem>();
+        public int CityId { get; set; }
+        public List<SelectListItem> Cities { get; set; } = new List<SelectListItem>();
 
     }
 }
