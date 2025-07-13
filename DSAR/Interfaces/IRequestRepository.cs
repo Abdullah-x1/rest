@@ -25,7 +25,9 @@ namespace DSAR.Interfaces
         Task<List<FormData>> GetRequestsForAnalyzer(string AnalyzerId, int userDepartmentId);
         Task<List<FormData>> GetRequestsForCaseStudyUsers(string CaseStudyId, int userDepartmentId);
         Task<List<FormData>> GetRequestsByUserId(string UserId);
+        IEnumerable<Department> GetAllDepartments();
 
+        Task<FormData?> GetDepartmentNameByRequestId(int id);
         Task<bool> SendEmailAsync(RequestViewModel request, User currentUser);
 
 

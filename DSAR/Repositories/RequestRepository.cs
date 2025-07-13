@@ -291,7 +291,21 @@ namespace DSAR.Repositories
 
         }
 
-       
+        public async Task<FormData?> GetDepartmentNameByRequestId(int id)
+        {
+            var form = await _context.Forms
+    .Include(f => f.Department) // ✅ Include related department
+    .FirstOrDefaultAsync(f => f.RequestId == id);
+
+            return form;
+
+        }
+
+        public IEnumerable<Department> GetAllDepartments()
+        {
+            var departments = _context.Department;
+            return departments;
+        }
         public async Task<bool> SendEmailAsync(RequestViewModel request, User currentUser)
         {
             try

@@ -306,7 +306,9 @@ namespace DSAR.Controllers
                 // Redirect to Main page if not allowed
                 return RedirectToAction("Main", "Account");
             }
+            await _requestRepository.GetDepartmentNameByRequestId(id);
 
+            await _requestRepository.GetDepartmentNameByRequestId(id); 
 
             var viewModel = new RequestViewModel
             {
@@ -314,10 +316,11 @@ namespace DSAR.Controllers
                 Name = form.Name,
                 Email = form.Email,
                 RepeatLimit = form.RepeatLimit,
+                DepartmentName = form.Department.DepartmentName,
                 Fees = form.Fees,
                 Cities = form.Cities,
                 TargetAudience = form.TargetAudience,
-                DepName = form.DepName,
+                DepName = form.Departments,
                 ExpectedOutput1 = form.ExpectedOutput1,
                 ExpectedOutput2 = form.ExpectedOutput2,
                 ApprovedTemplate = form.ApprovedTemplate,
@@ -654,64 +657,7 @@ namespace DSAR.Controllers
 
 
         //////////////////////
-        [Authorize(Roles = "SectionManager,DepartmentManager,ITManager,Analyzer")]
-        public async Task<IActionResult> MyRequest2()
-        {
-            var currentUser = await _userManager.GetUserAsync(User);
-            if (currentUser == null)
-                return Unauthorized();
-
-            // ❌ Block regular users from accessing this page
-            bool isUser = await _userManager.IsInRoleAsync(currentUser, "User");
-            if (isUser)
-                return Forbid();
-
-            var request = _requestRepository.GetById(requestId);
-            if (request == null)
-                return NotFound();
-
-            var requestAction = await _requestActionRepository.GetRequestActionByRequestIdAsync(requestId);
-            if (requestAction == null)
-                return NotFound();
-
-            var allowed = await _approveRepository.ProtectApprovePage(requestId, currentUser, request, requestAction);
-            if (!allowed)
-            {
-                // Redirect to Main page if not allowed
-                return RedirectToAction("Main", "Account");
-            }
-
-
-            var caseStudy = await _caseStudyRepository.GetByRequestIdAsync(requestId);
-
-            List<CaseStudyAttachmentMetadata> attachments = null;
-            if (caseStudy != null)
-            {
-                attachments = await _caseStudyRepository.GetAttachmentsByCaseStudyIdAsync(caseStudy.CaseId);
-            }
-            ViewBag.Attachments = attachments;
-
-            var action = await _requestActionRepository.GetByIdAsync(actionId);
-            if (action == null)
-                return NotFound();
-
-            var viewModel = new RequestViewModel
-            {
-                RequestId = request.RequestId,
-                ActionId = actionId,
-                // ServiceName = request.ServiceName,
-                SectionNotes = request.SectionNotes,
-                DepartmentNotes = request.DepartmentNotes,
-
-                WorkTeam = caseStudy?.WorkTeam,
-                Notes = caseStudy?.Notes,
-                restriction = caseStudy?.restriction,
-                LevelId = action.LevelId
-            };
-
-            return View(viewModel);
-        }
-
+        
 
 
 

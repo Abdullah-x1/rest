@@ -1,15 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DSAR.Data;
+﻿using DSAR.Data;
 using DSAR.Models;
 using DSAR.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace DSAR.Repositories
 {
+
     public class AdminRepository : IAdminRepository
     {
         private readonly UserManager<User> _userManager;
@@ -148,6 +151,118 @@ namespace DSAR.Repositories
                 ra.StatusId = statusId;
                 await _db.SaveChangesAsync();
             }
+
         }
+
+
+        //Dropdown sources for Users
+
+        public async Task<List<SelectListItem>> GetAllCitiesAsync() =>
+            await _db.City
+                     .Select(c => new SelectListItem(c.CityName, c.CityId.ToString()))
+                     .ToListAsync();
+
+        public async Task<List<SelectListItem>> GetAllSectionsAsync() =>
+            await _db.Section
+                     .Select(s => new SelectListItem(s.SectionName, s.SectionId.ToString()))
+                     .ToListAsync();
+
+        public async Task<List<SelectListItem>> GetAllDepartmentsAsync() =>
+            await _db.Department
+                     .Select(d => new SelectListItem(d.DepartmentName, d.DepartmentId.ToString()))
+                     .ToListAsync();
+
+        public async Task<List<SelectListItem>> GetAllSectorsAsync() =>
+            await _db.Sector
+                     .Select(s => new SelectListItem(s.SectorName, s.SectorId.ToString()))
+                     .ToListAsync();
+
+        public async Task<List<SelectListItem>> GetAllRolesAsync() =>
+            await _roleManager.Roles
+                              .Select(r => new SelectListItem(r.Name, r.Name))
+                              .ToListAsync();
+
+        //for ChangeLevel
+
+        public async Task<List<SelectListItem>> GetAllowedLevelsAsync(int currentLevelId) =>
+            await _db.Level
+                     .Where(l => l.LevelId < currentLevelId)
+                     .Select(l => new SelectListItem(l.LevelName, l.LevelId.ToString()))
+                     .ToListAsync();
+
+        public async Task<List<SelectListItem>> GetAllStatusesAsync() =>
+            await _db.Status
+                     .Select(s => new SelectListItem(s.StatusName, s.StatusId.ToString()))
+                     .ToListAsync();
+
+
+        //collect all dropdowns
+
+
+        public async Task<InsertUserViewModel> BuildInsertUserViewModelAsync()
+        {
+            return new InsertUserViewModel
+            {
+                Cities = await GetAllCitiesAsync(),
+                Sections = await GetAllSectionsAsync(),
+                Departments = await GetAllDepartmentsAsync(),
+                Sectors = await GetAllSectorsAsync(),
+                Roles = await GetAllRolesAsync()
+            };
+        }
+
+        public async Task<EditUserViewModel> BuildEditUserViewModelAsync(string id)
+        {
+            var user = await GetUserByIdAsync(id);
+            var roles = await GetUserRolesAsync(user);
+
+            var vm = new EditUserViewModel
+            {
+                IdentityGuid = user.Id,
+                NationalId = user.UserId,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                CityId = user.CityId,
+                SectionId = user.SectionId,
+                DepartmentId = user.DepartmentId,
+                SectorId = user.SectorId ?? 0,
+                Role = roles.FirstOrDefault()
+            };
+            await PopulateUserDropdownsAsync(vm);
+            return vm;
+        }
+
+        public async Task PopulateUserDropdownsAsync(EditUserViewModel vm)
+        {
+            vm.Cities = await GetAllCitiesAsync();
+            vm.Sections = await GetAllSectionsAsync();
+            vm.Departments = await GetAllDepartmentsAsync();
+            vm.Sectors = await GetAllSectorsAsync();
+            vm.Roles = await GetAllRolesAsync();
+        }
+
+        public async Task<ChangeLevelViewModel> BuildChangeLevelViewModelAsync(int requestId)
+        {
+            var ra = await _db.RequestActions
+                .Include(x => x.Levels)
+                .FirstOrDefaultAsync(x => x.RequestId == requestId);
+            if (ra == null) return null;
+
+            var vm = new ChangeLevelViewModel
+            {
+                RequestId = requestId,
+                CurrentLevelId = ra.LevelId,
+                CurrentLevelName = ra.Levels.LevelName,
+                SelectedLevelId = ra.LevelId,
+                SelectedStatusId = ra.StatusId,
+
+                Levels = await GetAllowedLevelsAsync(ra.LevelId),
+                Statuses = await GetAllStatusesAsync()
+            };
+
+            return vm;
+        }
+
     }
 }

@@ -11,6 +11,7 @@ namespace DSAR.Models
         //change to CreatedBy
         [Required, ForeignKey(nameof(User))]
         public string UserId { get; set; }
+        public int DepartmentId { get; set; }
         public Double RequestNumber { get; set; }
         public CaseStudy CaseStudy { get; set; } //nav
         public ICollection<History> Histories { get; set; }
@@ -32,7 +33,7 @@ namespace DSAR.Models
         public string? Fees { get; set; }
         public string? Cities { get; set; }
         public string? TargetAudience { get; set; }
-        public string? DepName { get; set; }
+        public string? Departments { get; set; }
         public string? ExpectedOutput1 { get; set; }
         public string? ExpectedOutput2 { get; set; }
         public string? ApprovedTemplate { get; set; }
@@ -77,6 +78,7 @@ namespace DSAR.Models
         //public User Manager { get; set; }
         public RequestActions? RequestActions { get; set; }
 
+        public Department Department { get; set; } // Navigation property
 
         //Metadata
 

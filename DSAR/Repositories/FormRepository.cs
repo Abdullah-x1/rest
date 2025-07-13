@@ -1,8 +1,10 @@
 ﻿using DSAR.Data;
+using DSAR.Interfaces;
 using DSAR.Models;
 using DSAR.Repository;
 using DSAR.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -19,16 +21,19 @@ namespace DSAR.Repository
     {
         private readonly AppDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IRequestRepository _requestRepository;
+
         private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
             WriteIndented = false
         };
 
-        public FormRepository(AppDbContext context, IHttpContextAccessor httpContextAccessor)
+        public FormRepository(AppDbContext context, IHttpContextAccessor httpContextAccessor,IRequestRepository requestRepository)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
+            _requestRepository = requestRepository;
         }
 
         #region Main Form Operations
@@ -170,7 +175,7 @@ namespace DSAR.Repository
                 Fees = formData.Fees,
                 Cities = formData.Cities,
                 TargetAudience = formData.TargetAudience,
-                DepName = formData.DepName,
+                
                 ExpectedOutput1 = formData.ExpectedOutput1,
                 ExpectedOutput2 = formData.ExpectedOutput2,
                 ApprovedTemplate = formData.ApprovedTemplate,
@@ -183,8 +188,14 @@ namespace DSAR.Repository
                 SystemNeeded = formData.SystemNeeded,
                 Cities2 = formData.Cities2,
                 DepartmentHeadName = formData.DepartmentHeadName,
-                AdditionalNotes = formData.AdditionalNotes
-               
+                AdditionalNotes = formData.AdditionalNotes,
+                Departments = _requestRepository.GetAllDepartments()
+    .Select(d => new SelectListItem
+    {
+        Value = d.DepartmentId.ToString(),       // or d.DepartmentId, depending on your model
+        Text = d.DepartmentName             // or d.DepartmentName or similar
+    }).ToList()
+
             };
             requestViewModel.Attachment1Id = snapshot.Attachments
         .Where(a => a.FieldName == "Step1")
@@ -310,7 +321,7 @@ namespace DSAR.Repository
             currentData.Fees = data.Fees;
             currentData.Cities = data.Cities;
             currentData.TargetAudience = data.TargetAudience;
-            currentData.DepName = data.DepName;
+            currentData.DepartmentId = data.DepartmentId;
             currentData.ExpectedOutput1 = data.ExpectedOutput1;
             currentData.ExpectedOutput2 = data.ExpectedOutput2;
             currentData.ApprovedTemplate = data.ApprovedTemplate;
@@ -357,7 +368,7 @@ namespace DSAR.Repository
                    current.Fees != incoming.Fees ||
                    current.Cities != incoming.Cities ||
                    current.TargetAudience != incoming.TargetAudience ||
-                   current.DepName != incoming.DepName ||
+                   current.DepartmentId != incoming.DepartmentId ||
                    current.ExpectedOutput1 != incoming.ExpectedOutput1 ||
                    current.ExpectedOutput2 != incoming.ExpectedOutput2 ||
                    current.ApprovedTemplate != incoming.ApprovedTemplate ||
@@ -387,7 +398,7 @@ namespace DSAR.Repository
             data.Fees = snapshotData.Fees;
             data.Cities = snapshotData.Cities;
             data.TargetAudience = snapshotData.TargetAudience;
-            data.DepName = snapshotData.DepName;
+            data.DepartmentId = snapshotData.DepartmentId;
             data.ExpectedOutput1 = snapshotData.ExpectedOutput1;
             data.ExpectedOutput2 = snapshotData.ExpectedOutput2;
             data.ApprovedTemplate = snapshotData.ApprovedTemplate;
@@ -401,6 +412,7 @@ namespace DSAR.Repository
             data.Cities2 = snapshotData.Cities2;
             data.DepartmentHeadName = snapshotData.DepartmentHeadName;
             data.AdditionalNotes = snapshotData.AdditionalNotes;
+            
 
             // Handle attachments
             foreach (var attachment in snapshot.Attachments)
@@ -437,7 +449,7 @@ namespace DSAR.Repository
                 Fees = data.Fees,
                 Cities = data.Cities,
                 TargetAudience = data.TargetAudience,
-                DepName = data.DepName,
+                DepartmentId = data.DepartmentId,
                 ExpectedOutput1 = data.ExpectedOutput1,
                 ExpectedOutput2 = data.ExpectedOutput2,
                 ApprovedTemplate = data.ApprovedTemplate,

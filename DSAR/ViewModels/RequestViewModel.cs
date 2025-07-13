@@ -1,4 +1,5 @@
 ﻿using DSAR.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -130,5 +131,10 @@ namespace DSAR.ViewModels
 
         public ICollection<AttachmentMetadata> Attachments { get; set; } = new List<AttachmentMetadata>();
         //public ICollection<DescriptionEntry> Descriptions { get; set; } = new List<DescriptionEntry>();
+
+        public int DepartmentId { get; set; }
+
+        public List<SelectListItem> Departments { get; set; } = new List<SelectListItem>();
+
     }
 }

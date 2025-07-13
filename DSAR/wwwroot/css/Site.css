@@ -1,0 +1,45 @@
+﻿/* make header shorter */
+.site-header {
+    height: 100px; /* adjust as needed */
+}
+
+/* ensure container div fills that height */
+.site-header .container-fluid {
+    height: 100%;
+}
+
+/* shrink logo */
+.header-logo {
+    height: 100px; /* was 40px before */
+}
+
+/* smaller nav-links */
+.header-link {
+    padding: 0 1.5rem; /* less horizontal padding */
+    font-size: 2.2rem; /* a bit smaller text */
+    line-height: 50px; /* vertically center in header */
+    color: #000; /* override if needed */
+}
+
+/* shrink logout icon */
+.header-logout {
+    height: 24px;
+}
+
+/* push page content below the fixed header */
+.main-content {
+    padding-top: 50px; /* same as .site-header height */
+}
+
+
+/* make footer stick */
+.site-footer {
+    background-color: #00246B;
+    color: #fff;
+    height: 40px; /* matches body padding-bottom */
+    line-height: 40px; /* vertical centering */
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 1030; /* above other content */
+}

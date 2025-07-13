@@ -1,24 +1,58 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="rtl">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/DSAR.styles.css" asp-append-version="true" />
+    <title>@ViewData["Title"] - DSAR</title>
 </head>
 <body>
-  
-    <div class="">
-        <main role="main" class="pb-3">
+    <!-- fixed header -->
+    <header class="site-header bg-light border-bottom fixed-top" dir="rtl">
+        <div class="container-fluid d-flex justify-content-between align-items-center h-100 px-3">
+            <div class="d-flex align-items-center">
+                <a asp-controller="Account" asp-action="Main" class="me-3">
+                    <img src="~/images/icon.png" alt="Logo" class="header-logo" />
+                </a>
+                <a asp-controller="Account" asp-action="Main" class="nav-link header-link">
+                    الرئيسية
+                </a>
+                <a asp-controller="Request" asp-action="MyRequest" class="nav-link header-link">
+                    طلباتي
+                </a>
+            </div>
+            <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                <button type="submit" class="btn btn-link p-0">
+                    <img src="~/images/logout.png" alt="Logout" class="header-logout" />
+                </button>
+            </form>
+        </div>
+    </header>
+
+    <!-- pad content so it never sits under header _or_ footer -->
+    <div class="main-content">
+        <main role="main">
             @RenderBody()
         </main>
     </div>
 
- 
+    <!-- fixed footer -->
+    <footer class="site-footer text-center">
+        <div class="container-fluid">
+            جميع الحقوق محفوظة © الهيئة الملكية للجبيل وينبع 2025
+        </div>
+    </footer>
+
+    <!-- scripts -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>
+
+
+
