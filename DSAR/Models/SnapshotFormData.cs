@@ -9,7 +9,7 @@ namespace DSAR.Models
     public class SnapshotFormData
     {
         public int Id { get; set; }
-        public string SessionId { get; set; }
+        public string CookieId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [Column(TypeName = "nvarchar(max)")]

@@ -321,3 +321,25 @@
     pointer-events: none;
 
 }
+.navigation-buttons button {
+    font-size: 16px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-left {
+    background-color: #ccc;
+    color: #333;
+}
+
+.btn-save {
+    background-color: #287067;
+    color: white;
+}
+
+.btn-next {
+    background-color: #00c9a7;
+    color: white;
+}

@@ -80,7 +80,9 @@ namespace DSAR.ViewModels
 
         public IFormFile? Attachment1 { get; set; }
 
+
         [NotMapped]
+
         public IFormFile? Attachment2 { get; set; }
 
         [NotMapped]
@@ -95,6 +97,24 @@ namespace DSAR.ViewModels
         [NotMapped]
         public IFormFile? DocumentsFile { get; set; }
 
+        public int Attachment1Id { get; set; }
+        public string Attachment1Name { get; set; }
+
+        public int Attachment2Id { get; set; }
+        public string Attachment2Name { get; set; }
+
+        public int Attachment3Id { get; set; }
+        public string Attachment3Name { get; set; }
+
+        public int WorkflowAttachmentId { get; set; }
+        public string WorkflowName { get; set; }
+
+        public int UploadsRequiredAttachmentId { get; set; }
+        public string UploadsRequiredName { get; set; }
+
+        public int DocumentsAttachmentId { get; set; }
+        public string DocumentsName { get; set; }
+
         //Descriptions
         public List<DescriptionEntry> Descriptions { get; set; } = new();
         public string ReturnUrl { get; set; } // Add this property
@@ -104,6 +124,7 @@ namespace DSAR.ViewModels
         public string? SectionNotes { get; set; }
         public string? DepartmentNotes { get; set; }
 
+        public IEnumerable<HistoryViewModel> History { get; set; }
 
 
 

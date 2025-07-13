@@ -2,7 +2,6 @@
 
 @{
     var step1Attachment = Model.Attachments.FirstOrDefault(a => a.FieldName == "Step1");
-    Layout = null;
 }
 
 <!DOCTYPE html>
@@ -11,57 +10,85 @@
     <meta charset="UTF-8" />
     <title>عرض الطلب - Step 1 (عرض)</title>
     <link rel="stylesheet" href="~/css/StepsView.css" asp-append-version="true" />
+    
+
+
 
 </head>
 <body>
-    <div class="form-container">
-        <div class="right-column column">
-            <input type="text" class="in1" value="@Model.Field1" readonly />
-            <input type="text" class="in1" value="@Model.Field2" readonly />
-            <textarea class="in2" readonly>@Model.Field3</textarea>
+    <div class="page-wrapper">
+        <div class="sidebar">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>المستوى</th>
+                            <th>الحالة</th>
+                            <th>الدور</th>
+                            <th>معلومات إضافية</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var entry in Model.History)
+                        {
+                            <tr>
+                                <td>@entry.LevelName</td>
+                                <td>@entry.StatusName</td>
+                                <td>@entry.RoleName</td>
+                                <td>@entry.Information</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
 
-            <div class="radio-section">
-                <label>هل توجد اعتمادية على خدمات حالية؟</label>
-                <div class="radio-options">
-                    <label><input type="radio" name="Depend" value="yes" @(Model.Depend == "yes" ? "checked" : "") disabled /> نعم</label>
-                    <label><input type="radio" name="Depend" value="no" @(Model.Depend == "no" ? "checked" : "") disabled /> لا</label>
+        <div class="form-container">
+            <div class="right-column column">
+                <input type="text" class="in1" value="@Model.Field1" readonly />
+                <input type="text" class="in1" value="@Model.Field2" readonly />
+                <textarea class="in2" readonly>@Model.Field3</textarea>
+
+                <div class="radio-section">
+                    <label>هل توجد اعتمادية على خدمات حالية؟</label>
+                    <div class="radio-options">
+                        <label><input type="radio" name="Depend" value="yes" @(Model.Depend == "yes" ? "checked" : "") disabled /> نعم</label>
+                        <label><input type="radio" name="Depend" value="no" @(Model.Depend == "no" ? "checked" : "") disabled /> لا</label>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="left-column column">
-            <input type="text" class="in1" value="@Model.Field4" readonly />
-            <input type="text" class="in1" value="@Model.Field5" readonly />
-            <input type="text" class="in3" value="@Model.Field6" readonly />
+            <div class="left-column column">
+                <input type="text" class="in1" value="@Model.Field4" readonly />
+                <input type="text" class="in1" value="@Model.Field5" readonly />
+                <input type="text" class="in3" value="@Model.Field6" readonly />
 
-            <div class="attachment-section">
-                @if (step1Attachment != null)
-                {
-                    <span>المرفق:</span>
-                    <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = step1Attachment.Id })"
-                       class="attachment-link">
-                        @step1Attachment.FileName@step1Attachment.FileExtension
-                    </a>
-                }
-                else
-                {
-                    <span class="no-attachment">لا يوجد مرفق</span>
-                }
+                <div class="attachment-section">
+                    @if (step1Attachment != null)
+                    {
+                        <span>المرفق:</span>
+                        <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = step1Attachment.Id })"
+                           class="attachment-link">
+                            @step1Attachment.FileName@step1Attachment.FileExtension
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="no-attachment">لا يوجد مرفق</span>
+                    }
+                </div>
             </div>
+
+            <button type="button" class="arrow arrow-left">
+                <a href="@Url.Action("Main", "Account", new { id = Model.RequestId })">
+                    <img src="~/images/arrowL.png" alt="السابق" />
+                </a>
+            </button>
+
+            <a href="@Url.Action("ViewSubmission2", "Request", new { id = Model.RequestId })">
+                <div class="arrow arrow-right">
+                    <img src="~/images/arrowR.png" alt="التالي" />
+                </div>
+            </a>
         </div>
-
-        <button type="button" class="arrow arrow-left">
-            <a href="@Url.Action("Main", "Account", new { id = Model.RequestId })">
-
-                <img src="~/images/arrowL.png" alt="السابق" />
-        </button>
-
-        <a href="@Url.Action("ViewSubmission2", "Request", new { id = Model.RequestId })">
-            <div class="arrow arrow-right">
-                <img src="~/images/arrowR.png" alt="التالي" />
-            </div>
-        </a>
     </div>
 </body>
 </html>
- 
