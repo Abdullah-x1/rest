@@ -411,20 +411,29 @@ namespace DSAR.Controllers
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
+
             var requests = await _requestActionRepository.GetRequestsStillInProcessByUserId(currentUser.Id);
-            if (requests.Count! > 0)
+            if (requests.Count > 0)
             {
                 TempData["Error"] = "You already have a pending request. Please wait until it is completed before submitting a new one.";
                 return RedirectToAction("Main", "Account");
             }
+
+            var snapshot = await _formRepo.GetCurrentSnapshotAsync(); // You'll create this method below
+            ViewBag.ShowTermsPopup = snapshot?.TermsAccepted == false;
+
             return View(await _formRepo.GetCurrentFormData());
         }
+
+
+
+
         [HttpPost]
-        public async Task<IActionResult> Step1(RequestViewModel data, IFormFile Attachment, string action)
+        public async Task<IActionResult> Step1(RequestViewModel data, List<IFormFile> Attachment1, string action)
         {
             if (action == "save")
             {
-                bool isSaved = await _formRepo.HandleStep1Data(data, Attachment);
+                bool isSaved = await _formRepo.HandleStep1Data(data, Attachment1);
                 if (isSaved)
                     return Json(new { success = true, message = "تم الحفظ بنجاح", attachmentName = data.Attachment1Name });
                 else
@@ -432,13 +441,28 @@ namespace DSAR.Controllers
             }
             else if (action == "next")
             {
-                await _formRepo.HandleStep1Data(data, Attachment); // ensure saved
+                await _formRepo.HandleStep1Data(data, Attachment1); // ensure saved
                 return RedirectToAction("Step2");
             }
             var vm = await _formRepo.GetCurrentFormData();
             return View(vm);
         }
 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AcceptTerms()
+        {
+            try
+            {
+                await _formRepo.AcceptTermsAsync();
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest("Unable to accept terms");
+            }
+        }
 
 
         // STEP 2 - GET
@@ -455,12 +479,13 @@ namespace DSAR.Controllers
             return View(await _formRepo.GetCurrentFormData());
         }
 
+       
         [HttpPost]
-        public async Task<IActionResult> Step2(RequestViewModel data, IFormFile Attachment1, IFormFile Attachment2, string action)
+        public async Task<IActionResult> Step2(RequestViewModel data, List<IFormFile> Attachment2, List<IFormFile> Attachment3, string action)
         {
             if (action == "save")
             {
-                bool isSaved = await _formRepo.HandleStep2Data(data, Attachment1, Attachment2);
+                bool isSaved = await _formRepo.HandleStep2Data(data, Attachment2, Attachment3);
                 if (isSaved)
                     return Json(new { success = true, message = "تم الحفظ بنجاح" });
                 else
@@ -468,13 +493,14 @@ namespace DSAR.Controllers
             }
             else if (action == "next")
             {
-                await _formRepo.HandleStep2Data(data, Attachment1, Attachment2);
+                await _formRepo.HandleStep2Data(data, Attachment2, Attachment3); // save before navigating
                 return RedirectToAction("Step4");
             }
 
             var vm = await _formRepo.GetCurrentFormData();
             return View(vm);
         }
+
 
         // STEP 3 - GET
         public async Task<IActionResult> Step3()
@@ -522,10 +548,11 @@ namespace DSAR.Controllers
         [HttpPost]
         public async Task<IActionResult> Step4(
     RequestViewModel data,
-    IFormFile WorkflowFile,
-    IFormFile UploadsRequiredFile,
-    IFormFile DocumentsFile,
+    List<IFormFile> WorkflowFile,
+    List<IFormFile> UploadsRequiredFile,
+    List<IFormFile> DocumentsFile,
     string action)
+
         {
             if (action == "save")
             {
@@ -621,7 +648,9 @@ namespace DSAR.Controllers
             return View(model); // fallback
         }
 
-        
+            return View(model); // fallback
+        }
+        [HttpGet]
         public async Task<IActionResult> DownloadAttachment(int attachmentId)
         {
             var attachment = await _formRepo.GetAttachmentById(attachmentId);
@@ -644,6 +673,21 @@ namespace DSAR.Controllers
 
 
         public async Task<IActionResult> DownloadSnapshotAttachment(int attachmentId)
+        {
+            var snapshotAttachment = await _formRepo.GetSnapshotAttachmentById(attachmentId);
+            if (snapshotAttachment == null) return NotFound();
+
+            var metadata = snapshotAttachment.SnapshotAttachmentMetadata;
+
+            return File(snapshotAttachment.Data, "application/octet-stream",
+                $"{metadata.FileName}{metadata.FileExtension}");
+        }
+
+
+
+        //////////////////////
+        [Authorize(Roles = "SectionManager,DepartmentManager,ITManager,Analyzer")]
+        public async Task<IActionResult> MyRequest2()
         {
             var snapshotAttachment = await _formRepo.GetSnapshotAttachmentById(attachmentId);
             if (snapshotAttachment == null) return NotFound();
@@ -964,6 +1008,8 @@ namespace DSAR.Controllers
 
             return View(historiesVm);
         }
+
+
 
     }
 

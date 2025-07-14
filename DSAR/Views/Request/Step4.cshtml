@@ -29,54 +29,74 @@
                     <img src="~/images/link.png" alt="إرفاق ملف" style="width: 24px;" />
                 </label>
 
-                @if (!string.IsNullOrEmpty(Model.WorkflowName) && Model.WorkflowAttachmentId > 0)
+                @if (Model.WorkflowAttachmentId != null && Model.WorkflowAttachmentId.Any())
                 {
                     <div class="text-info mt-1">
-                        <i class="bi bi-paperclip me-1"></i> الملف الحالي:
-                        <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = Model.WorkflowAttachmentId })" target="_blank">
-                            @Model.WorkflowName
-                        </a>
+                        <i class="bi bi-paperclip me-1"></i> الملفات الحالية لمسار العمل:
+                        <ul class="attached-files">
+                            @for (int i = 0; i < Model.WorkflowAttachmentId.Count; i++)
+                            {
+                                <li>
+                                    <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = Model.WorkflowAttachmentId[i] })" target="_blank">
+                                        @Model.WorkflowName[i]
+                                    </a>
+                                </li>
+                            }
+                        </ul>
                     </div>
                 }
 
                 <span id="workflowFileName" class="text-muted d-block mt-1"></span>
-                <input type="file" name="WorkflowFile" id="workflowFile" accept=".doc,.docx,.xls,.xlsx,.pdf,image/*" onchange="updateFileName('workflowFile', 'workflowFileName')" style="display: none;" />
+                <input type="file" name="WorkflowFile" multiple id="workflowFile" accept=".doc,.docx,.xls,.xlsx,.pdf,image/*" onchange="updateFileName('workflowFile', 'workflowFileName')" style="display: none;" />
 
                 <textarea asp-for="UploadsRequired" class="in2" placeholder="يتم ذكر جميع المرفقات المطلوب إضافتها في الخدمة، مع تحديد إلزاميتها (الزامي او اختياري)"></textarea>
                 <label for="uploadsRequiredFile">
                     <img src="~/images/link.png" alt="إرفاق ملف" style="width: 24px;" />
                 </label>
 
-                @if (!string.IsNullOrEmpty(Model.UploadsRequiredName) && Model.UploadsRequiredAttachmentId > 0)
+                @if (Model.UploadsRequiredAttachmentId != null && Model.UploadsRequiredAttachmentId.Any())
                 {
                     <div class="text-info mt-1">
-                        <i class="bi bi-paperclip me-1"></i> الملف الحالي:
-                        <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = Model.UploadsRequiredAttachmentId })" target="_blank">
-                            @Model.UploadsRequiredName
-                        </a>
+                        <i class="bi bi-paperclip me-1"></i> الملفات الحالية للمرفقات المطلوبة:
+                        <ul class="attached-files">
+                            @for (int i = 0; i < Model.UploadsRequiredAttachmentId.Count; i++)
+                            {
+                                <li>
+                                    <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = Model.UploadsRequiredAttachmentId[i] })" target="_blank">
+                                        @Model.UploadsRequiredName[i]
+                                    </a>
+                                </li>
+                            }
+                        </ul>
                     </div>
                 }
-
                 <span id="uploadsRequiredFileName" class="text-muted d-block mt-1"></span>
-                <input type="file" name="UploadsRequiredFile" id="uploadsRequiredFile" accept=".doc,.docx,.xls,.xlsx,.pdf,image/*" onchange="updateFileName('uploadsRequiredFile', 'uploadsRequiredFileName')" style="display: none;" />
+                <input type="file" multiple name="UploadsRequiredFile" id="uploadsRequiredFile" accept=".doc,.docx,.xls,.xlsx,.pdf,image/*" onchange="updateFileName('uploadsRequiredFile', 'uploadsRequiredFileName')" style="display: none;" />
 
                 <textarea asp-for="Documents" class="in1" placeholder="وثائق الدعم؛ مثل (إجراءات العمل الموحد، لوائح وأنظمة)"></textarea>
                 <label for="documentsFile">
                     <img src="~/images/link.png" alt="إرفاق ملف" style="width: 24px;" />
                 </label>
 
-                @if (!string.IsNullOrEmpty(Model.DocumentsName) && Model.DocumentsAttachmentId > 0)
+                @if (Model.DocumentsAttachmentId != null && Model.DocumentsAttachmentId.Any())
                 {
                     <div class="text-info mt-1">
-                        <i class="bi bi-paperclip me-1"></i> الملف الحالي:
-                        <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = Model.DocumentsAttachmentId })" target="_blank">
-                            @Model.DocumentsName
-                        </a>
+                        <i class="bi bi-paperclip me-1"></i> الملفات الحالية لوثائق الدعم:
+                        <ul class="attached-files">
+                            @for (int i = 0; i < Model.DocumentsAttachmentId.Count; i++)
+                            {
+                                <li>
+                                    <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = Model.DocumentsAttachmentId[i] })" target="_blank">
+                                        @Model.DocumentsName[i]
+                                    </a>
+                                </li>
+                            }
+                        </ul>
                     </div>
                 }
 
                 <span id="documentsFileName" class="text-muted d-block mt-1"></span>
-                <input type="file" name="DocumentsFile" id="documentsFile" accept=".doc,.docx,.xls,.xlsx,.pdf,image/*" onchange="updateFileName('documentsFile', 'documentsFileName')" style="display: none;" />
+                <input type="file" multiple name="DocumentsFile" id="documentsFile" accept=".doc,.docx,.xls,.xlsx,.pdf,image/*" onchange="updateFileName('documentsFile', 'documentsFileName')" style="display: none;" />
             </div>
 
 

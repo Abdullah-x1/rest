@@ -5,7 +5,7 @@
 namespace DSAR.Migrations
 {
     /// <inheritdoc />
-    public partial class new12 : Migration
+    public partial class new5 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

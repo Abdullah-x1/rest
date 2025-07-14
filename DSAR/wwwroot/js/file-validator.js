@@ -4,25 +4,33 @@
         ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"
     ];
 
-    document.querySelector(inputSelector)?.addEventListener('change', function () {
-        const input = this;
-        const file = input.files[0];
-        const fileName = file?.name || '';
-        const extension = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+function updateFileName(inputId, spanId) {
+    const input = document.getElementById(inputId);
+    const display = document.getElementById(spanId);
 
-        if (!allowedExtensions.includes(extension)) {
-            input.value = '';
-            document.querySelector(nameDisplaySelector).textContent = '';
-            Swal.fire({
-                title: "صيغة غير مدعومة!",
-                text: "يرجى رفع ملف بصيغة .doc, .docx, .pdf, .xls, .xlsx أو صورة.",
-                icon: "error",
-                allowOutsideClick: true,
-                allowEscapeKey: true,
-                scrollbarPadding: false,
-            });
-        } else {
-            document.querySelector(nameDisplaySelector).textContent = fileName;
-        }
+    if (!input || !display) return;
+
+    if (input.files.length > 5) {
+        Swal.fire("تنبيه", "الحد الأقصى للمرفقات هو 5 ملفات", "warning");
+        input.value = '';
+        display.textContent = '';
+        return;
+    }
+
+    const allowedExtensions = [".doc", ".docx", ".xls", ".xlsx", ".pdf", ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"];
+
+    const invalidFiles = Array.from(input.files).filter(file => {
+        const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+        return !allowedExtensions.includes(ext);
+    });
+
+    if (invalidFiles.length > 0) {
+        Swal.fire("صيغة غير مدعومة!", "يرجى رفع ملفات بصيغ .doc, .docx, .pdf, .xls, .xlsx أو صور.", "error");
+        input.value = '';
+        display.textContent = '';
+    } else {
+        const fileNames = Array.from(input.files).map(file => file.name).join(', ');
+        display.textContent = fileNames;
+    }
     });
 }

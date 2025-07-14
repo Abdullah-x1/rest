@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DSAR.Migrations
 {
     /// <inheritdoc />
-    public partial class @new : Migration
+    public partial class RenameSessionIdToCookieId : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -57,7 +57,7 @@ namespace DSAR.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SessionId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CookieId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FormDataJson = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -235,6 +235,7 @@ namespace DSAR.Migrations
                     DepartmentId = table.Column<int>(type: "int", nullable: true),
                     SectionId = table.Column<int>(type: "int", nullable: true),
                     CityId = table.Column<int>(type: "int", nullable: false),
+                    Active = table.Column<bool>(type: "bit", nullable: false),
                     SectorId = table.Column<int>(type: "int", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -412,7 +413,7 @@ namespace DSAR.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -448,7 +449,6 @@ namespace DSAR.Migrations
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     WorkTeam = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Attachment = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     restriction = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -496,14 +496,23 @@ namespace DSAR.Migrations
                 {
                     HistoryId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LevelId = table.Column<int>(type: "int", nullable: false),
                     StatusId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    RequestId = table.Column<int>(type: "int", nullable: false)
+                    RequestId = table.Column<int>(type: "int", nullable: false),
+                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Information = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Histories", x => x.HistoryId);
+                    table.ForeignKey(
+                        name: "FK_Histories_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Histories_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -515,6 +524,12 @@ namespace DSAR.Migrations
                         column: x => x.RequestId,
                         principalTable: "Forms",
                         principalColumn: "RequestId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Histories_Level_LevelId",
+                        column: x => x.LevelId,
+                        principalTable: "Level",
+                        principalColumn: "LevelId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Histories_Status_StatusId",
@@ -747,9 +762,19 @@ namespace DSAR.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Histories_LevelId",
+                table: "Histories",
+                column: "LevelId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Histories_RequestId",
                 table: "Histories",
                 column: "RequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Histories_RoleId",
+                table: "Histories",
+                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Histories_StatusId",
@@ -859,13 +884,13 @@ namespace DSAR.Migrations
                 name: "SnapshotDescriptionEntries");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
                 name: "AttachmentMetadata");
 
             migrationBuilder.DropTable(
                 name: "CaseStudyAttachmentMetadata");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Level");

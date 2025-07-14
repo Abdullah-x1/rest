@@ -12,6 +12,7 @@
 
     <!-- Your Custom CSS -->
     <link rel="stylesheet" href="~/css/steps.css" asp-append-version="true" />
+    <script src="~/js/updateFileName.js" asp-append-version="true"></script>
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -19,14 +20,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="~/css/Script.js" asp-append-version="true"></script>
-    <!-- SweetAlert -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Your shared scripts -->
     <script src="~/js/form-handler.js" asp-append-version="true"></script>
     <script src="~/js/file-validator.js" asp-append-version="true"></script>
 </head>
 
 <body>
+    <partial name="_ValidationScriptsPartial" />
     <form asp-action="Step1" id="step1Form" method="post" enctype="multipart/form-data" asp-antiforgery="true">
         <div class="form-container position-relative">
             <div class="right-column column">
@@ -61,27 +60,37 @@
                 <textarea asp-for="Field4" class="in1" placeholder="توضيح الاعتمادية ان وجد">@Model.Field4</textarea>
                 <textarea asp-for="Field5" class="in1" placeholder="رقم الإجراء الإداري إن وجد">@Model.Field5</textarea>
 
-                <label for="Attachment" class="form-label">إرفاق ملف الإجراء الإداري إن وجد:</label><br />
-                <label for="Attachment" style="cursor: pointer;">
+                <label for="Attachment1" class="form-label">إرفاق ملف الإجراء الإداري إن وجد:</label><br />
+                <label for="Attachment1" style="cursor: pointer;">
                     <img src="~/images/link.png" alt="إرفاق ملف" width="24" />
                     اختر ملف
                 </label>
 
-                <input type="file" name="Attachment" id="Attachment" class="d-none"
-                       accept=".doc,.docx,.xls,.xlsx,.pdf,image/*" onchange="updateFileName()" />
+                <input type="file" multiple name="Attachment1" id="Attachment1" class="d-none"
+                       accept=".doc,.docx,.xls,.xlsx,.pdf,image/*"
+                       onchange="updateFileName('Attachment1', 'Attachment1Name')" />
 
-                <span id="attachmentName" class="text-muted mt-2 d-block"></span>
+                <span id="Attachment1Name" class="text-muted mt-2 d-block"
+                      data-existing="@Model.Attachment1Id?.Count">
+                </span>
 
-                @if (Model.Attachment1Id > 0)
+                @if (Model.Attachment1Id != null && Model.Attachment1Id.Any())
                 {
                     <div class="text-info mt-1">
-                        <i class="bi bi-paperclip me-1"></i> الملف الحالي:
-                        <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = Model.Attachment1Id })">
-                            @Model.Attachment1Name
-                        </a>
-
+                        <i class="bi bi-paperclip me-1"></i> الملفات الحالية:
+                        <ul class="attached-files">
+                            @for (int i = 0; i < Model.Attachment1Id.Count; i++)
+                            {
+                                <li>
+                                    <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = Model.Attachment1Id[i] })" target="_blank">
+                                        @Model.Attachment1Name[i]
+                                    </a>
+                                </li>
+                            }
+                        </ul>
                     </div>
                 }
+
 
                 <div id="statusMessage"></div>
             </div>
@@ -126,37 +135,68 @@
 </html>
 
 
-    <!-- ✅ Popup Modal -->
-    @if (!User.IsInRole("Admin") &&
-          !User.IsInRole("SectionManager") &&
-          !User.IsInRole("DepartmentManager") &&
-          !User.IsInRole("AdministrationManager") &&
-          !User.IsInRole("Analyzer") &&
-          !User.IsInRole("ApplicationManager"))
-    {
-        <div id="termsPopup" class="popup-overlay">
-            <div class="popup-content">
-                <h1>المتطلبات والشروط والأحكام:</h1>
-                <ul class="requirements">
-                    <li>جميع الوثائق يجب ان تكون سارية المفعول</li>
-                    <li>عدم وجود طلب قائم لنفس الخدمة</li>
-                    <li>استكمال جميع الحقول المطلوبة</li>
-                    <li>الطلبات الغير نشطة يتم اغلاقها</li>
-                    <li>مقدم الطلب يجب ان يكون موظف رسمي بالهيئة الملكية</li>
-                    <li>يجب ارفاق جميع موافقات المدن</li>
-                </ul>
-                <div class="checkbox-container">
-                    <label>
-                        <input type="checkbox" id="termsCheckbox" />
-                        اوافق على الشروط والأحكام
-                    </label>
-                </div>
-                <div class="popup-buttons">
-                    <button class="popup-btn back-btn" onclick="location.href='@Url.Action("Main", "Account")'">رجوع</button>
-                    <button class="popup-btn confirm-btn" id="acceptTermsBtn" disabled onclick="closePopup()">موافق</button>
-                </div>
+    <script>
+        setupAjaxSave('#step1Form', '#saveButton', '@Url.Action("Step1", "Request")');
+        setupFileValidation('#Attachment1', '#Attachment1Name');
+    </script>
+</body>
+</html>
+
+
+
+@if (ViewBag.ShowTermsPopup == true)
+{
+    <div id="termsPopup" class="popup-overlay">
+        <div class="popup-content">
+            <h1>المتطلبات والشروط والأحكام:</h1>
+            <ul class="requirements">
+                <li>جميع الوثائق يجب ان تكون سارية المفعول</li>
+                <li>عدم وجود طلب قائم لنفس الخدمة</li>
+                <li>استكمال جميع الحقول المطلوبة</li>
+                <li>الطلبات الغير نشطة يتم اغلاقها</li>
+                <li>مقدم الطلب يجب ان يكون موظف رسمي بالهيئة الملكية</li>
+                <li>يجب ارفاق جميع موافقات المدن</li>
+            </ul>
+            <div class="checkbox-container">
+                <label>
+                    <input type="checkbox" id="termsCheckbox" />
+                    اوافق على الشروط والأحكام
+                </label>
+            </div>
+            <div class="popup-buttons">
+                <button class="popup-btn back-btn" onclick="location.href='@Url.Action("Main", "Account")'">رجوع</button>
+                <button class="popup-btn confirm-btn" id="acceptTermsBtn" disabled>موافق</button>
             </div>
         </div>
-    }
+    </div>
 
-  
+    <script>
+        const termsCheckbox = document.getElementById('termsCheckbox');
+        const acceptBtn = document.getElementById('acceptTermsBtn');
+        const popup = document.getElementById('termsPopup');
+
+        termsCheckbox.addEventListener('change', () => {
+            acceptBtn.disabled = !termsCheckbox.checked;
+        });
+
+        acceptBtn.addEventListener('click', () => {
+            if (!termsCheckbox.checked) return;
+
+            fetch('@Url.Action("AcceptTerms", "Request")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                body: JSON.stringify({})
+            })
+            .then(res => {
+                if (res.ok) {
+                    popup.style.display = 'none';
+                } else {
+                    alert('حدث خطأ في الموافقة، حاول مرة أخرى.');
+                }
+            });
+        });
+    </script>
+}

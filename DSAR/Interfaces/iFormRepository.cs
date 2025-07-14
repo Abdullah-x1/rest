@@ -17,14 +17,15 @@ namespace DSAR.Repository
         // Snapshot-based step handlers
         Task<RequestViewModel> GetCurrentFormData();
         // In iFormRepository.cs
-        Task<bool> HandleStep1Data(RequestViewModel data, IFormFile attachment);
-        Task<bool> HandleStep2Data(RequestViewModel data, IFormFile attachment1, IFormFile attachment2);
-        Task<FormData> HandleStep3Data(RequestViewModel data, string UserId);
+        Task<bool> HandleStep1Data(RequestViewModel data, List<IFormFile> attachments);
+        Task<bool> HandleStep2Data(RequestViewModel data, List<IFormFile> attachments2, List<IFormFile> attachments3);
+        Task<FormData> HandleStep3Data(RequestViewModel data);
         Task<(bool isSaved, string workflowName, string uploadsName, string documentsName)> HandleStep4Data(
-            RequestViewModel data,
-            IFormFile workflowFile,
-            IFormFile uploadsRequiredFile,
-            IFormFile documentsFile);
+         RequestViewModel data,
+         List<IFormFile> workflowFiles,
+         List<IFormFile> uploadsRequiredFiles,
+         List<IFormFile> documentsFiles);
+
 
         // Description handling
         Task<AttachmentData> GetAttachmentById(int attachmentId); // Add this
@@ -34,6 +35,8 @@ namespace DSAR.Repository
 
         Task<List<DescriptionEntry>> GetDescriptionsByRequestId(int requestId);
         Task<SnapshotAttachmentData> GetSnapshotAttachmentById(int id);
+        Task<SnapshotFormData> GetCurrentSnapshotAsync();
+        Task AcceptTermsAsync();
 
 
     }

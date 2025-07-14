@@ -1,24 +1,24 @@
 @model DSAR.ViewModels.RequestViewModel
 
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>الصفحة الثانية من النموذج</title>
+
     <link rel="stylesheet" href="~/css/steps.css" asp-append-version="true" />
     <script src="~/css/Script.js" asp-append-version="true"></script>
+
+    <!-- External Libraries -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
-    <!-- SweetAlert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Your shared scripts -->
+
+    <!-- Custom Scripts -->
     <script src="~/js/form-handler.js" asp-append-version="true"></script>
     <script src="~/js/file-validator.js" asp-append-version="true"></script>
-
-
 </head>
 <body>
     <form asp-action="Step2" id="step2Form" method="post" enctype="multipart/form-data">
@@ -26,23 +26,22 @@
             <!-- Right Column -->
             <div class="right-column column">
                 <input asp-for="RepeatLimit" placeholder="عدد المرات المسموح بها" />
+
                 <div class="required-wrapper">
                     <span class="required-asterisk">*</span>
-
-                <input asp-for="Fees" placeholder="مجانية / توجد رسوم (مثال:100 ريال)" />
-                <span asp-validation-for="Fees" class="text-danger"></span>
+                    <input asp-for="Fees" placeholder="مجانية / توجد رسوم (مثال:100 ريال)" />
+                    <span asp-validation-for="Fees" class="text-danger"></span>
                 </div>
 
 
                 <div class="required-wrapper">
                     <span class="required-asterisk">*</span>
-
-                <select asp-for="TargetAudience" class="form-control">
-                    <option value="">الفئة المستهدفة</option>
-                    <option value="افراد">افراد</option>
-                    <option value="مؤسسه">مؤسسه</option>
-                </select>
-                <span asp-validation-for="TargetAudience" class="text-danger"></span>
+                    <select asp-for="TargetAudience" class="form-control">
+                        <option value="">الفئة المستهدفة</option>
+                        <option value="افراد">افراد</option>
+                        <option value="مؤسسه">مؤسسه</option>
+                    </select>
+                    <span asp-validation-for="TargetAudience" class="text-danger"></span>
                 </div>
 
                 <div class="required-wrapper">
@@ -62,28 +61,64 @@
 
             <!-- Left Column -->
             <div class="left-column column">
-                <textarea asp-for="ExpectedOutput1" class="in1" placeholder="يتم ذكر المخرجات المتوقعة بعد طلب الخدمة؛
-مثل (رخصة أو شهادة أو تنفيذ الخدمة) مع ارفاق نموذج من المخرج النهائي"></textarea>
+                <textarea asp-for="ExpectedOutput1" class="in1" placeholder="يتم ذكر المخرجات المتوقعة بعد طلب الخدمة؛ مثل (رخصة أو شهادة أو تنفيذ الخدمة) مع ارفاق نموذج من المخرج النهائي"></textarea>
+
                 <textarea asp-for="ApprovedTemplate" rows="4" class="auto-expand" placeholder="يتم إضافة نموذج معتمد للخدمة حيث يتم فيه إضافة جميع الحقول المطلوبة ووصفها وتحديد نوع الحقول وتحديد الزاميتها باللغتين العربية والإنجليزية"></textarea>
-                @if (Model.Attachment2Id > 0)
+
+                <!-- Attachment2 -->
+                <label for="Attachment2" style="cursor: pointer;">
+                    <img src="~/images/link.png" alt="إرفاق ملف" width="24" />
+                    اختر ملف
+                </label>
+                <input type="file" multiple name="Attachment2" id="Attachment2" class="d-none"
+                       accept=".doc,.docx,.xls,.xlsx,.pdf,image/*"
+                       onchange="updateFileName('Attachment2', 'Attachment2Name')" />
+                <span id="Attachment2Name" class="text-muted mt-2 d-block"></span>
+
+                @if (Model.Attachment2Id != null && Model.Attachment2Id.Any())
                 {
-                    <div class="text-info mt-1">
-                        <i class="bi bi-paperclip me-1"></i> الملف الحالي:
-                        <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = Model.Attachment2Id })" target="_blank">
-                            @Model.Attachment2Name
-                        </a>
+                    <div class="text-info">
+                        <i class="bi bi-paperclip me-1"></i>
+                        <ul class="attached-files">
+                            @for (int i = 0; i < Model.Attachment2Id.Count; i++)
+                            {
+                                <li>
+                                    <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = Model.Attachment2Id[i] })" target="_blank">
+                                        @Model.Attachment2Name[i]
+                                    </a>
+                                </li>
+                            }
+                        </ul>
                     </div>
                 }
 
+
                 <textarea asp-for="DetailedInfo" rows="4" placeholder="يتم ذكر بيانات تفصيلية للحقول المضافة في النموذج، في حال وجود تصنيفات معتمدة لأي حقل من الحقول وفي حال وجود حقل معتمد على حقل آخر (يمكن إدراج ملف إكسل)"></textarea>
-                @if (Model.Attachment3Id > 0)
+
+                <!-- Attachment3 -->
+                <label for="Attachment3" style="cursor: pointer;">
+                    <img src="~/images/link.png" alt="إرفاق ملف" width="24" />
+                    اختر ملف
+                </label>
+                <input type="file" multiple name="Attachment3" id="Attachment3" class="d-none"
+                       accept=".doc,.docx,.xls,.xlsx,.pdf,image/*"
+                       onchange="updateFileName('Attachment3', 'Attachment3Name')" />
+                <span id="Attachment3Name" class="text-muted mt-2 d-block"></span>
+
+                @if (Model.Attachment3Id != null && Model.Attachment3Id.Any())
                 {
-                    <div class="text-info mt-1">
-                        <i class="bi bi-paperclip me-1"></i> الملف الحالي:
-                        <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = Model.Attachment3Id })"
-                           target="_blank">
-                            @Model.Attachment3Name
-                        </a>
+                    <div class="text-info">
+                        <i class="bi bi-paperclip me-1"></i>
+                        <ul class="attached-files">
+                            @for (int i = 0; i < Model.Attachment3Id.Count; i++)
+                            {
+                                <li>
+                                    <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = Model.Attachment3Id[i] })" target="_blank">
+                                        @Model.Attachment3Name[i]
+                                    </a>
+                                </li>
+                            }
+                        </ul>
                     </div>
                 }
 
@@ -91,7 +126,7 @@
                 <textarea asp-for="RequiredConditions" rows="4" placeholder="يتم ذكر جميع الشروط اللازمة لطلب الخدمة أو تنفيذها من قبل المستخدم المستهدف (مقدم الطلب)"></textarea>
             </div>
 
-            <!-- Navigation Arrows -->
+            <!-- Navigation -->
             <div class="d-flex justify-content-between align-items-center position-absolute bottom-0 start-0 end-0 p-3">
                 <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("Step1", "Request")'">السابق</button>
 
@@ -104,8 +139,6 @@
                 </div>
             </div>
         </div>
-
-        </div>
     </form>
     <script>
         // Reuse the AJAX logic
@@ -115,18 +148,10 @@
             '@Url.Action("Step2", "Request")'
         );
 
-        // Optional: if you want file name display + extension check
-        setupFileValidation('#attachment1', '#attachment1Name');
-        setupFileValidation('#attachment2', '#attachment2Name');
-    </script>
     <script>
-        if (response.attachment1Name) {
-            $('#attachment1Name').text(response.attachment1Name);
-        }
-        if (response.attachment2Name) {
-            $('#attachment2Name').text(response.attachment2Name);
-        }
+        setupAjaxSave('#step2Form', '#saveButton', '@Url.Action("Step2", "Request")');
+        setupFileValidation('#Attachment2', '#Attachment2Name');
+        setupFileValidation('#Attachment3', '#Attachment3Name');
     </script>
-    
 </body>
 </html>
