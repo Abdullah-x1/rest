@@ -28,7 +28,11 @@ namespace DSAR.Interfaces
         IEnumerable<Department> GetAllDepartments();
 
         Task<FormData?> GetDepartmentNameByRequestId(int id);
+        //Task<FormData?> GetCityNameByRequestId(int id);
+
         Task<bool> SendEmailAsync(RequestViewModel request, User currentUser);
+
+        
 
 
         //NewFrom

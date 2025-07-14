@@ -1,36 +1,42 @@
-﻿function setupFileValidation(inputSelector, nameDisplaySelector) {
-    const allowedExtensions = [
-        ".doc", ".docx", ".xls", ".xlsx", ".pdf",
-        ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"
-    ];
-
-function updateFileName(inputId, spanId) {
+﻿function validateAndDisplayFiles(inputId, spanId, maxFiles = 5, maxSizeMB = 5) {
     const input = document.getElementById(inputId);
     const display = document.getElementById(spanId);
 
     if (!input || !display) return;
 
-    if (input.files.length > 5) {
-        Swal.fire("تنبيه", "الحد الأقصى للمرفقات هو 5 ملفات", "warning");
+    const files = Array.from(input.files);
+
+    // Check file count
+    if (files.length > maxFiles) {
+        Swal.fire("تنبيه", `الحد الأقصى للمرفقات هو ${maxFiles} ملفات`, "warning");
         input.value = '';
         display.textContent = '';
         return;
     }
 
+    // Allowed extensions
     const allowedExtensions = [".doc", ".docx", ".xls", ".xlsx", ".pdf", ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"];
 
-    const invalidFiles = Array.from(input.files).filter(file => {
+    for (let file of files) {
         const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
         return !allowedExtensions.includes(ext);
     });
 
-    if (invalidFiles.length > 0) {
-        Swal.fire("صيغة غير مدعومة!", "يرجى رفع ملفات بصيغ .doc, .docx, .pdf, .xls, .xlsx أو صور.", "error");
-        input.value = '';
-        display.textContent = '';
-    } else {
-        const fileNames = Array.from(input.files).map(file => file.name).join(', ');
-        display.textContent = fileNames;
+        if (!allowedExtensions.includes(ext)) {
+            Swal.fire("صيغة غير مدعومة!", "يرجى رفع ملفات بصيغ .doc, .docx, .pdf, .xls, .xlsx أو صور.", "error");
+            input.value = '';
+            display.textContent = '';
+            return;
+        }
+
+        if (file.size > maxSizeMB * 1024 * 1024) {
+            Swal.fire("حجم الملف كبير", `الملف ${file.name} أكبر من ${maxSizeMB} ميغابايت.`, "error");
+            input.value = '';
+            display.textContent = '';
+            return;
+        }
     }
-    });
+
+    // If valid, show file names
+    display.textContent = files.map(file => file.name).join(', ');
 }

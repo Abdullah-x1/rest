@@ -159,8 +159,8 @@ namespace DSAR.Controllers
                     "Request submitted"
                 );
                 return RedirectToAction("Main", "Account");
-            }
-            data.UserId = currentUser.Id;
+            }else if(await _userManager.IsInRoleAsync(currentUser, "User"))
+                data.UserId = currentUser.Id;
             request = await _formRepo.HandleStep3Data(data, currentUser.UserId);
 
             _requestActionRepository.Create(data, currentUser, request);
@@ -271,13 +271,12 @@ namespace DSAR.Controllers
             var viewModel = new RequestViewModel
             {
                 RequestId = form.RequestId,
-                Field1 = form.Field1,
-                Field2 = form.Field2,
-                Field3 = form.Field3,
-                Depend = form.Depend,
-                Field4 = form.Field4,
-                Field5 = form.Field5,
-                Field6 = form.Field6,
+                ServiceName = form.ServiceName,
+                ServiceTypeAndLocation = form.ServiceTypeAndLocation,
+                ServiceDescription = form.ServiceDescription,
+                HasDependency = form.HasDependency,
+                DependencyDetails = form.DependencyDetails,
+                ProcedureNumber = form.ProcedureNumber,
                 Attachments = form.Attachments?.ToList(),
                 History = historyVm
             };
@@ -318,7 +317,6 @@ namespace DSAR.Controllers
                 RepeatLimit = form.RepeatLimit,
                 DepartmentName = form.Department.DepartmentName,
                 Fees = form.Fees,
-                CityId = form.CityId,
                 TargetAudience = form.TargetAudience,
                 DepName = form.Departments,
                 ExpectedOutput1 = form.ExpectedOutput1,
@@ -513,7 +511,7 @@ namespace DSAR.Controllers
                 TempData["Error"] = "You already have a pending request. Please wait until it is completed before submitting a new one.";
                 return RedirectToAction("Main", "Account");
             }
-            return View(await _formRepo.GetCurrentFormData());
+                return View(await _formRepo.GetCurrentFormData());
         }
 
         // STEP 3 - POST
@@ -544,7 +542,6 @@ namespace DSAR.Controllers
         }
 
         // STEP 4 - POST
-        [HttpPost]
         [HttpPost]
         public async Task<IActionResult> Step4(
     RequestViewModel data,
@@ -648,7 +645,11 @@ namespace DSAR.Controllers
             return View(model); // fallback
         }
 
-            return View(model); // fallback
+
+
+        public IActionResult Complete()
+        {
+            return View();
         }
         [HttpGet]
         public async Task<IActionResult> DownloadAttachment(int attachmentId)
@@ -682,27 +683,6 @@ namespace DSAR.Controllers
             return File(snapshotAttachment.Data, "application/octet-stream",
                 $"{metadata.FileName}{metadata.FileExtension}");
         }
-
-
-
-        //////////////////////
-        [Authorize(Roles = "SectionManager,DepartmentManager,ITManager,Analyzer")]
-        public async Task<IActionResult> MyRequest2()
-        {
-            var snapshotAttachment = await _formRepo.GetSnapshotAttachmentById(attachmentId);
-            if (snapshotAttachment == null) return NotFound();
-
-            var metadata = snapshotAttachment.SnapshotAttachmentMetadata;
-
-            return File(snapshotAttachment.Data, "application/octet-stream",
-                $"{metadata.FileName}{metadata.FileExtension}");
-        }
-
-
-
-        //////////////////////
-        
-
 
 
         [HttpPost]

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DSAR.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250714061913_18")]
-    partial class _18
+    [Migration("20250715071022_2")]
+    partial class _2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -253,9 +253,6 @@ namespace DSAR.Migrations
                     b.Property<string>("Cities2")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CityId")
-                        .HasColumnType("int");
-
                     b.Property<string>("DepartmentHeadName")
                         .HasColumnType("nvarchar(max)");
 
@@ -268,7 +265,7 @@ namespace DSAR.Migrations
                     b.Property<string>("Departments")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Depend")
+                    b.Property<string>("DependencyDetails")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DetailedInfo")
@@ -289,31 +286,19 @@ namespace DSAR.Migrations
                     b.Property<string>("Fees")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Field1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field2")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field3")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field4")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field5")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field6")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("FilePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HasDependency")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Message")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProcedureNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RepeatLimit")
@@ -328,11 +313,23 @@ namespace DSAR.Migrations
                     b.Property<string>("SectionNotes")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ServiceDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ServiceName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ServiceTypeAndLocation")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SystemNeeded")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TargetAudience")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TermsAccepted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Timeline")
                         .HasColumnType("nvarchar(max)");
@@ -599,14 +596,17 @@ namespace DSAR.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CookieId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("FormDataJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TermsAccepted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

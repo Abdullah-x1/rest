@@ -31,34 +31,34 @@
             <div class="right-column column">
                 <div class="required-wrapper">
                     <span class="required-asterisk">*</span>
-                    <textarea asp-for="Field1" class="in1" placeholder="يتم كتابة اسم الخدمة المطلوبة">@Model.Field1</textarea>
-                    <span asp-validation-for="Field1" class="text-danger"></span>
+                    <textarea asp-for="ServiceName" class="in1" placeholder="يتم كتابة اسم الخدمة المطلوبة">@Model.ServiceName</textarea>
+                    <span asp-validation-for="ServiceName" class="text-danger"></span>
                 </div>
 
                 <div class="required-wrapper">
                     <span class="required-asterisk">*</span>
-                    <textarea asp-for="Field2" class="in1" placeholder="يتم تحديد نوع الخدمة وموقعها">@Model.Field2</textarea>
-                    <span asp-validation-for="Field2" class="text-danger"></span>
+                    <textarea asp-for="ServiceTypeAndLocation" class="in1" placeholder="يتم تحديد نوع الخدمة وموقعها">@Model.ServiceTypeAndLocation</textarea>
+                    <span asp-validation-for="ServiceTypeAndLocation" class="text-danger"></span>
                 </div>
 
                 <div class="required-wrapper">
                     <span class="required-asterisk">*</span>
-                    <textarea asp-for="Field3" class="in2" placeholder="يتم كتابة وصف تفصيلي للخدمة المطلوب تطويرها">@Model.Field3</textarea>
-                    <span asp-validation-for="Field3" class="text-danger"></span>
+                    <textarea asp-for="ServiceDescription" class="in2" placeholder="يتم كتابة وصف تفصيلي للخدمة المطلوب تطويرها">@Model.ServiceDescription</textarea>
+                    <span asp-validation-for="ServiceDescription" class="text-danger"></span>
                 </div>
 
                 <div class="radio-section">
                     <label>هل توجد اعتمادية على خدمات حالية؟</label>
                     <div class="radio-options">
-                        <label><input type="radio" name="Depend" value="yes" @(Model.Depend == "yes" ? "checked" : "") /> نعم</label>
-                        <label><input type="radio" name="Depend" value="no" @(Model.Depend == "no" ? "checked" : "") /> لا</label>
+                        <label><input type="radio" name="Depend" value="yes" @(Model.HasDependency == "yes" ? "checked" : "") /> نعم</label>
+                        <label><input type="radio" name="Depend" value="no" @(Model.HasDependency == "no" ? "checked" : "") /> لا</label>
                     </div>
                 </div>
             </div>
 
             <div class="left-column column">
-                <textarea asp-for="Field4" class="in1" placeholder="توضيح الاعتمادية ان وجد">@Model.Field4</textarea>
-                <textarea asp-for="Field5" class="in1" placeholder="رقم الإجراء الإداري إن وجد">@Model.Field5</textarea>
+                <textarea asp-for="DependencyDetails" class="in1" placeholder="توضيح الاعتمادية ان وجد">@Model.DependencyDetails</textarea>
+                <textarea asp-for="ProcedureNumber" class="in1" placeholder="رقم الإجراء الإداري إن وجد">@Model.ProcedureNumber</textarea>
 
                 <label for="Attachment1" class="form-label">إرفاق ملف الإجراء الإداري إن وجد:</label><br />
                 <label for="Attachment1" style="cursor: pointer;">
@@ -68,7 +68,8 @@
 
                 <input type="file" multiple name="Attachment1" id="Attachment1" class="d-none"
                        accept=".doc,.docx,.xls,.xlsx,.pdf,image/*"
-                       onchange="updateFileName('Attachment1', 'Attachment1Name')" />
+                       onchange="validateAndDisplayFiles('Attachment1', 'Attachment1Name')" />
+
 
                 <span id="Attachment1Name" class="text-muted mt-2 d-block"
                       data-existing="@Model.Attachment1Id?.Count">
@@ -131,16 +132,7 @@
 
     </script>
  
-</body>
-</html>
 
-
-    <script>
-        setupAjaxSave('#step1Form', '#saveButton', '@Url.Action("Step1", "Request")');
-        setupFileValidation('#Attachment1', '#Attachment1Name');
-    </script>
-</body>
-</html>
 
 
 
@@ -200,3 +192,4 @@
         });
     </script>
 }
+</body>

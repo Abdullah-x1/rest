@@ -19,7 +19,7 @@ namespace DSAR.Repository
         // In iFormRepository.cs
         Task<bool> HandleStep1Data(RequestViewModel data, List<IFormFile> attachments);
         Task<bool> HandleStep2Data(RequestViewModel data, List<IFormFile> attachments2, List<IFormFile> attachments3);
-        Task<FormData> HandleStep3Data(RequestViewModel data);
+        Task<FormData> HandleStep3Data(RequestViewModel data, string UserId);
         Task<(bool isSaved, string workflowName, string uploadsName, string documentsName)> HandleStep4Data(
          RequestViewModel data,
          List<IFormFile> workflowFiles,

@@ -301,6 +301,16 @@ namespace DSAR.Repositories
 
         }
 
+    //    public async Task<FormData?> GetCityNameByRequestId(int id)
+    //    {
+    //        var form = await _context.Forms
+    //.Include(f => f.City) 
+    //.FirstOrDefaultAsync(f => f.RequestId == id);
+
+    //        return form;
+
+    //    }
+
         public IEnumerable<Department> GetAllDepartments()
         {
             var departments = _context.Department;

@@ -47,7 +47,7 @@
                 }
 
                 <span id="workflowFileName" class="text-muted d-block mt-1"></span>
-                <input type="file" name="WorkflowFile" multiple id="workflowFile" accept=".doc,.docx,.xls,.xlsx,.pdf,image/*" onchange="updateFileName('workflowFile', 'workflowFileName')" style="display: none;" />
+                <input type="file" name="WorkflowFile" multiple id="workflowFile" accept=".doc,.docx,.xls,.xlsx,.pdf,image/*" onchange="validateAndDisplayFiles('workflowFile', 'workflowFileName')" style="display: none;" />
 
                 <textarea asp-for="UploadsRequired" class="in2" placeholder="يتم ذكر جميع المرفقات المطلوب إضافتها في الخدمة، مع تحديد إلزاميتها (الزامي او اختياري)"></textarea>
                 <label for="uploadsRequiredFile">
@@ -71,7 +71,7 @@
                     </div>
                 }
                 <span id="uploadsRequiredFileName" class="text-muted d-block mt-1"></span>
-                <input type="file" multiple name="UploadsRequiredFile" id="uploadsRequiredFile" accept=".doc,.docx,.xls,.xlsx,.pdf,image/*" onchange="updateFileName('uploadsRequiredFile', 'uploadsRequiredFileName')" style="display: none;" />
+                <input type="file" multiple name="UploadsRequiredFile" id="uploadsRequiredFile" accept=".doc,.docx,.xls,.xlsx,.pdf,image/*" onchange="validateAndDisplayFiles('uploadsRequiredFile', 'uploadsRequiredFileName')" style="display: none;" />
 
                 <textarea asp-for="Documents" class="in1" placeholder="وثائق الدعم؛ مثل (إجراءات العمل الموحد، لوائح وأنظمة)"></textarea>
                 <label for="documentsFile">
@@ -96,7 +96,7 @@
                 }
 
                 <span id="documentsFileName" class="text-muted d-block mt-1"></span>
-                <input type="file" multiple name="DocumentsFile" id="documentsFile" accept=".doc,.docx,.xls,.xlsx,.pdf,image/*" onchange="updateFileName('documentsFile', 'documentsFileName')" style="display: none;" />
+                <input type="file" multiple name="DocumentsFile" id="documentsFile" accept=".doc,.docx,.xls,.xlsx,.pdf,image/*" onchange="validateAndDisplayFiles('documentsFile', 'documentsFileName')" style="display: none;" />
             </div>
 
 

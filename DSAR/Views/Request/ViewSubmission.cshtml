@@ -43,23 +43,22 @@
 
         <div class="form-container">
             <div class="right-column column">
-                <input type="text" class="in1" value="@Model.Field1" readonly />
-                <input type="text" class="in1" value="@Model.Field2" readonly />
-                <textarea class="in2" readonly>@Model.Field3</textarea>
+                <input type="text" class="in1" value="@Model.ServiceName" readonly />
+                <input type="text" class="in1" value="@Model.ServiceTypeAndLocation" readonly />
+                <textarea class="in2" readonly>@Model.ServiceDescription</textarea>
 
                 <div class="radio-section">
                     <label>هل توجد اعتمادية على خدمات حالية؟</label>
                     <div class="radio-options">
-                        <label><input type="radio" name="Depend" value="yes" @(Model.Depend == "yes" ? "checked" : "") disabled /> نعم</label>
-                        <label><input type="radio" name="Depend" value="no" @(Model.Depend == "no" ? "checked" : "") disabled /> لا</label>
+                        <label><input type="radio" name="Depend" value="yes" @(Model.HasDependency == "yes" ? "checked" : "") disabled /> نعم</label>
+                        <label><input type="radio" name="Depend" value="no" @(Model.HasDependency == "no" ? "checked" : "") disabled /> لا</label>
                     </div>
                 </div>
             </div>
 
             <div class="left-column column">
-                <input type="text" class="in1" value="@Model.Field4" readonly />
-                <input type="text" class="in1" value="@Model.Field5" readonly />
-                <input type="text" class="in3" value="@Model.Field6" readonly />
+                <input type="text" class="in1" value="@Model.DependencyDetails" readonly />
+                <input type="text" class="in1" value="@Model.ProcedureNumber" readonly />
 
                 <div class="attachment-section">
                     @if (step1Attachment != null)

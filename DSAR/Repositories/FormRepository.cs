@@ -1,4 +1,5 @@
-﻿using DSAR.Data;
+﻿using Azure.Core;
+using DSAR.Data;
 using DSAR.Interfaces;
 using DSAR.Models;
 using DSAR.Repository;
@@ -143,19 +144,19 @@ namespace DSAR.Repository
             var snapshot = await GetOrCreateSnapshotAsync();
 
             var formData = snapshot.GetFormData(_jsonOptions);
+           
             // Map FormData to RequestViewModel  
             var requestViewModel = new RequestViewModel
             {
                 Name = formData.Name,
                 Email = formData.Email,
                 Message = formData.Message,
-                Field1 = formData.Field1,
-                Field2 = formData.Field2,
-                Field3 = formData.Field3,
-                Depend = formData.Depend,
-                Field4 = formData.Field4,
-                Field5 = formData.Field5,
-                Field6 = formData.Field6,
+                ServiceName = formData.ServiceName,
+                ServiceTypeAndLocation = formData.ServiceTypeAndLocation,
+                ServiceDescription = formData.ServiceDescription,
+                HasDependency = formData.HasDependency,
+                DependencyDetails = formData.DependencyDetails,
+                ProcedureNumber = formData.ProcedureNumber,
                 RepeatLimit = formData.RepeatLimit,
                 Fees = formData.Fees,
                 //Cities = formData.Cities,
@@ -180,12 +181,12 @@ namespace DSAR.Repository
                     Value = d.DepartmentId.ToString(),
                     Text = d.DepartmentName
                 }).ToList(),
-                Cities = _cityRepository.GetAll()
-                .Select(d => new SelectListItem
-                {
-                    Value = d.CityId.ToString(),
-                    Text = d.CityName
-                }).ToList()
+                //Cities = _cityRepository.GetAll()
+                //.Select(d => new SelectListItem
+                //{
+                //    Value = d.CityId.ToString(),
+                //    Text = d.CityName
+                //}).ToList()
 
             };
             requestViewModel.Attachment1Id = snapshot.Attachments
@@ -267,13 +268,12 @@ namespace DSAR.Repository
             }
 
             // Update the data with new values
-            currentData.Field1 = data.Field1;
-            currentData.Field2 = data.Field2;
-            currentData.Field3 = data.Field3;
-            currentData.Depend = data.Depend;
-            currentData.Field4 = data.Field4;
-            currentData.Field5 = data.Field5;
-            currentData.Field6 = data.Field6;
+            currentData.ServiceName = data.ServiceName;
+            currentData.ServiceTypeAndLocation = data.ServiceTypeAndLocation;
+            currentData.ServiceDescription = data.ServiceDescription;
+            currentData.HasDependency = data.HasDependency;
+            currentData.DependencyDetails = data.DependencyDetails;
+            currentData.ProcedureNumber = data.ProcedureNumber;
 
             snapshot.SetFormData(currentData, _jsonOptions);
 
@@ -305,14 +305,15 @@ namespace DSAR.Repository
 
         private bool HasMeaningfulChanges(FormData current, RequestViewModel incoming)
         {
-            return current.Field1 != incoming.Field1 ||
-                   current.Field2 != incoming.Field2 ||
-                   current.Field3 != incoming.Field3 ||
-                   current.Depend != incoming.Depend ||
-                   current.Field4 != incoming.Field4 ||
-                   current.Field5 != incoming.Field5 ||
-                   current.Field6 != incoming.Field6;
+            return current.ServiceName != incoming.ServiceName ||
+                   current.ServiceTypeAndLocation != incoming.ServiceTypeAndLocation ||
+                   current.ServiceDescription != incoming.ServiceDescription ||
+                   current.HasDependency != incoming.HasDependency ||
+                   current.DependencyDetails != incoming.DependencyDetails ||
+                   current.ProcedureNumber != incoming.ProcedureNumber;
         }
+
+        
 
         public async Task<bool> HandleStep2Data(RequestViewModel data, List<IFormFile> attachments2, List<IFormFile> attachments3)
         {
@@ -328,7 +329,7 @@ namespace DSAR.Repository
             // Update Step 2 fields
             currentData.RepeatLimit = data.RepeatLimit;
             currentData.Fees = data.Fees;
-            currentData.CityId = data.CityId;
+            currentData.Cities = data.Cities2;
             currentData.TargetAudience = data.TargetAudience;
             currentData.DepartmentId = data.DepartmentId;
             currentData.ExpectedOutput1 = data.ExpectedOutput1;
@@ -377,7 +378,7 @@ namespace DSAR.Repository
                    current.Fees != incoming.Fees ||
                    current.Cities != incoming.Cities ||
                    current.TargetAudience != incoming.TargetAudience ||
-                   current.DepName != incoming.DepName ||
+                   current.DepartmentId != incoming.DepartmentId ||
                    current.ExpectedOutput1 != incoming.ExpectedOutput1 ||
                    current.ExpectedOutput2 != incoming.ExpectedOutput2 ||
                    current.ApprovedTemplate != incoming.ApprovedTemplate ||
@@ -392,21 +393,39 @@ namespace DSAR.Repository
             var snapshot = await GetOrCreateSnapshotAsync();
             var snapshotData = snapshot.GetFormData(_jsonOptions);
 
+            MapSnapshotToViewModel(snapshotData, data);
+            MapAttachments(snapshot, data);
 
-            // Map all properties from JSON to the final form data
+            var request = await CreateFormDataFromViewModelAsync(data , UserId);
+         
+            request.TermsAccepted = snapshot.TermsAccepted;
+
+            await _context.Forms.AddAsync(request);
+            await _context.SaveChangesAsync();
+
+            SaveDescriptions(snapshot, request.RequestId);
+
+            _context.SnapshotForms.Remove(snapshot);
+            await _context.SaveChangesAsync();
+
+            return request;
+        }
+
+        private void MapSnapshotToViewModel(FormData snapshotData, RequestViewModel data)
+        {
+            // Use reflection for a cleaner mapping or map manually if performance is key
             data.Name = snapshotData.Name;
             data.Email = snapshotData.Email;
             data.Message = snapshotData.Message;
-            data.Field1 = snapshotData.Field1;
-            data.Field2 = snapshotData.Field2;
-            data.Field3 = snapshotData.Field3;
-            data.Depend = snapshotData.Depend;
-            data.Field4 = snapshotData.Field4;
-            data.Field5 = snapshotData.Field5;
-            data.Field6 = snapshotData.Field6;
+            data.ServiceName = snapshotData.ServiceName;
+            data.ServiceTypeAndLocation = snapshotData.ServiceTypeAndLocation;
+            data.ServiceDescription = snapshotData.ServiceDescription;
+            data.HasDependency = snapshotData.HasDependency;
+            data.DependencyDetails = snapshotData.DependencyDetails;
+            data.ProcedureNumber = snapshotData.ProcedureNumber;
             data.RepeatLimit = snapshotData.RepeatLimit;
             data.Fees = snapshotData.Fees;
-            data.CityId = snapshotData.CityId;
+            data.Cities = snapshotData.Cities;
             data.TargetAudience = snapshotData.TargetAudience;
             data.DepartmentId = snapshotData.DepartmentId;
             data.ExpectedOutput1 = snapshotData.ExpectedOutput1;
@@ -422,9 +441,11 @@ namespace DSAR.Repository
             data.Cities2 = snapshotData.Cities2;
             data.DepartmentHeadName = snapshotData.DepartmentHeadName;
             data.AdditionalNotes = snapshotData.AdditionalNotes;
+        }
 
+        private void MapAttachments(SnapshotFormData snapshot, RequestViewModel data)
 
-            // Handle attachments
+        {
             foreach (var attachment in snapshot.Attachments)
             {
                 data.Attachments.Add(new AttachmentMetadata
@@ -432,32 +453,32 @@ namespace DSAR.Repository
                     FileName = attachment.FileName,
                     FileExtension = attachment.FileExtension,
                     FileSize = attachment.FileSize,
-
-                    FieldName = attachment.FieldName, // Copy field name
-
+                    FieldName = attachment.FieldName,
                     AttachmentData = new AttachmentData
                     {
                         Data = attachment.SnapshotAttachmentData.Data
                     }
                 });
             }
+        }
 
-            var request = new FormData
+        private async Task<FormData> CreateFormDataFromViewModelAsync(RequestViewModel data,string UserId)
+        {
+            var form =  new FormData
             {
                 UserId = data.UserId,
                 Name = data.Name,
                 Email = data.Email,
                 Message = data.Message,
-                Field1 = data.Field1,
-                Field2 = data.Field2,
-                Field3 = data.Field3,
-                Depend = data.Depend,
-                Field4 = data.Field4,
-                Field5 = data.Field5,
-                Field6 = data.Field6,
+                ServiceName = data.ServiceName,
+                ServiceTypeAndLocation = data.ServiceTypeAndLocation,
+                ServiceDescription = data.ServiceDescription,
+                HasDependency = data.HasDependency,
+                DependencyDetails = data.DependencyDetails,
+                ProcedureNumber = data.ProcedureNumber,
                 RepeatLimit = data.RepeatLimit,
                 Fees = data.Fees,
-                CityId = data.CityId,
+                Cities = data.Cities,
                 TargetAudience = data.TargetAudience,
                 DepartmentId = data.DepartmentId,
                 ExpectedOutput1 = data.ExpectedOutput1,
@@ -473,47 +494,33 @@ namespace DSAR.Repository
                 Cities2 = data.Cities2,
                 DepartmentHeadName = data.DepartmentHeadName,
                 AdditionalNotes = data.AdditionalNotes,
-                FilePath = data.FilePath,
+              
                 SectionNotes = data.SectionNotes,
                 DepartmentNotes = data.DepartmentNotes,
                 Attachments = data.Attachments,
-
+                TermsAccepted = data.TermsAccepted
             };
-
             int userRequestCount = await _context.Forms
-         .Include(r => r.User)
-         .Where(r => r.User.UserId == userId)
-         .CountAsync();
+                .Include(r => r.User)
+            .Where(r => r.User.UserId == UserId)
+               .CountAsync();
+            string newRequestNumber = $"{UserId}{(userRequestCount + 1).ToString("D4")}";
+            form.RequestNumber = Double.Parse(newRequestNumber);
+            return form;
+        }
 
-            string newRequestNumber = $"{userId}{(userRequestCount + 1):D4}";
+        private void SaveDescriptions(SnapshotFormData snapshot, int requestId)
 
-            request.RequestNumber = newRequestNumber;
-
-            request.TermsAccepted = snapshot.TermsAccepted;
-
-
-            // Create the actual form data
-            await _context.Forms.AddAsync(request);
-            await _context.SaveChangesAsync();
-
-            // Save descriptions
+        {
             foreach (var description in snapshot.Descriptions)
             {
                 _context.DescriptionEntries.Add(new DescriptionEntry
                 {
-                    RequestId = request.RequestId,
+                    RequestId = requestId,
                     Description1 = description.Description1,
                     Description2 = description.Description2
                 });
             }
-
-            await _context.SaveChangesAsync();
-
-            // Clean up the snapshot
-            _context.SnapshotForms.Remove(snapshot);
-            await _context.SaveChangesAsync();
-
-            return request;
         }
 
 
@@ -526,35 +533,17 @@ namespace DSAR.Repository
         {
             var snapshot = await GetOrCreateSnapshotAsync();
             var currentData = snapshot.GetFormData(_jsonOptions);
-            if (!HasMeaningfulChangesStep4(currentData, data) &&
-    (workflowFile == null || workflowFile.Length == 0) &&
-    (uploadsRequiredFile == null || uploadsRequiredFile.Length == 0) &&
-    (documentsFile == null || documentsFile.Length == 0))
-            {
-                // No changes detected, skip saving
-                return (false, null, null, null);
-            }
+            
             // Check if anything changed
-            bool hasChanges =
-                currentData.Workflow != data.Workflow ||
-                currentData.UploadsRequired != data.UploadsRequired ||
-                currentData.Documents != data.Documents ||
-                currentData.Timeline != data.Timeline ||
-                currentData.SystemNeeded != data.SystemNeeded ||
-                currentData.Cities2 != data.Cities2 ||
-                currentData.DepartmentHeadName != data.DepartmentHeadName ||
-                currentData.AdditionalNotes != data.AdditionalNotes ||
-                (workflowFile != null && workflowFile.Length > 0) ||
-                (uploadsRequiredFile != null && uploadsRequiredFile.Length > 0) ||
-                (documentsFile != null && documentsFile.Length > 0);
+           
 
-            if (!hasChanges)
-                return (false, null, null, null);
+           
 
             bool anyWorkflow = workflowFiles != null && workflowFiles.Any(f => f.Length > 0);
             bool anyUploads = uploadsRequiredFiles != null && uploadsRequiredFiles.Any(f => f.Length > 0);
             bool anyDocuments = documentsFiles != null && documentsFiles.Any(f => f.Length > 0);
 
+         
             if (!HasMeaningfulChangesStep4(currentData, data) && !anyWorkflow && !anyUploads && !anyDocuments)
                 return (false, null, null, null);
 
@@ -636,25 +625,15 @@ namespace DSAR.Repository
 
             snapshot.TermsAccepted = true;
             await _context.SaveChangesAsync();
-            return (true, workflowName, uploadsName, documentsName);
         }
-        private bool HasMeaningfulChangesStep4(FormData current, RequestViewModel incoming)
-        {
-            return current.Workflow != incoming.Workflow ||
-                   current.UploadsRequired != incoming.UploadsRequired ||
-                   current.Documents != incoming.Documents ||
-                   current.Timeline != incoming.Timeline ||
-                   current.SystemNeeded != incoming.SystemNeeded ||
-                   current.Cities2 != incoming.Cities2 ||
-                   current.DepartmentHeadName != incoming.DepartmentHeadName ||
-                   current.AdditionalNotes != incoming.AdditionalNotes;
-        }
+       
         public async Task<SnapshotFormData> GetCurrentSnapshotAsync()
         {
             var userId = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             return await _context.SnapshotForms
                 .FirstOrDefaultAsync(s => s.UserId == userId);
         }
+        
 
 
         #endregion

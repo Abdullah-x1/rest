@@ -8,13 +8,13 @@ namespace DSAR.ViewModels
     public class RequestViewModel
     {   
         public int RequestId { get; set; }
-        public int ReuqestNumber { get; set; }
         public string UserId { get; set; }
-        public string RequestNumber { get; set; }
+        public Double RequestNumber { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string DepartmentName { get; set; }
 
+        public bool TermsAccepted { get; set; }
 
         //Request Actions
         public int ActionId { get; set; }
@@ -35,54 +35,87 @@ namespace DSAR.ViewModels
         public string? Email { get; set; }
         public string? Message { get; set; }
         [Required(ErrorMessage = "اسم الخدمة مطلوب")]
-
-        public string Field1 { get; set; }
+        [StringLength(250)]
+        public string? ServiceName { get; set; }              // يتم كتابة اسم الخدمة المطلوبة  
 
         [Required(ErrorMessage = "نوع الخدمة مطلوب")]
+        [StringLength(250)]
 
-        public string Field2 { get; set; }
+        public string? ServiceTypeAndLocation { get; set; }   // يتم تحديد نوع الخدمة وموقعها  
         [Required(ErrorMessage = "الوصف التفصيلي مطلوب")]
+        [StringLength(1000)]
 
-        public string? Field3 { get; set; }
-        public string? Depend { get; set; }
-        public string? Field4 { get; set; }
-        public string? Field5 { get; set; }
-        public string? Field6 { get; set; }
+        public string? ServiceDescription { get; set; }       // يتم كتابة وصف تفصيلي للخدمة المطلوب تطويرها  
+        public string? HasDependency { get; set; }            // هل توجد اعتمادية على خدمات حالية؟  
+        [StringLength(250)]
+
+        public string? DependencyDetails { get; set; }        // توضيح الاعتمادية ان وجد  
+        [StringLength(250)]
+
+        public string? ProcedureNumber { get; set; }          // رقم الإجراء الإداري إن وجد  
+
+        [StringLength(250)]
         public string? RepeatLimit { get; set; }
+
         [Required(ErrorMessage = "الرسوم مطلوبه")]
+        [StringLength(250)]
 
         public string Fees { get; set; }
-        //public string? Cities { get; set; }
-        //[Required(ErrorMessage = "الفئة المستهدفة مطلوبه")]
+        public string? Cities { get; set; }
+        [Required(ErrorMessage = "الفئة المستهدفة مطلوبه")]
 
         public string TargetAudience { get; set; }
         [Required(ErrorMessage = " اسم الإدارة مطلوب")]
         public string DepName { get; set; }
+
+        [StringLength(1000)]
         public string? ExpectedOutput1 { get; set; }
+        [StringLength(1000)]
+
         public string? ExpectedOutput2 { get; set; }
+        [StringLength(1000)]
+
         public string? ApprovedTemplate { get; set; }
+        [StringLength(1000)]
+
         public string? DetailedInfo { get; set; }
+        [StringLength(1000)]
+
         public string? RequiredConditions { get; set; }
 
         [Required(ErrorMessage = " مسار العمل مطلوب")]
+        [StringLength(250)]
         public string Workflow { get; set; }
+        [StringLength(1000)]
+
         public string? UploadsRequired { get; set; }
+        [StringLength(250)]
+
         public string? Documents { get; set; }
 
         [Required(ErrorMessage = " المدة الزمنية  مطلوبه")]
+        [StringLength(250)]
+
         public string Timeline { get; set; }
+        [StringLength(1000)]
+
         public string? SystemNeeded { get; set; }
+        [StringLength(250)]
+
         public string? Cities2 { get; set; } // to avoid collision with existing Cities
+        [StringLength(250)]
+
         public string? DepartmentHeadName { get; set; }
+        [StringLength(250)]
+
         public string? AdditionalNotes { get; set; } //
-        public string? FilePath { get; set; } // Store file name or path
 
         [NotMapped]
         public List<IFormFile> Attachment1 { get; set; }
 
+
         [NotMapped]
         public List<IFormFile> Attachment2 { get; set; }
-
 
         [NotMapped]
         public List<IFormFile> Attachment3 { get; set; }
@@ -114,24 +147,6 @@ namespace DSAR.ViewModels
         public List<int> DocumentsAttachmentId { get; set; }
         public List<string> DocumentsName { get; set; }
 
-        public int Attachment1Id { get; set; }
-        public string Attachment1Name { get; set; }
-
-        public int Attachment2Id { get; set; }
-        public string Attachment2Name { get; set; }
-
-        public int Attachment3Id { get; set; }
-        public string Attachment3Name { get; set; }
-
-        public int WorkflowAttachmentId { get; set; }
-        public string WorkflowName { get; set; }
-
-        public int UploadsRequiredAttachmentId { get; set; }
-        public string UploadsRequiredName { get; set; }
-
-        public int DocumentsAttachmentId { get; set; }
-        public string DocumentsName { get; set; }
-
         //Descriptions
         public List<DescriptionEntry> Descriptions { get; set; } = new();
         public string ReturnUrl { get; set; } // Add this property
@@ -151,8 +166,8 @@ namespace DSAR.ViewModels
         public int DepartmentId { get; set; }
 
         public List<SelectListItem> Departments { get; set; } = new List<SelectListItem>();
-        public int CityId { get; set; }
-        public List<SelectListItem> Cities { get; set; } = new List<SelectListItem>();
+        //public int CityId { get; set; }
+        //public List<SelectListItem> Cities { get; set; } = new List<SelectListItem>();
 
     }
 }

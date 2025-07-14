@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DSAR.Migrations
 {
     /// <inheritdoc />
-    public partial class RenameSessionIdToCookieId : Migration
+    public partial class _1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -57,9 +57,10 @@ namespace DSAR.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CookieId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FormDataJson = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    FormDataJson = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TermsAccepted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -232,8 +233,8 @@ namespace DSAR.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    DepartmentId = table.Column<int>(type: "int", nullable: true),
-                    SectionId = table.Column<int>(type: "int", nullable: true),
+                    DepartmentId = table.Column<int>(type: "int", nullable: false),
+                    SectionId = table.Column<int>(type: "int", nullable: false),
                     CityId = table.Column<int>(type: "int", nullable: false),
                     Active = table.Column<bool>(type: "bit", nullable: false),
                     SectorId = table.Column<int>(type: "int", nullable: true),
@@ -372,6 +373,8 @@ namespace DSAR.Migrations
                     RequestId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CityId = table.Column<int>(type: "int", nullable: false),
+                    DepartmentId = table.Column<int>(type: "int", nullable: false),
                     RequestNumber = table.Column<double>(type: "float", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -387,7 +390,7 @@ namespace DSAR.Migrations
                     Fees = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Cities = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TargetAudience = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DepName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Departments = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ExpectedOutput1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ExpectedOutput2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ApprovedTemplate = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -402,6 +405,7 @@ namespace DSAR.Migrations
                     DepartmentHeadName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AdditionalNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FilePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TermsAccepted = table.Column<bool>(type: "bit", nullable: false),
                     SectionNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DepartmentNotes = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -414,6 +418,12 @@ namespace DSAR.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Forms_Department_DepartmentId",
+                        column: x => x.DepartmentId,
+                        principalTable: "Department",
+                        principalColumn: "DepartmentId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -755,6 +765,11 @@ namespace DSAR.Migrations
                 name: "IX_DescriptionEntries_FormDataRequestId",
                 table: "DescriptionEntries",
                 column: "FormDataRequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Forms_DepartmentId",
+                table: "Forms",
+                column: "DepartmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Forms_UserId",

@@ -250,9 +250,6 @@ namespace DSAR.Migrations
                     b.Property<string>("Cities2")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CityId")
-                        .HasColumnType("int");
-
                     b.Property<string>("DepartmentHeadName")
                         .HasColumnType("nvarchar(max)");
 
@@ -265,7 +262,7 @@ namespace DSAR.Migrations
                     b.Property<string>("Departments")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Depend")
+                    b.Property<string>("DependencyDetails")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DetailedInfo")
@@ -286,25 +283,10 @@ namespace DSAR.Migrations
                     b.Property<string>("Fees")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Field1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field2")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field3")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field4")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field5")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field6")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("FilePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HasDependency")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Message")
@@ -313,17 +295,28 @@ namespace DSAR.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ProcedureNumber")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("RepeatLimit")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RequestNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<double>("RequestNumber")
+                        .HasColumnType("float");
 
                     b.Property<string>("RequiredConditions")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SectionNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ServiceDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ServiceName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ServiceTypeAndLocation")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SystemNeeded")
@@ -599,10 +592,6 @@ namespace DSAR.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CookieId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");

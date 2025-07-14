@@ -51,10 +51,7 @@
                     <select asp-for="DepartmentId" asp-items="Model.Departments" class="form-select"></select>
                     <span asp-validation-for="DepartmentId" class="text-danger"></span>
                 <span asp-validation-for="DepName" class="text-danger"></span>
-                    <label class="form-label">City</label>
-                    <select asp-for="CityId" asp-items="Model.Cities" class="form-select"></select>
-                    <span asp-validation-for="CityId" class="text-danger"></span>
-                    <span asp-validation-for="DepName" class="text-danger"></span>
+                   
                 </div>
 
             </div>
@@ -72,7 +69,7 @@
                 </label>
                 <input type="file" multiple name="Attachment2" id="Attachment2" class="d-none"
                        accept=".doc,.docx,.xls,.xlsx,.pdf,image/*"
-                       onchange="updateFileName('Attachment2', 'Attachment2Name')" />
+                       onchange="validateAndDisplayFiles('Attachment2', 'Attachment2Name')" />
                 <span id="Attachment2Name" class="text-muted mt-2 d-block"></span>
 
                 @if (Model.Attachment2Id != null && Model.Attachment2Id.Any())
@@ -102,7 +99,7 @@
                 </label>
                 <input type="file" multiple name="Attachment3" id="Attachment3" class="d-none"
                        accept=".doc,.docx,.xls,.xlsx,.pdf,image/*"
-                       onchange="updateFileName('Attachment3', 'Attachment3Name')" />
+                       onchange="validateAndDisplayFiles('Attachment3', 'Attachment3Name')" />
                 <span id="Attachment3Name" class="text-muted mt-2 d-block"></span>
 
                 @if (Model.Attachment3Id != null && Model.Attachment3Id.Any())
@@ -131,22 +128,15 @@
                 <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("Step1", "Request")'">السابق</button>
 
                 <div class="d-flex gap-2">
-                    <button type="button" id="saveButton" class="btn btn-success d-flex align-items-center" name="action" value="save">
+                    <button type="submit" id="saveButton" class="btn btn-success d-flex align-items-center" name="action" value="save">
                         <i class="bi bi-save me-2"></i> حفظ
                     </button>
-
+                    <button type="submit" class="bi bi-save me-2" name="action" id="saveButton" value="save">حفظ</button>
                     <button type="submit" class="btn btn-primary" name="action" value="next">التالي</button>
                 </div>
             </div>
         </div>
     </form>
-    <script>
-        // Reuse the AJAX logic
-        setupAjaxSave(
-            '#step2Form',
-            '#saveButton',
-            '@Url.Action("Step2", "Request")'
-        );
 
     <script>
         setupAjaxSave('#step2Form', '#saveButton', '@Url.Action("Step2", "Request")');

@@ -11,7 +11,6 @@ namespace DSAR.Models
         //change to CreatedBy
         [Required, ForeignKey(nameof(User))]
         public string UserId { get; set; }
-        public int CityId { get; set; }
         public int DepartmentId { get; set; }
         public Double RequestNumber { get; set; }
         public CaseStudy CaseStudy { get; set; } //nav
@@ -23,13 +22,12 @@ namespace DSAR.Models
         public string? Name { get; set; }
         public string? Email { get; set; }
         public string? Message { get; set; }
-        public string? Field1 { get; set; }
-        public string? Field2 { get; set; }
-        public string? Field3 { get; set; }
-        public string? Depend { get; set; }
-        public string? Field4 { get; set; }
-        public string? Field5 { get; set; }
-        public string? Field6 { get; set; }
+        public string? ServiceName { get; set; }              // يتم كتابة اسم الخدمة المطلوبة  
+        public string? ServiceTypeAndLocation { get; set; }   // يتم تحديد نوع الخدمة وموقعها  
+        public string? ServiceDescription { get; set; }       // يتم كتابة وصف تفصيلي للخدمة المطلوب تطويرها  
+        public string? HasDependency { get; set; }            // هل توجد اعتمادية على خدمات حالية؟  
+        public string? DependencyDetails { get; set; }        // توضيح الاعتمادية ان وجد  
+        public string? ProcedureNumber { get; set; }          // رقم الإجراء الإداري إن وجد  
         public string? RepeatLimit { get; set; }
         public string? Fees { get; set; }
         public string? Cities { get; set; }
@@ -80,7 +78,6 @@ namespace DSAR.Models
         public RequestActions? RequestActions { get; set; }
 
         public Department Department { get; set; } // Navigation property
-
         //Metadata
 
         public ICollection<AttachmentMetadata> Attachments { get; set; } = new List<AttachmentMetadata>();
