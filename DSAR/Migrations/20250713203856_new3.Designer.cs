@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DSAR.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250714105848_1")]
-    partial class _1
+    [Migration("20250713203856_new3")]
+    partial class new3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -253,19 +253,13 @@ namespace DSAR.Migrations
                     b.Property<string>("Cities2")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CityId")
-                        .HasColumnType("int");
+                    b.Property<string>("DepName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DepartmentHeadName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DepartmentId")
-                        .HasColumnType("int");
-
                     b.Property<string>("DepartmentNotes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Departments")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Depend")
@@ -334,9 +328,6 @@ namespace DSAR.Migrations
                     b.Property<string>("TargetAudience")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("TermsAccepted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Timeline")
                         .HasColumnType("nvarchar(max)");
 
@@ -351,8 +342,6 @@ namespace DSAR.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("RequestId");
-
-                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("UserId");
 
@@ -656,7 +645,7 @@ namespace DSAR.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DepartmentId")
+                    b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
@@ -696,7 +685,7 @@ namespace DSAR.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int>("SectionId")
+                    b.Property<int?>("SectionId")
                         .HasColumnType("int");
 
                     b.Property<int?>("SectorId")
@@ -958,19 +947,11 @@ namespace DSAR.Migrations
 
             modelBuilder.Entity("DSAR.Models.FormData", b =>
                 {
-                    b.HasOne("DSAR.Models.Department", "Department")
-                        .WithMany()
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("DSAR.Models.User", "User")
                         .WithMany("Forms")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Department");
 
                     b.Navigation("User");
                 });
@@ -1135,14 +1116,12 @@ namespace DSAR.Migrations
                     b.HasOne("DSAR.Models.Department", "Department")
                         .WithMany("Users")
                         .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("DSAR.Models.Section", "Section")
                         .WithMany("Users")
                         .HasForeignKey("SectionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("DSAR.Models.Sector", "Sector")
                         .WithMany("Users")

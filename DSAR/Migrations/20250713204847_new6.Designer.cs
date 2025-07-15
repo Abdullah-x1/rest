@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DSAR.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250715071022_2")]
-    partial class _2
+    [Migration("20250713204847_new6")]
+    partial class new6
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -253,19 +253,16 @@ namespace DSAR.Migrations
                     b.Property<string>("Cities2")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DepartmentHeadName")
+                    b.Property<string>("DepName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DepartmentId")
-                        .HasColumnType("int");
+                    b.Property<string>("DepartmentHeadName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DepartmentNotes")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Departments")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DependencyDetails")
+                    b.Property<string>("Depend")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DetailedInfo")
@@ -286,10 +283,25 @@ namespace DSAR.Migrations
                     b.Property<string>("Fees")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FilePath")
+                    b.Property<string>("Field1")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("HasDependency")
+                    b.Property<string>("Field2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Field3")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Field4")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Field5")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Field6")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Message")
@@ -298,28 +310,17 @@ namespace DSAR.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ProcedureNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("RepeatLimit")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("RequestNumber")
-                        .HasColumnType("float");
+                    b.Property<string>("RequestNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RequiredConditions")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SectionNotes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ServiceDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ServiceName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ServiceTypeAndLocation")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SystemNeeded")
@@ -345,8 +346,6 @@ namespace DSAR.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("RequestId");
-
-                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("UserId");
 
@@ -650,7 +649,7 @@ namespace DSAR.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DepartmentId")
+                    b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
@@ -690,7 +689,7 @@ namespace DSAR.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int>("SectionId")
+                    b.Property<int?>("SectionId")
                         .HasColumnType("int");
 
                     b.Property<int?>("SectorId")
@@ -952,19 +951,11 @@ namespace DSAR.Migrations
 
             modelBuilder.Entity("DSAR.Models.FormData", b =>
                 {
-                    b.HasOne("DSAR.Models.Department", "Department")
-                        .WithMany()
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("DSAR.Models.User", "User")
                         .WithMany("Forms")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Department");
 
                     b.Navigation("User");
                 });
@@ -1129,14 +1120,12 @@ namespace DSAR.Migrations
                     b.HasOne("DSAR.Models.Department", "Department")
                         .WithMany("Users")
                         .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("DSAR.Models.Section", "Section")
                         .WithMany("Users")
                         .HasForeignKey("SectionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("DSAR.Models.Sector", "Sector")
                         .WithMany("Users")

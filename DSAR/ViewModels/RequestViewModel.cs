@@ -113,7 +113,6 @@ namespace DSAR.ViewModels
         [NotMapped]
         public List<IFormFile> Attachment1 { get; set; }
 
-
         [NotMapped]
         public List<IFormFile> Attachment2 { get; set; }
 
@@ -138,6 +137,8 @@ namespace DSAR.ViewModels
         public List<int> Attachment3Id { get; set; }
         public List<string> Attachment3Name { get; set; }
 
+        
+
         public List<int> WorkflowAttachmentId { get; set; }
         public List<string> WorkflowName { get; set; }
 
@@ -157,8 +158,8 @@ namespace DSAR.ViewModels
         public string? DepartmentNotes { get; set; }
 
         public IEnumerable<HistoryViewModel> History { get; set; }
-
-
+        public List<int> CaseStudyAttachmentIds { get; set; } = new List<int>();
+        public List<string> CaseStudyAttachmentNames { get; set; } = new List<string>();
 
         public ICollection<AttachmentMetadata> Attachments { get; set; } = new List<AttachmentMetadata>();
         //public ICollection<DescriptionEntry> Descriptions { get; set; } = new List<DescriptionEntry>();

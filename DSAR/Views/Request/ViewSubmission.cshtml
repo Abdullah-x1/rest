@@ -25,6 +25,8 @@
                             <th>الحالة</th>
                             <th>الدور</th>
                             <th>معلومات إضافية</th>
+                        <th>الوقت والتاريخ</th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -35,59 +37,98 @@
                                 <td>@entry.StatusName</td>
                                 <td>@entry.RoleName</td>
                                 <td>@entry.Information</td>
+                            <td>@entry.CreationDate</td>
+
                             </tr>
                         }
                     </tbody>
                 </table>
             </div>
 
+        <div class="content-area">
         <div class="form-container">
             <div class="right-column column">
-                <input type="text" class="in1" value="@Model.ServiceName" readonly />
-                <input type="text" class="in1" value="@Model.ServiceTypeAndLocation" readonly />
-                <textarea class="in2" readonly>@Model.ServiceDescription</textarea>
+                <label class="form-label small-label">اسم الخدمة المطلوبة</label>
+                    <input type="text" class="in1" value="@Model.ServiceName " readonly />
+
+                <label class="form-label small-label">نوع الخدمة</label>
+                    <input type="text" class="in1" value="@Model.ServiceTypeAndLocation " readonly />
+
+                <label class="form-label small-label">وصف الخدمة</label>
+                    <textarea class="in2" readonly>@Model.ServiceDescription </textarea>
+
 
                 <div class="radio-section">
                     <label>هل توجد اعتمادية على خدمات حالية؟</label>
                     <div class="radio-options">
-                        <label><input type="radio" name="Depend" value="yes" @(Model.HasDependency == "yes" ? "checked" : "") disabled /> نعم</label>
-                        <label><input type="radio" name="Depend" value="no" @(Model.HasDependency == "no" ? "checked" : "") disabled /> لا</label>
+                            <label><input type="radio" name="Depend" value="yes" @(Model.HasDependency == "yes" ? "checked" : "") disabled /> نعم</label>
+                            <label><input type="radio" name="Depend" value="no" @(Model.HasDependency == "no" ? "checked" : "") disabled /> لا</label>
                     </div>
                 </div>
             </div>
 
             <div class="left-column column">
-                <input type="text" class="in1" value="@Model.DependencyDetails" readonly />
-                <input type="text" class="in1" value="@Model.ProcedureNumber" readonly />
+                <div class="left-column column">
+                    <label class="form-label small-label">توضيح الاعتمادية</label>
+                        <input type="text" class="in1" value="@Model.DependencyDetails " readonly />
+
+                    <label class="form-label small-label">رقم الإجراء الإداري</label>
+                        <input type="text" class="in1" value="@Model.ProcedureNumber" readonly />
+
+                    <label class="form-label">ملف الإجراء الإداري إن وجد:</label><br />
+
 
                 <div class="attachment-section">
-                    @if (step1Attachment != null)
+                    @{
+                        var step1Attachments = Model.Attachments
+                        .Where(a => a.FieldName == "Step1")
+                        .ToList();
+                    }
+
+                    @if (step1Attachments.Any())
                     {
-                        <span>المرفق:</span>
-                        <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = step1Attachment.Id })"
-                           class="attachment-link">
-                            @step1Attachment.FileName@step1Attachment.FileExtension
-                        </a>
+                        <span>المرفقات:</span>
+                        <ul class="attached-files">
+                            @foreach (var att in step1Attachments)
+                            {
+                                <li>
+                                    <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = att.Id })"
+                                       class="attachment-link" target="_blank">
+                                        @att.FileName@att.FileExtension
+                                    </a>
+                                </li>
+                            }
+                        </ul>
                     }
                     else
                     {
-                        <span class="no-attachment">لا يوجد مرفق</span>
+                        <span class="no-attachment">لا يوجد مرفقات</span>
                     }
+
                 </div>
             </div>
 
-            <button type="button" class="arrow arrow-left">
-                <a href="@Url.Action("Main", "Account", new { id = Model.RequestId })">
-                    <img src="~/images/arrowL.png" alt="السابق" />
-                </a>
-            </button>
+            <div class="button-footer">
+                <button type="button"
+                        class="btn-prev"
+                        onclick="location.href='@Url.Action("Main", "Account", new { id = Model.RequestId })'">
+                    السابق
+                </button>
 
-            <a href="@Url.Action("ViewSubmission2", "Request", new { id = Model.RequestId })">
-                <div class="arrow arrow-right">
-                    <img src="~/images/arrowR.png" alt="التالي" />
+                <div class="btn-group-custom">
+                    <form method="post" asp-action="ViewSubmission2" asp-controller="Request">
+                        <input type="hidden" name="id" value="@Model.RequestId" />
+                        <button type="submit" class="btn-next" name="action" value="next">
+                            التالي
+                        </button>
+                    </form>
                 </div>
-            </a>
+            </div>
+
         </div>
     </div>
+    </div>
+    </div>
+
 </body>
 </html>

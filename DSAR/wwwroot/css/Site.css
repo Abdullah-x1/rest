@@ -3,32 +3,34 @@
     height: 100px; /* adjust as needed */
 }
 
-/* ensure container div fills that height */
-.site-header .container-fluid {
-    height: 100%;
-}
+    /* ensure container div fills that height */
+    .site-header .container-fluid {
+        height: 100%;
+    }
 
 /* shrink logo */
 .header-logo {
-    height: 100px; /* was 40px before */
+    height: 65px; /* was 40px before */
+
 }
 
 /* smaller nav-links */
 .header-link {
     padding: 0 1.5rem; /* less horizontal padding */
-    font-size: 2.2rem; /* a bit smaller text */
+    font-size: 28px; /* a bit smaller text */
     line-height: 50px; /* vertically center in header */
     color: #000; /* override if needed */
 }
 
 /* shrink logout icon */
 .header-logout {
-    height: 24px;
+    height: 40px;
+    width:40px;
 }
 
 /* push page content below the fixed header */
 .main-content {
-    padding-top: 50px; /* same as .site-header height */
+    padding-top: -100px; /* same as .site-header height */
 }
 
 
