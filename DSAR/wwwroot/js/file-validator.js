@@ -19,8 +19,6 @@
 
     for (let file of files) {
         const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
-        return !allowedExtensions.includes(ext);
-    });
 
         if (!allowedExtensions.includes(ext)) {
             Swal.fire("صيغة غير مدعومة!", "يرجى رفع ملفات بصيغ .doc, .docx, .pdf, .xls, .xlsx أو صور.", "error");

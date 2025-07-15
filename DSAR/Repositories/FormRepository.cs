@@ -144,7 +144,6 @@ namespace DSAR.Repository
             var snapshot = await GetOrCreateSnapshotAsync();
 
             var formData = snapshot.GetFormData(_jsonOptions);
-           
             // Map FormData to RequestViewModel  
             var requestViewModel = new RequestViewModel
             {
@@ -159,7 +158,7 @@ namespace DSAR.Repository
                 ProcedureNumber = formData.ProcedureNumber,
                 RepeatLimit = formData.RepeatLimit,
                 Fees = formData.Fees,
-                //Cities = formData.Cities,
+                Cities = formData.Cities,
                 TargetAudience = formData.TargetAudience,
 
                 ExpectedOutput1 = formData.ExpectedOutput1,
@@ -248,7 +247,15 @@ namespace DSAR.Repository
                 .Where(a => a.FieldName == "Step4_documentsFile")
                 .Select(a => $"{a.FileName}{a.FileExtension}")
                 .ToList();
+            requestViewModel.CaseStudyAttachmentIds = snapshot.Attachments
+    .Where(a => a.FieldName == "CaseStudyAttachment")
+    .Select(a => a.Id)
+    .ToList();
 
+            requestViewModel.CaseStudyAttachmentNames = snapshot.Attachments
+                .Where(a => a.FieldName == "CaseStudyAttachment")
+                .Select(a => $"{a.FileName}{a.FileExtension}")
+                .ToList();
 
             return requestViewModel;
         }
@@ -313,7 +320,7 @@ namespace DSAR.Repository
                    current.ProcedureNumber != incoming.ProcedureNumber;
         }
 
-        
+       
 
         public async Task<bool> HandleStep2Data(RequestViewModel data, List<IFormFile> attachments2, List<IFormFile> attachments3)
         {
@@ -329,7 +336,7 @@ namespace DSAR.Repository
             // Update Step 2 fields
             currentData.RepeatLimit = data.RepeatLimit;
             currentData.Fees = data.Fees;
-            currentData.Cities = data.Cities2;
+            currentData.Cities2 = data.Cities2;
             currentData.TargetAudience = data.TargetAudience;
             currentData.DepartmentId = data.DepartmentId;
             currentData.ExpectedOutput1 = data.ExpectedOutput1;
@@ -367,6 +374,8 @@ namespace DSAR.Repository
             await _context.SaveChangesAsync();
             return true;
         }
+
+
 
 
 
@@ -442,7 +451,6 @@ namespace DSAR.Repository
             data.DepartmentHeadName = snapshotData.DepartmentHeadName;
             data.AdditionalNotes = snapshotData.AdditionalNotes;
         }
-
         private void MapAttachments(SnapshotFormData snapshot, RequestViewModel data)
 
         {
@@ -533,17 +541,11 @@ namespace DSAR.Repository
         {
             var snapshot = await GetOrCreateSnapshotAsync();
             var currentData = snapshot.GetFormData(_jsonOptions);
-            
-            // Check if anything changed
-           
-
-           
 
             bool anyWorkflow = workflowFiles != null && workflowFiles.Any(f => f.Length > 0);
             bool anyUploads = uploadsRequiredFiles != null && uploadsRequiredFiles.Any(f => f.Length > 0);
             bool anyDocuments = documentsFiles != null && documentsFiles.Any(f => f.Length > 0);
 
-         
             if (!HasMeaningfulChangesStep4(currentData, data) && !anyWorkflow && !anyUploads && !anyDocuments)
                 return (false, null, null, null);
 
@@ -626,14 +628,12 @@ namespace DSAR.Repository
             snapshot.TermsAccepted = true;
             await _context.SaveChangesAsync();
         }
-       
         public async Task<SnapshotFormData> GetCurrentSnapshotAsync()
         {
             var userId = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             return await _context.SnapshotForms
                 .FirstOrDefaultAsync(s => s.UserId == userId);
         }
-        
 
 
         #endregion

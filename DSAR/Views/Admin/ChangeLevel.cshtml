@@ -1,44 +1,43 @@
 ﻿@model DSAR.Models.ViewModels.ChangeLevelViewModel
 @using Microsoft.AspNetCore.Mvc.Rendering
+<link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 
+<div class="container form-container">
+    <h2 class="form-title">تغيير مستوى الطلب @Model.RequestId</h2>
 
-<div class="mb-3">
-    <a asp-controller="Account"
-       asp-action="Main"
-       class="btn btn-secondary">
-        الصفحة الرئيسية
-    </a>
-<h2>تغيير مستوى الطلب @Model.RequestId</h2>
+    <form asp-action="ChangeLevel" method="post">
+        <input type="hidden" asp-for="RequestId" />
 
-<form asp-action="ChangeLevel" method="post">
-    <input type="hidden" asp-for="RequestId" />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <label>المستوى الحالي</label>
+            <input asp-for="CurrentLevelName" class="form-control" readonly />
+        </div>
 
-    <div class="form-group">
-        <label>Current Level</label>
-        <input asp-for="CurrentLevelName" class="form-control" readonly />
-    </div>
+        <div class="form-group">
+            <label asp-for="SelectedLevelId">المستوى الجديد</label>
+            <select asp-for="SelectedLevelId" asp-items="Model.Levels" class="form-control">
+                <option value="">-- اختر مستوى --</option>
+            </select>
+            <span asp-validation-for="SelectedLevelId" class="text-danger"></span>
+        </div>
 
-    <div class="form-group">
-        <label asp-for="SelectedLevelId">New Level</label>
-        <select asp-for="SelectedLevelId" asp-items="Model.Levels" class="form-control">
-            <option value="">-- اختر مستوى --</option>
-        </select>
-        <span asp-validation-for="SelectedLevelId" class="text-danger"></span>
-    </div>
+        <div class="form-group">
+            <label asp-for="SelectedStatusId">الحالة</label>
+            <select asp-for="SelectedStatusId" asp-items="Model.Statuses" class="form-control">
+                <option value="">-- اختر حالة --</option>
+            </select>
+            <span asp-validation-for="SelectedStatusId" class="text-danger"></span>
+        </div>
 
-    <div class="form-group">
-        <label asp-for="SelectedStatusId">Status</label>
-        <select asp-for="SelectedStatusId" asp-items="Model.Statuses" class="form-control">
-            <option value="">-- اختر حالة --</option>
-        </select>
-        <span asp-validation-for="SelectedStatusId" class="text-danger"></span>
-    </div>
+        <button type="submit" class="btn btn-submit">حفظ</button>
 
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a asp-action="ListRequests" class="btn btn-secondary">Cancel</a>
-</form>
+        <div class="d-flex justify-content-between mt-3">
+            <a asp-action="ListRequests" class="btn btn-secondary">إلغاء</a>
+        </div>
+    </form>
+</div>
 
 @section Scripts {
     @{

@@ -1,7 +1,5 @@
 @model DSAR.ViewModels.CaseStudyViewModel
-@{
-    Layout = null;
-}
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -9,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>المراجع والملاحظات</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <script src="~/js/file-validator.js" asp-append-version="true"></script>
+
     <link rel="stylesheet" href="~/css/analyzer.css" asp-append-version="true" />
 
 </head>
@@ -25,7 +25,7 @@
             {
                 <tr>
                     <td>@Model.SectionNotes</td>
-                    <td><h4>ملاحظة مدير القسم</h4></td>
+                    <td><h6>ملاحظة مدير القسم</h6></td>
                 </tr>
             }
 
@@ -33,7 +33,7 @@
             {
                 <tr>
                     <td>@Model.DepartmentNotes</td>
-                    <td><h4>ملاحظة مدير الإدارة</h4></td>
+                    <td><h6>ملاحظة مدير الإدارة</h6></td>
                 </tr>
             }
 
@@ -41,25 +41,51 @@
         </table>
 
         <div class="form-group">
-            <label asp-for="WorkTeam"></label>
+            <label asp-for="WorkTeam">فريق العمل</label>
             <input asp-for="WorkTeam" class="form-control" />
         </div>
 
         <div class="form-group">
-            <label asp-for="Notes"></label>
+            <label asp-for="Notes">الملاحظات</label>
             <textarea asp-for="Notes" class="form-control" rows="4"></textarea>
         </div>
 
         <div class="form-group">
-            <label asp-for="restriction"></label>
+            <label asp-for="restriction">القيود</label>
             <textarea asp-for="restriction" class="form-control" rows="4"></textarea>
         </div>
 
-        <div class="attachment">
-            <input type="file" id="CaseStudyAttachment" name="CaseStudyAttachment" style="display: none;" />
+        <!-- Attachment Upload Section -->
+        <div class="form-group">
+            <label for="CaseStudyAttachment" class="form-label">إرفاق مرفقات الدراسة:</label><br />
+
             <label for="CaseStudyAttachment" style="cursor: pointer;">
-                <img src="~/images/link.png" alt="إرفاق ملف" style="width: 24px;" />
+                <img src="~/images/link.png" alt="إرفاق ملف" width="24" />
             </label>
+
+            <input type="file" multiple name="CaseStudyAttachment" id="CaseStudyAttachment" class="d-none"
+                   accept=".doc,.docx,.xls,.xlsx,.pdf,image/*"
+                   onchange="validateAndDisplayFiles('CaseStudyAttachment', 'CaseStudyAttachmentName')" />
+
+            <span id="CaseStudyAttachmentName" class="text-muted mt-2 d-block"
+                  data-existing="@Model.CaseStudyAttachmentId?.Count"></span>
+
+            @if (Model.CaseStudyAttachmentId != null && Model.CaseStudyAttachmentId.Any())
+            {
+                <div class="text-info mt-1">
+                    <i class="bi bi-paperclip me-1"></i> الملفات الحالية:
+                    <ul class="attached-files">
+                        @for (int i = 0; i < Model.CaseStudyAttachmentId.Count; i++)
+                        {
+                            <li>
+                                <a href="@Url.Action("DownloadCaseStudyAttachment", "CaseStudy", new { attachmentId = Model.CaseStudyAttachmentId[i] })" target="_blank">
+                                    @Model.CaseStudyAttachmentName[i]
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
         </div>
 
 

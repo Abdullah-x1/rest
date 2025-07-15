@@ -287,6 +287,16 @@ namespace DSAR.Controllers
 
         public async Task<IActionResult> ViewSubmission2(int id)
         {
+            var histories = await _historyRepository.GetHistoriesByRequestIdAsync(id);
+
+            var historyVm = histories.Select(h => new HistoryViewModel
+            {
+                CreationDate = h.CreationDate,
+                LevelName = h.Levels.LevelName,
+                StatusName = h.Status.StatusName,
+                RoleName = h.Role.Name,
+                Information = h.Information
+            }).ToList();
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
 
@@ -324,7 +334,9 @@ namespace DSAR.Controllers
                 ApprovedTemplate = form.ApprovedTemplate,
                 DetailedInfo = form.DetailedInfo,
                 RequiredConditions = form.RequiredConditions,
-                Attachments = form.Attachments?.ToList() // ✅ Add this line
+                Attachments = form.Attachments?.ToList(), // ✅ Add this line
+                History = historyVm,
+                Cities2 = form.Cities2
 
 
             };
@@ -332,6 +344,17 @@ namespace DSAR.Controllers
         }
         public async Task<IActionResult> ViewSubmission3(int id)
         {
+
+            var histories = await _historyRepository.GetHistoriesByRequestIdAsync(id);
+
+            var historyVm = histories.Select(h => new HistoryViewModel
+            {
+                CreationDate = h.CreationDate,
+                LevelName = h.Levels.LevelName,
+                StatusName = h.Status.StatusName,
+                RoleName = h.Role.Name,
+                Information = h.Information
+            }).ToList();
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
 
@@ -363,7 +386,8 @@ namespace DSAR.Controllers
                 Cities2 = form.Cities2,
                 DepartmentHeadName = form.DepartmentHeadName,
                 AdditionalNotes = form.AdditionalNotes,
-                Attachments = form.Attachments?.ToList() // ✅ Add this line
+                Attachments = form.Attachments?.ToList(), // ✅ Add this line
+                History = historyVm
 
             };
             return viewModel == null ? NotFound() : View(viewModel);
@@ -395,7 +419,7 @@ namespace DSAR.Controllers
             // Create the proper view model  
             var viewModel = new RequestViewModel
             {
-                FormId = id, // Pass the form ID for navigation  
+                RequestId = form.RequestId,
                 Descriptions = formData?.ToList() ?? new List<DescriptionEntry>(),
                 ActionId = requestAction?.ActionId ?? 0, // Fix: Use null-coalescing operator to handle null reference  
                 LevelId = requestAction?.LevelId ?? 0,
@@ -542,6 +566,8 @@ namespace DSAR.Controllers
         }
 
         // STEP 4 - POST
+        [HttpPost]
+        [HttpPost]
         [HttpPost]
         public async Task<IActionResult> Step4(
     RequestViewModel data,
