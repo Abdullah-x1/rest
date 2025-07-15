@@ -80,7 +80,7 @@ using (var scope = app.Services.CreateScope())
             FirstName = "System Admin",
             UserId = userId,
             CityId = 1,
-            DepartmentId = 1, // Assuming 1 is the ID for the Admin department
+            DepartmentId = 2, // Assuming 1 is the ID for the Admin department
             SectorId = 1, // Assuming 1 is the ID for the Admin sector    
             SectionId = 2, // Assuming 1 is the ID for the Admin section
         };
@@ -103,7 +103,7 @@ using (var scope = app.Services.CreateScope())
             FirstName = "DepartmentManager",
             UserId = ManagerUserId,
             CityId = 1,
-            DepartmentId = 1, // Assuming 1 is the ID for the Admin department
+            DepartmentId = 2, // Assuming 1 is the ID for the Admin department
             SectorId = 1, // Assuming 1 is the ID for the Admin sector    
             SectionId = 2, // Assuming 1 is the ID for the Admin section
         };
@@ -126,9 +126,10 @@ using (var scope = app.Services.CreateScope())
             FirstName = "SectionManager",
             UserId = Manager2UserId,
             CityId = 1,
-            DepartmentId = 1, // Assuming 1 is the ID for the Admin department
+            DepartmentId = 2, // Assuming 1 is the ID for the Admin department
             SectorId = 1, // Assuming 1 is the ID for the Admin sector    
             SectionId = 2, // Assuming 1 is the ID for the Admin section
+
         };
         var result = await userManager.CreateAsync(newManager2, Manager2Password);
         if (result.Succeeded)
@@ -149,9 +150,10 @@ using (var scope = app.Services.CreateScope())
             FirstName = "ITManager",
             UserId = ITManagerUserId,
             CityId = 1,
-            DepartmentId = 1, // Assuming 1 is the ID for the Admin department
+            DepartmentId = 2, // Assuming 1 is the ID for the Admin department
             SectorId = 1, // Assuming 1 is the ID for the Admin sector    
             SectionId = 2, // Assuming 1 is the ID for the Admin section
+
         };
         var result = await userManager.CreateAsync(newITManager, ITManagerPassword);
         if (result.Succeeded)
@@ -172,9 +174,10 @@ using (var scope = app.Services.CreateScope())
             FirstName = "ApplicationManager",
             UserId = ApplicationUserId,
             CityId = 1,
-            DepartmentId = 1, // Assuming 1 is the ID for the Admin department
+            DepartmentId = 2, // Assuming 1 is the ID for the Admin department
             SectorId = 1, // Assuming 1 is the ID for the Admin sector    
             SectionId = 2, // Assuming 1 is the ID for the Admin section
+
         };
         var result = await userManager.CreateAsync(newApplication, ApplicationPassword);
         if (result.Succeeded)
@@ -196,9 +199,10 @@ using (var scope = app.Services.CreateScope())
             FirstName = "Analyzer",
             UserId = AnalyzerUserId,
             CityId = 1,
-            DepartmentId = 1, // Assuming 1 is the ID for the Admin department
+            DepartmentId = 2, // Assuming 1 is the ID for the Admin department
             SectorId = 1, // Assuming 1 is the ID for the Admin sector    
             SectionId = 2, // Assuming 1 is the ID for the Admin section
+
         };
         var result = await userManager.CreateAsync(newAnalyzer, AnalyzerPassword);
         if (result.Succeeded)
@@ -221,9 +225,10 @@ using (var scope = app.Services.CreateScope())
             FirstName = "Analyzer2",
             UserId = Analyzer2UserId,
             CityId = 1,
-            DepartmentId = 1, // Assuming 1 is the ID for the Admin department
+            DepartmentId = 2, // Assuming 1 is the ID for the Admin department
             SectorId = 1, // Assuming 1 is the ID for the Admin sector    
             SectionId = 2, // Assuming 1 is the ID for the Admin section
+
         };
         var result = await userManager.CreateAsync(newAnalyzer2, Analyzer2Password);
         if (result.Succeeded)

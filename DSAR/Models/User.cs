@@ -22,6 +22,7 @@ namespace DSAR.Models
 
         [ForeignKey("Sector")]
         public int? SectorId { get; set; }
+        public bool TermsAccepted { get; set; } = false;
 
         public Department Department { get; set; } // Navigation property
         public Section Section { get; set; } // Navigation property

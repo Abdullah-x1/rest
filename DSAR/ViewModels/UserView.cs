@@ -12,8 +12,9 @@ namespace DSAR.ViewModels
         public string? LastName { get; set; }
         public string UserName { get; set; }
         public int CityId { get; set; }
-
+        public bool TermsAccepted { get; set; }
+        public string terms { get; set; }
     }
-    
+
 
 }

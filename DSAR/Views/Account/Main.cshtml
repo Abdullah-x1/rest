@@ -67,5 +67,104 @@
 
 
 </body>
-</html>
 
+</html>
+@if (Model.TermsAccepted == false)
+{
+    <div id="termsPopup" class="popup-overlay">
+        <div class="popup-content">
+            <h1>المتطلبات والشروط والأحكام:</h1>
+            <ul class="requirements">
+                <li>جميع الوثائق يجب ان تكون سارية المفعول</li>
+                <li>عدم وجود طلب قائم لنفس الخدمة</li>
+                <li>استكمال جميع الحقول المطلوبة</li>
+                <li>الطلبات الغير نشطة يتم اغلاقها</li>
+                <li>مقدم الطلب يجب ان يكون موظف رسمي بالهيئة الملكية</li>
+                <li>يجب ارفاق جميع موافقات المدن</li>
+            </ul>
+
+            <form asp-action="Terms" method="post">
+                <div class="checkbox-container">
+                    <label>
+                        <input type="checkbox" id="termsCheckbox" name="termsAccepted"/>
+                        أوافق على الشروط والأحكام
+                    </label>
+                </div>
+                <div class="popup-buttons">
+                    <button type="submit" name="terms" value="Decline" class="popup-btn reject-btn">رفض الطلب</button>
+                    <button type="submit" id="acceptTermsBtn" name="terms" value="Accept" class="popup-btn accept-btn" disabled>قبول الطلب</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        /* Fullscreen overlay */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); /* semi-transparent */
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Modal content box */
+        .popup-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            text-align: right;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .requirements {
+            text-align: right;
+            padding-right: 20px;
+        }
+
+        .checkbox-container {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .popup-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .popup-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .accept-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .reject-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+
+    <script>
+        const termsCheckbox = document.getElementById('termsCheckbox');
+        const acceptBtn = document.getElementById('acceptTermsBtn');
+
+        termsCheckbox.addEventListener('change', () => {
+            acceptBtn.disabled = !termsCheckbox.checked;
+        });
+    </script>
+}

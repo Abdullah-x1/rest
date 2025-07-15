@@ -765,7 +765,7 @@ namespace DSAR.Controllers
             if (requestAction == null) return NotFound();
 
 
-            var allowed = await _requestActionRepository.ProtectViewPages(requestId, currentUser, request, requestAction);
+            var allowed = await _approveRepository.ProtectApprovePage(requestId, currentUser, request, requestAction);
             if (!allowed)
             {
                 // Redirect to Main page if not allowed

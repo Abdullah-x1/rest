@@ -20,17 +20,19 @@ namespace DSAR.Controllers
     public class AccountController : Controller
     {
 
-        private readonly SignInManager<User> signInManager;
-        private readonly UserManager<User> userManager;
+        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<User> _userManager;
 
         private readonly IAccountRepository _accountRepository;
         private readonly ICityRepository _cityRepository;
-        public AccountController(SignInManager<User> signInManager, UserManager<User> userManager, IAccountRepository accountRepository, ICityRepository cityRepository)
+        private readonly IUserRepository _userRepository;
+        public AccountController(SignInManager<User> signInManager, UserManager<User> userManager, IAccountRepository accountRepository, ICityRepository cityRepository, IUserRepository userRepository)
         {
-            this.signInManager = signInManager;
-            this.userManager = userManager;
+            _signInManager = signInManager;
+            _userManager = userManager;
             _accountRepository = accountRepository;
             _cityRepository = cityRepository;
+            _userRepository = userRepository;
         }
 
 
@@ -97,16 +99,50 @@ namespace DSAR.Controllers
         }
 
         [Authorize]
-        public IActionResult Main()
-        {
-            return View();
-        }
+        public async Task<IActionResult> MainAsync()
+        {  // Check if the user is authenticated
+            var currentUser = await _userManager.GetUserAsync(User);
 
+            var viewModel = new UserView
+           {
+               Id = User.FindFirstValue(ClaimTypes.NameIdentifier),
+               Email = User.FindFirstValue(ClaimTypes.Email),
+               FirstName = User.FindFirstValue("FirstName"),
+               LastName = User.FindFirstValue("LastName"),
+               UserName = User.Identity.Name,
+               CityId = int.Parse(User.FindFirstValue("CityId") ?? "0"),
+               TermsAccepted = currentUser.TermsAccepted,
+               terms = User.FindFirstValue("terms") ?? ""
+           };
+            return View(viewModel);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Terms(string terms, string termsAccepted)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            // Check if the user is authenticated
+            if (terms == "Accept" && termsAccepted != "on")
+            {
+                ModelState.AddModelError("", "ÌÃ» «·„Ê«›ﬁ… ⁄·Ï «·‘—Êÿ Ê«·√Õﬂ«„ ﬁ»· «·„ «»⁄….");
+                return View();
+            }
+
+            if (terms == "Accept")
+            {
+                 _userRepository.UpdateTerms(user);
+                return RedirectToAction("Main", "Account");
+            }
+            else if (terms == "Decline")
+            {
+                await Logout();
+            }
+                return View();
+        }
 
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            await signInManager.SignOutAsync();
+            await _signInManager.SignOutAsync();
             return RedirectToAction("Login", "Account");
         }
 

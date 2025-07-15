@@ -9,5 +9,6 @@ namespace DSAR.Repositories
         Task<IdentityResult> RegisterAsync(RegisterViewModel model, string role);
         Task<SignInResult> LoginAsync(LoginViewModel model);
 
+
     }
 }

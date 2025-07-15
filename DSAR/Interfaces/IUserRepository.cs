@@ -8,6 +8,7 @@ namespace DSAR.Repositories
        IEnumerable<User> GetAll();
         User GetById(string Id);
         void Create(User user);
+        void UpdateTerms(User user);
         void Update(User user);
         void Delete(string Id);
         void Save();

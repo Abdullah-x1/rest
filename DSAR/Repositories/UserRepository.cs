@@ -20,6 +20,17 @@ public class UserRepository : IUserRepository
         return;
     }
 
+    public void UpdateTerms(User user)
+    {
+        var userInDb = _context.Users.Find(user.Id);
+        if (userInDb == null)
+            throw new InvalidOperationException("User not found.");
+        // Update the TermsAccepted field
+        userInDb.TermsAccepted = true;
+        _context.User.Update(userInDb);
+        _context.SaveChanges(); // Save the changes
+    }
+
     public void Delete(string Id)
     {
         var userInDb = _context.Users.Find(Id);

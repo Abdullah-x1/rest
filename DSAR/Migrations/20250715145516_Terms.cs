@@ -5,14 +5,14 @@
 namespace DSAR.Migrations
 {
     /// <inheritdoc />
-    public partial class new3 : Migration
+    public partial class Terms : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<bool>(
                 name: "TermsAccepted",
-                table: "SnapshotForms",
+                table: "AspNetUsers",
                 type: "bit",
                 nullable: false,
                 defaultValue: false);
@@ -23,7 +23,7 @@ namespace DSAR.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "TermsAccepted",
-                table: "SnapshotForms");
+                table: "AspNetUsers");
         }
     }
 }

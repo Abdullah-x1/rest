@@ -301,9 +301,8 @@ namespace DSAR.Migrations
                     b.Property<string>("RepeatLimit")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RequestNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<double>("RequestNumber")
+                        .HasColumnType("float");
 
                     b.Property<string>("RequiredConditions")
                         .HasColumnType("nvarchar(max)");
@@ -696,6 +695,9 @@ namespace DSAR.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TermsAccepted")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
