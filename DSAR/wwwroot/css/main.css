@@ -7,15 +7,27 @@
     font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-body {
-    background: linear-gradient(135deg, #8BC6EC 0%, #9599E2 100%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+html, body {
+    margin: 0;
+    padding: 0;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     direction: rtl;
 }
 
+.main-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 950px;
+}
+
+body {
+    background: linear-gradient(135deg, #8BC6EC 0%, #9599E2 100%);
+}
 .container {
     background: white;
     width: 1288px;
@@ -218,4 +230,109 @@ body {
     .welcome-text p {
         font-size: 16px;
     }
+
 }
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.popup-content {
+    background: white;
+    width: 1288px;
+    height: 729px;
+    border-radius: 20px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    position: relative;
+}
+
+    .popup-content h1 {
+        color: #333;
+        font-size: 28px;
+        margin-bottom: 30px;
+        font-weight: 600;
+    }
+
+.requirements {
+    list-style: none;
+}
+
+    .requirements li {
+        color: #444;
+        font-size: 18px;
+        margin-bottom: 40px;
+        position: relative;
+        padding-right: 20px;
+    }
+
+        .requirements li::before {
+            content: '-';
+            position: absolute;
+            right: 0;
+        }
+
+.checkbox-container {
+    margin-top: 95px;
+}
+
+    .checkbox-container label {
+        display: flex;
+        align-items: center;
+        color: #444;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .checkbox-container input[type="checkbox"] {
+        margin-left: 10px;
+        width: 18px;
+        height: 18px;
+    }
+
+.popup-buttons {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    display: flex;
+    gap: 20px;
+}
+
+.popup-btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+    .popup-btn:hover:not(:disabled) {
+        opacity: 0.9;
+    }
+
+.back-btn {
+    background: #CC281B;
+    border-radius: 20px;
+}
+
+.confirm-btn {
+    background: #287067;
+    border-radius: 20px;
+}
+
+    .confirm-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }

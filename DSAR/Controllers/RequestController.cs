@@ -437,7 +437,7 @@ namespace DSAR.Controllers
             var requests = await _requestActionRepository.GetRequestsStillInProcessByUserId(currentUser.Id);
             if (requests.Count > 0)
             {
-                TempData["Error"] = "You already have a pending request. Please wait until it is completed before submitting a new one.";
+                TempData["Error"] = "لديك طلب معلق. يُرجى الانتظار حتى اكتماله قبل إرسال طلب جديد.";
                 return RedirectToAction("Main", "Account");
             }
 
@@ -647,10 +647,9 @@ namespace DSAR.Controllers
                 Description2 = d.Description2,
 
             }).ToList();
-            return View(new RequestViewModel
-            {
-                Descriptions = descriptions
-            });
+            var vm = await _formRepo.GetCurrentFormData();
+            vm.Descriptions = descriptions;
+            return View(vm);
         }
 
         // STEP DESCRIPTIONS - POST

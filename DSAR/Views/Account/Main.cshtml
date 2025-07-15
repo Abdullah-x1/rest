@@ -1,11 +1,6 @@
 @model DSAR.ViewModels.UserView
 @using Microsoft.AspNetCore.Authorization
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">
-        @TempData["Error"]
-    </div>
-}
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -17,9 +12,12 @@
 
 </head>
 <body>
+    <div class="main-wrapper">
     <div class="container">
+
         <!-- Logout -->
         <form asp-action="Logout" method="post">
+
             <button type="submit" style="background: none; border: none; padding: 0;">
                 <img src="~/images/logout.png" alt="Logout" class="logout-icon" />
             </button>
@@ -30,40 +28,65 @@
             <p>هل ترغب في عرض طلباتك أو تقديم طلب جديد؟</p>
         </div>
 
-        <div class="buttons">
-            <form asp-controller="Request" asp-action="MyRequest" method="get">
-                <button type="submit" class="btn requests-btn">طلباتي</button>
-            </form>
+            <div class="buttons">
+                @* Common for User, SectionManager, DepartmentManager *@
+                @if (User.IsInRole("User") || User.IsInRole("SectionManager") || User.IsInRole("DepartmentManager"))
+                {
+                    <form asp-controller="Request" asp-action="MyRequest" method="get">
+                        <button type="submit" class="btn requests-btn">طلباتي</button>
+                    </form>
 
-            <form asp-controller="Request" asp-action="Step1" method="get">
-                <button type="submit" class="btn submit-btn">تقديم طلب</button>
-            </form>
+                    <form asp-controller="Request" asp-action="Step1" method="get">
+                        <button type="submit" class="btn submit-btn">تقديم طلب</button>
+                    </form>
+                }
 
-            @if (User.IsInRole("Admin"))
-            {
-                <form asp-controller="Admin" asp-action="InsertUser" method="get">
-                    <button type="submit" class="btn" style="background:#6c5ce7;">إدخال</button>
-                </form>
-                <form asp-controller="Admin" asp-action="ListAllUsers" method="get">
-                    <button type="submit" class="btn" style="background:#00cec9;">قائمة المستخدمين</button>
-                </form>
-                <form asp-controller="Admin" asp-action="ListRequests" method="get">
-                    <button type="submit" class="btn" style="background:#00cec9;">قائمة الطلبات</button>
-                </form>
-            }
+                @* Show مراجعة الطلبات only for SectionManager, DepartmentManager, ITManager, Analyzer, ApplicationManager *@
+                @if (
+                User.IsInRole("SectionManager") ||
+                User.IsInRole("DepartmentManager") ||
+                User.IsInRole("ITManager") ||
+                User.IsInRole("Analyzer") ||
+                User.IsInRole("ApplicationManager"))
+                {
+                    <form asp-controller="Request" asp-action="OrderPage" method="get">
+                        <button type="submit" class="btn" style="background:#35AC90; border-radius: 27px;">
+                            مراجعة الطلبات
+                        </button>
+                    </form>
+                }
 
-            @if (!User.IsInRole("User"))
-            {
-                <form asp-controller="Request" asp-action="OrderPage" method="get">
-                    <button type="submit" class="btn" style="background:#35AC90; border-radius: 27px;">
-                        مراجعة الطلبات
-                    </button>
-                </form>
-            }
-
+                @* Admin-specific buttons *@
+                @if (User.IsInRole("Admin"))
+                {
+                    <form asp-controller="Admin" asp-action="InsertUser" method="get">
+                        <button type="submit" class="btn" style="background:#6c5ce7;">إدخال</button>
+                    </form>
+                    <form asp-controller="Admin" asp-action="ListAllUsers" method="get">
+                        <button type="submit" class="btn" style="background:#00cec9;">قائمة المستخدمين</button>
+                    </form>
+                    <form asp-controller="Admin" asp-action="ListRequests" method="get">
+                        <button type="submit" class="btn" style="background:#00cec9;">قائمة الطلبات</button>
+                    </form>
+                }
+            </div>
 
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if (TempData["Error"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'تنبيه',
+                        text: '@Html.Raw(TempData["Error"])',
+                        confirmButtonText: 'حسناً'
+                    });
+            </text>
+        }
+    </script>
 
 
 </body>
@@ -91,73 +114,13 @@
                     </label>
                 </div>
                 <div class="popup-buttons">
-                    <button type="submit" name="terms" value="Decline" class="popup-btn reject-btn">رفض الطلب</button>
-                    <button type="submit" id="acceptTermsBtn" name="terms" value="Accept" class="popup-btn accept-btn" disabled>قبول الطلب</button>
+                    
+                    <button class="popup-btn back-btn" name="terms" value="Decline" onclick="location.href='@Url.Action("Main", "Account")'">رجوع</button>
+                    <button class="popup-btn confirm-btn" name="terms" value="Accept" id="acceptTermsBtn" disabled>موافق</button>
                 </div>
             </form>
         </div>
     </div>
-
-    <style>
-        /* Fullscreen overlay */
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6); /* semi-transparent */
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* Modal content box */
-        .popup-content {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 600px;
-            text-align: right;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .requirements {
-            text-align: right;
-            padding-right: 20px;
-        }
-
-        .checkbox-container {
-            margin-top: 20px;
-            font-size: 16px;
-        }
-
-        .popup-buttons {
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .popup-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .accept-btn {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .reject-btn {
-            background-color: #dc3545;
-            color: white;
-        }
-    </style>
 
     <script>
         const termsCheckbox = document.getElementById('termsCheckbox');
