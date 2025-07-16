@@ -22,7 +22,7 @@
     <!-- fixed header -->
 
   
-    <header class="site-header bg-light border-bottom fixed-top">
+    <header class="site-header bg-light border-bottom">
         <div class="container-fluid d-flex justify-content-between align-items-center h-100 px-3">
             <div class="d-flex align-items-center">
                 <a asp-controller="Account" asp-action="Main" class="me-3">
@@ -44,8 +44,8 @@
     </header>
 
     <!-- padding so content never hides under fixed header -->
-    <div style="padding-top: 60px; padding-bottom: 60px;">
-        <main role="main" class="">
+    <div class="main-content">
+        <main role="main">
             @RenderBody()
         </main>
     </div>

@@ -407,7 +407,6 @@ namespace DSAR.Repository
 
             var request = await CreateFormDataFromViewModelAsync(data , UserId);
          
-            request.TermsAccepted = snapshot.TermsAccepted;
 
             await _context.Forms.AddAsync(request);
             await _context.SaveChangesAsync();
@@ -506,7 +505,6 @@ namespace DSAR.Repository
                 SectionNotes = data.SectionNotes,
                 DepartmentNotes = data.DepartmentNotes,
                 Attachments = data.Attachments,
-                TermsAccepted = data.TermsAccepted
             };
             int userRequestCount = await _context.Forms
                 .Include(r => r.User)

@@ -12,5 +12,6 @@ namespace DSAR.Repositories
         void Update(User user);
         void Delete(string Id);
         void Save();
+        
     }
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DSAR.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250715145516_Terms")]
-    partial class Terms
+    [Migration("20250716053506_TermsAccepted remove from_Form_table")]
+    partial class TermsAcceptedremovefrom_Form_table
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -327,9 +327,6 @@ namespace DSAR.Migrations
 
                     b.Property<string>("TargetAudience")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TermsAccepted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Timeline")
                         .HasColumnType("nvarchar(max)");

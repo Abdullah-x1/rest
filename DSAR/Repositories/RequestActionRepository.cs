@@ -209,6 +209,7 @@ namespace DSAR.Repositories
             bool isApplicationManager = await _userManager.IsInRoleAsync(currentUser, "ApplicationManager");
             bool isAnalyzer = await _userManager.IsInRoleAsync(currentUser, "Analyzer");
             bool isUser = await _userManager.IsInRoleAsync(currentUser, "User");
+            bool isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin"); 
             var histories = await _historyRepository.GetHistoriesByRequestIdAsync(request.RequestId);
             bool isAnyActor = histories.Any(h => h.UserId == currentUser.Id);
 
@@ -216,6 +217,11 @@ namespace DSAR.Repositories
             {
                 return false;
             }
+            if (isAdmin)
+            {
+                return true;
+            }
+                
 
             // ✅ Check department match for all managers/analyzers
             if ((isSectionManager || isDepartmentManager || isITManager || isAnalyzer) &&

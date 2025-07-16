@@ -47,12 +47,16 @@
                     </tr>
                 </thead>
                 <tbody id="tableBody">
-                    <tr>
-                        <td><input name="Descriptions[0].Description1" class="form-control" /></td>
-                        <td><input name="Descriptions[0].Description2" class="form-control" /></td>
-                    </tr>
-
+                    @for (int i = 0; i < Model.Descriptions.Count; i++)
+                    {
+                        <tr>
+                            <td><input name="Descriptions[@i].Description1" value="@Model.Descriptions[i].Description1" class="form-control" /></td>
+                            <td><input name="Descriptions[@i].Description2" value="@Model.Descriptions[i].Description2" class="form-control" /></td>
+                        </tr>
+                    }
                 </tbody>
+
+
             </table>
         </div>
 
@@ -130,11 +134,8 @@
             }
         }</script>
     <script>
-        setupAjaxSave(
-            'form', // or '#yourFormId' if you give your form an ID
-            '#saveButton',
-            '@Url.Action("StepDescriptions", "Request")'
-        );
+        setupAjaxSave('#form', '#saveButton', '@Url.Action("StepDescriptions", "Request")');
+
     </script>
 
 </body>

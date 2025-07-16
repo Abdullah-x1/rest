@@ -1,4 +1,7 @@
 ﻿@model DSAR.ViewModels.RequestViewModel
+@{
+    Layout = null;
+}
 
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -24,6 +27,21 @@
             await Html.RenderPartialAsync("_ValidationScriptsPartial");
         }
     }
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if (TempData["Error"] != null)
+        {
+                <text>
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'تنبيه',
+                            text: '@Html.Raw(TempData["Error"])',
+                            confirmButtonText: 'حسناً'
+                        });
+                </text>
+        }
+    </script>
 </body>
 </html>
 
