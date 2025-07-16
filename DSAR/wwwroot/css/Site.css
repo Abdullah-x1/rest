@@ -32,6 +32,12 @@
     width:40px;
 }
 
+.site-header .btn {
+    width: auto;
+    height: auto;
+    padding: 0.25rem 0.5rem; /* or whatever Bootstrap defaults you want */
+}
+
 /* push page content below the fixed header */
 body {
     margin: 0;

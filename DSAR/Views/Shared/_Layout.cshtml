@@ -31,9 +31,24 @@
                 <a asp-controller="Account" asp-action="Main" class="nav-link header-link">
                     الرئيسية
                 </a>
-                <a asp-controller="Request" asp-action="MyRequest" class="nav-link header-link">
-                    طلباتي
-                </a>
+                 @if (
+                      User.IsInRole("User") ||
+                      User.IsInRole("SectionManager") ||
+                      User.IsInRole("DepartmentManager"))
+                {
+                    <a asp-controller="Request" asp-action="MyRequest" class="nav-link header-link">
+                        طلباتي
+                    </a>
+                }
+                @if (
+                      User.IsInRole("ITManager") ||
+                      User.IsInRole("Analyzer") ||
+                      User.IsInRole("ApplicationManager"))
+                {
+                    <a asp-controller="Request" asp-action="OrderPage" class="nav-link header-link">
+                        مراجعة الطلبات
+                    </a>
+                }
             </div>
             <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
                 <button type="submit" class="btn btn-link p-0" style="background: none; border: none;">

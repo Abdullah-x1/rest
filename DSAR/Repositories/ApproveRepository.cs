@@ -43,13 +43,14 @@ namespace DSAR.Repositories
                 request.DepartmentNotes = model.DepartmentNotes;
 
                 //history
+
                 const int initialStatusId = 2; // "in progress" status
                 await _historyRepository.CreateHistoryAsync(
                     currentUser,
                     request,
                     initialStatusId,
                     3,
-                    "Request approved by DepartmentManager"
+                    "Request approved by "+currentUser.FirstName+" "+currentUser.LastName
                 );
                 //history
             }
@@ -65,7 +66,7 @@ namespace DSAR.Repositories
                     request,
                     initialStatusId,
                     9,
-                    "Request Rejected by DepartmentManager"
+                    "Request Rejected by " + currentUser.FirstName + " " + currentUser.LastName
                 );
                 //history
             }
@@ -92,7 +93,7 @@ namespace DSAR.Repositories
                     request,
                     initialStatusId,
                     2,
-                    "Request approved by SecctionManager"
+                    "Request approved by " + currentUser.FirstName + " " + currentUser.LastName
                 );
                 //history
             }
@@ -108,7 +109,7 @@ namespace DSAR.Repositories
                     request,
                     initialStatusId,
                     9,
-                    "Request Rejected by SecctionManager"
+                    "Request Rejected by " + currentUser.FirstName + " " + currentUser.LastName
                 );
                 //history
             }
@@ -144,7 +145,7 @@ namespace DSAR.Repositories
                             request,
                             initialStatusId,
                             4,
-                            "Request approved initially by ITManager"
+                            "Request approved initially by " + currentUser.FirstName + " " + currentUser.LastName
                         );
                         //history
                     }
@@ -160,7 +161,7 @@ namespace DSAR.Repositories
                             request,
                             initialStatusId,
                             8,
-                            "Request approved by ITManager"
+                            "Request approved by " + currentUser.FirstName + " " + currentUser.LastName
                         );
                         //history
                     }
@@ -177,7 +178,7 @@ namespace DSAR.Repositories
                         request,
                         initialStatusId,
                         9,
-                        "Request Rejected by ITManager"
+                        "Request Rejected by " + currentUser.FirstName + " " + currentUser.LastName
                     );
                     //history
                 }
@@ -207,7 +208,7 @@ namespace DSAR.Repositories
                         request,
                         initialStatusId,
                         7,
-                        "Request approved by ApplicationManager"
+                        "Request approved by " + currentUser.FirstName + " " + currentUser.LastName
                     );
                     //history
                 }
@@ -223,7 +224,7 @@ namespace DSAR.Repositories
                         request,
                         initialStatusId,
                         9,
-                        "Request Rejected by ApplicationsManager"
+                        "Request Rejected by " + currentUser.FirstName + " " + currentUser.LastName
                     );
                     //history
                 }
