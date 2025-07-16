@@ -19,6 +19,8 @@ namespace DSAR.Models
 
         public ICollection<SnapshotAttachmentMetadata> Attachments { get; set; } = new List<SnapshotAttachmentMetadata>();
         public ICollection<SnapshotDescriptionEntry> Descriptions { get; set; } = new List<SnapshotDescriptionEntry>();
+        public ICollection<SnapshotAuthorizedContactEntry> SnapshotAuthorizedContacts { get; set; } = new List<SnapshotAuthorizedContactEntry>();
+
 
         public FormData GetFormData(JsonSerializerOptions options)
         {
