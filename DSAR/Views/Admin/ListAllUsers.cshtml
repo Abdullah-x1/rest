@@ -3,10 +3,9 @@
 <div class="container list-container">
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 
-
     <h2 class="list-title">قائمة المستخدمين</h2>
 
-    <table class="table list-table">
+    <table class="list-table">
         <thead>
             <tr>
                 <th>رقم الهوية</th>
@@ -18,7 +17,7 @@
                 <th>القطاع</th>
                 <th>المدينة</th>
                 <th>الحالة</th>
-                <th>ال</th> <!-- Actions -->
+                <th>الإجراءات</th>
             </tr>
         </thead>
         <tbody>
@@ -34,32 +33,24 @@
                     <td data-label="القطاع">@u.SectorId</td>
                     <td data-label="المدينة">@u.CityName</td>
                     <td data-label="الحالة">
-                        @if (u.IsActive)
-                        {
-                            <span class="badge badge-active">Active</span>
-                        }
-                        else
-                        {
-                            <span class="badge badge-inactive">Inactive</span>
-                        }
+                        <span class="badge @(u.IsActive ? "badge-active" : "badge-inactive")">
+                            @(u.IsActive ? "مفعل" : "غير مفعل")
+                        </span>
                     </td>
                     <td data-label="إجراءات">
                         <a asp-controller="Admin"
                            asp-action="EditUser"
                            asp-route-id="@u.IdentityGuid"
-                           class="btn btn-sm btn-edit">
+                           class="btn btn-edit btn-sm">
                             تعديل
                         </a>
-
                         <form asp-controller="Admin"
                               asp-action="DeleteUser"
                               asp-route-id="@u.IdentityGuid"
                               method="post"
                               style="display:inline"
                               onsubmit="return confirm('هل أنت متأكد أنك تريد حذف هذا المستخدم؟');">
-                            <button type="submit" class="btn btn-sm btn-delete">
-                                حذف
-                            </button>
+                            <button type="submit" class="btn btn-delete btn-sm">حذف</button>
                             @Html.AntiForgeryToken()
                         </form>
                     </td>

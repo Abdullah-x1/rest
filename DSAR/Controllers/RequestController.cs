@@ -233,15 +233,17 @@ namespace DSAR.Controllers
                 return RedirectToAction("Account", "Main");
             }
 
+
             var viewModels = requests.Select(r => new RequestViewModel
             {
                 RequestId = r.RequestId,
                 LevelId = r.RequestActions.LevelId,
                 FirstName = r.User.FirstName,
                 LastName = r.User.LastName,
-                DepartmentName = r.User.Department?.DepartmentName ?? "N/A",
+                DepartmentName = r.User.Department.DepartmentName,
                 RequestNumber = r.RequestNumber,
                 ActionId = r.RequestActions.ActionId,
+                StatusName = r.RequestActions.Status?.StatusName,
             }).ToList();
             return View(viewModels);
         }

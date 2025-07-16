@@ -2,6 +2,7 @@
 @{
     var attachments = ViewBag.Attachments as List<CaseStudyAttachmentMetadata>;
     var caseStudyAttachments = attachments?.Where(a => a.FieldName == "CaseStudyAttachment").ToList();
+    Layout = null;
 }
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -44,7 +45,7 @@
 
         @if ((User.IsInRole("ApplicationManager") || User.IsInRole("ITManager")) && Model.LevelId >= 4)
         {
-            <p>Request Level: @Model.LevelId</p>
+            
 
             <div class="form-group">
                 <label asp-for="WorkTeam">فريق العمل</label>
