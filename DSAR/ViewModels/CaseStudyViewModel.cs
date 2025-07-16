@@ -18,6 +18,8 @@ namespace DSAR.ViewModels
 
         public string? SectionNotes { get; set; }
         public string? DepartmentNotes { get; set; }
+        public string? ITNotes { get; set; }
+        public string? ApplicationNotes { get; set; }
 
         public List<int> CaseStudyAttachmentId => Attachments.Select(a => a.Id).ToList();
         public List<string> CaseStudyAttachmentName => Attachments.Select(a => a.FileName + a.FileExtension).ToList();

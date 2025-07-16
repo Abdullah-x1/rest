@@ -336,7 +336,7 @@ namespace DSAR.Repository
             // Update Step 2 fields
             currentData.RepeatLimit = data.RepeatLimit;
             currentData.Fees = data.Fees;
-            currentData.Cities2 = data.Cities2;
+            currentData.Cities = data.Cities;
             currentData.TargetAudience = data.TargetAudience;
             currentData.DepartmentId = data.DepartmentId;
             currentData.ExpectedOutput1 = data.ExpectedOutput1;

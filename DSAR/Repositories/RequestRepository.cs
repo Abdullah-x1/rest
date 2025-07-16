@@ -177,7 +177,7 @@ namespace DSAR.Repositories
             throw new NotImplementedException();
         }
 
-        public void Update(FormData request)
+        public void UpdateNotes(FormData request)
         {
             var existing = _context.Forms.Where(x=> x.RequestId == request.RequestId).FirstOrDefault();
             if (existing == null) throw new InvalidOperationException("Request not found");

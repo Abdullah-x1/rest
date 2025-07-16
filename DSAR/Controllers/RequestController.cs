@@ -809,7 +809,9 @@ namespace DSAR.Controllers
                 WorkTeam = caseStudy?.WorkTeam,
                 Notes = caseStudy?.Notes,
                 restriction = caseStudy?.restriction,
-                LevelId = action.LevelId
+                LevelId = action.LevelId,
+                ITNotes = request.ITNotes,
+                ApplicationNotes = request.ApplicationNotes
             };
 
             return View(viewModel);
@@ -887,6 +889,8 @@ namespace DSAR.Controllers
                 CreatedAt = caseStudy.CreatedAt,
                 SectionNotes = request?.SectionNotes,
                 DepartmentNotes = request?.DepartmentNotes,
+                ApplicationNotes = request?.ApplicationNotes,
+                ITNotes = request?.ITNotes,
 
                 Attachments = attachments.Select(a => new AttachmentViewModel
                 {

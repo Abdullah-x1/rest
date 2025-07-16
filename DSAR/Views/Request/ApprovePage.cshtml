@@ -32,16 +32,25 @@
                 <td asp-for="DepartmentNotes">@Model.DepartmentNotes</td>
                 <td asp-for="DepartmentNotes">ملاحظة مدير الإدارة</td>
             </tr>
+             <tr>
+                <td>@Model.ITNotes</td>
+                <td>ملاحظة رئيس إدارة تقنية المعلومات المشتركة </td>
+            </tr>
+             <tr>
+                <td>@Model.ApplicationNotes</td>
+                <td>ملاحظة رئيس قسم التطبيقات </td>
+            </tr>
 
         </table>
         @if (User.IsInRole("SectionManager"))
         {
             <textarea asp-for="SectionNotes" class="notes-input" placeholder="ذكر الملاحظات إن وجدت"></textarea>
         }
-        @if (User.IsInRole("DepartmentManager"))
+        else if (User.IsInRole("DepartmentManager"))
         {
             <textarea asp-for="DepartmentNotes" class="notes-input" placeholder="ذكر الملاحظات إن وجدت"></textarea>
         }
+        
 
         @if ((User.IsInRole("ApplicationManager") || User.IsInRole("ITManager")) && Model.LevelId >= 4)
         {
@@ -61,8 +70,21 @@
                 <label asp-for="restriction">القيود</label>
                 <textarea asp-for="restriction" class="form-control" rows="4" readonly style="background-color: #f5f5f5;">@Model.restriction</textarea>
             </div>
+            <div class="form-group">
+                <label>كتابة الملاحظات</label>
+               @if (User.IsInRole("ITManager"))
+            {
+                <textarea asp-for="ITNotes" class="notes-input" placeholder="ذكر الملاحظات إن وجدت"></textarea>
+            }
 
-
+            else if (User.IsInRole("ApplicationManager"))
+            {
+            <textarea asp-for="ApplicationNotes" class="notes-input" placeholder="ذكر الملاحظات إن وجدت"></textarea>
+                
+            }
+            </div>
+           
+        
 
             <div class="attachment-section" style="margin-top: 20px;">
 

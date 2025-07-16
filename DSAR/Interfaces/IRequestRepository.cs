@@ -14,7 +14,7 @@ namespace DSAR.Interfaces
         public FormData Create(RequestViewModel viewModel);
          Task<FormData> CreateForSectionManagerAsync(RequestViewModel viewModel, User currentUser);
 
-        void Update(FormData user);
+        void UpdateNotes(FormData user);
         void Delete(string Id);
         void Save();
          

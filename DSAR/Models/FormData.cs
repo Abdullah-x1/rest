@@ -71,6 +71,8 @@ namespace DSAR.Models
         //notes
         public string? SectionNotes { get; set; }
         public string? DepartmentNotes { get; set; }
+        public string? ITNotes { get; set; }
+        public string? ApplicationNotes { get; set; }
 
         public User User { get; set; }
         //public User Manager { get; set; }
