@@ -167,7 +167,7 @@ namespace DSAR.ViewModels
         public int DepartmentId { get; set; }
 
         public List<SelectListItem> Departments { get; set; } = new List<SelectListItem>();
-        //public int CityId { get; set; }
+        public List<AuthorizedContactEntry> AuthorizedContacts { get; set; }        //public int CityId { get; set; }
         //public List<SelectListItem> Cities { get; set; } = new List<SelectListItem>();
 
     }

@@ -45,9 +45,9 @@ namespace DSAR.Models
 
         public string? Timeline { get; set; }
         public string? SystemNeeded { get; set; }
-        public string? Cities2 { get; set; } // to avoid collision with existing Cities
-        public string? DepartmentHeadName { get; set; }
-        public string? AdditionalNotes { get; set; } //
+       // public string? Cities2 { get; set; } // to avoid collision with existing Cities
+       // public string? DepartmentHeadName { get; set; }
+       // public string? AdditionalNotes { get; set; } //
         public string? FilePath { get; set; } // Store file name or path
         [NotMapped]
 
@@ -79,7 +79,9 @@ namespace DSAR.Models
         public Department Department { get; set; } // Navigation property
         //Metadata
 
+
         public ICollection<AttachmentMetadata> Attachments { get; set; } = new List<AttachmentMetadata>();
         public ICollection<DescriptionEntry> Descriptions { get; set; } = new List<DescriptionEntry>();
+        public List<AuthorizedContactEntry> AuthorizedContacts { get; set; } = new();
     }
 }

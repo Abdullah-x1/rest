@@ -4,6 +4,7 @@ using DSAR.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DSAR.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250717081507_new2")]
+    partial class new2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,9 +92,6 @@ namespace DSAR.Migrations
                     b.Property<string>("ApprovedCities")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("FormDataRequestId")
-                        .HasColumnType("int");
-
                     b.Property<int>("RequestId")
                         .HasColumnType("int");
 
@@ -103,7 +103,7 @@ namespace DSAR.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FormDataRequestId");
+                    b.HasIndex("RequestId");
 
                     b.ToTable("AuthorizedContactEntries");
                 });
@@ -938,7 +938,9 @@ namespace DSAR.Migrations
                 {
                     b.HasOne("DSAR.Models.FormData", "FormData")
                         .WithMany("AuthorizedContacts")
-                        .HasForeignKey("FormDataRequestId");
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("FormData");
                 });

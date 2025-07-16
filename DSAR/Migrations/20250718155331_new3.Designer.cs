@@ -4,6 +4,7 @@ using DSAR.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DSAR.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250718155331_new3")]
+    partial class new3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,7 +92,7 @@ namespace DSAR.Migrations
                     b.Property<string>("ApprovedCities")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("FormDataRequestId")
+                    b.Property<int>("FormDataRequestId")
                         .HasColumnType("int");
 
                     b.Property<int>("RequestId")
@@ -937,8 +940,10 @@ namespace DSAR.Migrations
             modelBuilder.Entity("DSAR.Models.AuthorizedContactEntry", b =>
                 {
                     b.HasOne("DSAR.Models.FormData", "FormData")
-                        .WithMany("AuthorizedContacts")
-                        .HasForeignKey("FormDataRequestId");
+                        .WithMany("SnapshotAuthorizedContacts")
+                        .HasForeignKey("FormDataRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("FormData");
                 });
@@ -1302,8 +1307,6 @@ namespace DSAR.Migrations
                 {
                     b.Navigation("Attachments");
 
-                    b.Navigation("AuthorizedContacts");
-
                     b.Navigation("CaseStudy")
                         .IsRequired();
 
@@ -1312,6 +1315,8 @@ namespace DSAR.Migrations
                     b.Navigation("Histories");
 
                     b.Navigation("RequestActions");
+
+                    b.Navigation("SnapshotAuthorizedContacts");
                 });
 
             modelBuilder.Entity("DSAR.Models.Levels", b =>
