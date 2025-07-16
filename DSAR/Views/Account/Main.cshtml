@@ -15,14 +15,8 @@
     <div class="main-wrapper">
     <div class="container">
 
-        <!-- Logout -->
-        <form asp-action="Logout" method="post">
-
-            <button type="submit" style="background: none; border: none; padding: 0;">
-                <img src="~/images/logout.png" alt="Logout" class="logout-icon" />
-            </button>
-        </form>
-
+     
+     
         <div class="welcome-text">
             <h1>مرحباً يا @User.FindFirst("FirstName")?.Value @User.FindFirst("LastName")?.Value</h1>
             <p>هل ترغب في عرض طلباتك أو تقديم طلب جديد؟</p>
