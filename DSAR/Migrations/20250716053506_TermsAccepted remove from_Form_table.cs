@@ -5,25 +5,25 @@
 namespace DSAR.Migrations
 {
     /// <inheritdoc />
-    public partial class Terms : Migration
+    public partial class TermsAcceptedremovefrom_Form_table : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<bool>(
+            migrationBuilder.DropColumn(
                 name: "TermsAccepted",
-                table: "AspNetUsers",
-                type: "bit",
-                nullable: false,
-                defaultValue: false);
+                table: "Forms");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
+            migrationBuilder.AddColumn<bool>(
                 name: "TermsAccepted",
-                table: "AspNetUsers");
+                table: "Forms",
+                type: "bit",
+                nullable: false,
+                defaultValue: false);
         }
     }
 }

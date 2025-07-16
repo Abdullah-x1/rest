@@ -1,13 +1,21 @@
-﻿
-body {
+﻿html, body {
     margin: 0;
-    background: linear-gradient(to right, #6dc1a8, #7ab8ea);
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     font-family: sans-serif;
+    background: linear-gradient(to right, #6dc1a8, #7ab8ea);
+}
+
+.main-content {
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    padding: 20px 10px; /* adjust as needed */
 }
+
 
 .header-container {
     position: fixed;
@@ -165,4 +173,138 @@ th {
 .btn-save i,
 .btn-next i {
     margin-left: 0.5rem;
+}
+/* ========== Mobile (≤600px) ========== */
+@media (max-width: 600px) {
+    .form-container {
+        flex-direction: column;
+        width: 100%;
+        height: auto;
+        padding: 20px 15px;
+        border-radius: 10px;
+        overflow-y: auto;
+    }
+
+    .arrow {
+        position: static;
+        margin-top: 15px;
+        text-align: center;
+    }
+
+        .arrow img {
+            width: 28px;
+            height: 28px;
+        }
+
+    .button-footer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        position: static;
+        margin-top: 20px;
+    }
+
+    .btn {
+        width: 100%;
+        font-size: 1.1rem;
+    }
+
+    table, th, td {
+        font-size: 13px;
+        padding: 6px;
+    }
+
+    .header-container {
+        padding: 15px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
+/* ========== Tablets (601px–900px) ========== */
+@media (min-width: 601px) and (max-width: 900px) {
+    .form-container {
+        flex-direction: column;
+        width: 95%;
+        height: auto;
+        padding: 25px 20px;
+        border-radius: 12px;
+    }
+
+    .button-footer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        position: static;
+        margin-top: 20px;
+    }
+
+    .btn {
+        width: 100%;
+        font-size: 1rem;
+    }
+
+    .arrow {
+        position: static;
+        margin-top: 15px;
+    }
+
+        .arrow img {
+            width: 28px;
+            height: 28px;
+        }
+}
+
+/* ========== Small Desktops (901px–1023px) ========== */
+@media (min-width: 901px) and (max-width: 1023px) {
+    .form-container {
+        flex-direction: column;
+        width: 95%;
+        height: auto;
+        padding: 30px;
+    }
+
+    .arrow {
+        bottom: 10px;
+    }
+
+        .arrow img {
+            width: 30px;
+            height: 30px;
+        }
+
+    .button-footer {
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .btn {
+        min-width: 140px;
+    }
+}
+
+/* ========== Standard Laptops (1024px–1440px) ========== */
+@media (min-width: 1024px) and (max-width: 1440px) {
+    body {
+        padding: 40px 20px;
+    }
+
+    .form-container {
+        width: 90%;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 30px;
+        border-radius: 12px;
+    }
+
+    .arrow img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .button-footer {
+        padding: 1rem;
+    }
 }

@@ -1,5 +1,9 @@
-﻿/* make header shorter */
+﻿
 .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    background: white; /* avoid transparency */
     height: 100px; /* adjust as needed */
 }
 
@@ -29,19 +33,107 @@
 }
 
 /* push page content below the fixed header */
-.main-content {
-    padding-top: -100px; /* same as .site-header height */
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(to right, #6dc1a8, #7ab8ea); /* for consistency */
 }
-
+.main-content {
+    flex: 1;
+    padding-top: 100px; /* height of your header */
+    padding-bottom: 40px; /* height of your footer */
+    box-sizing: border-box;
+}
 
 /* make footer stick */
 .site-footer {
     background-color: #00246B;
     color: #fff;
-    height: 40px; /* matches body padding-bottom */
-    line-height: 40px; /* vertical centering */
-    position: fixed;
-    bottom: 0;
+    height: 40px;
+    line-height: 40px;
     width: 100%;
-    z-index: 1030; /* above other content */
+    z-index: 1030;
+}
+@media (max-width: 600px) {
+    header.site-header {
+        flex-direction: column;
+        height: auto;
+        padding: 10px 20px;
+    }
+
+    .header-logo {
+        height: 50px;
+        margin-bottom: 10px;
+    }
+
+    .header-link {
+        font-size: 18px;
+        padding: 5px 10px;
+    }
+
+    .header-logout {
+        height: 32px;
+        width: 32px;
+    }
+
+    .main-content {
+        padding-top: 120px; /* increase top padding since header is taller now */
+    }
+
+    footer.site-footer {
+        font-size: 12px;
+    }
+}
+
+@media (min-width: 601px) and (max-width: 1024px) {
+    header.site-header {
+        height: 80px;
+        padding: 0 20px;
+    }
+
+    .header-logo {
+        height: 55px;
+    }
+
+    .header-link {
+        font-size: 22px;
+        padding: 0 1rem;
+    }
+
+    .header-logout {
+        height: 36px;
+        width: 36px;
+    }
+
+    .main-content {
+        padding-top: 90px;
+    }
+}
+
+
+@media (min-width: 1025px) and (max-width: 1440px) {
+    header.site-header {
+        height: 90px;
+        padding: 0 30px;
+    }
+
+    .header-logo {
+        height: 60px;
+    }
+
+    .header-link {
+        font-size: 24px;
+    }
+
+    .header-logout {
+        height: 36px;
+        width: 36px;
+    }
+
+    .main-content {
+        padding-top: 95px;
+    }
 }

@@ -73,12 +73,101 @@ namespace DSAR.Controllers
             FormData request;
             bool emailResponse;
             const int initialStatusId = 1; // "new submission" status
-
-            if (await _userManager.IsInRoleAsync(currentUser, "SectionManager"))
+            if (currentUser.TermsAccepted == true)
             {
-                data.UserId = currentUser.Id;
+
+
+                if (await _userManager.IsInRoleAsync(currentUser, "SectionManager"))
+                {
+                    data.UserId = currentUser.Id;
+                    request = await _formRepo.HandleStep3Data(data, currentUser.UserId);
+                    _requestActionRepository.CreateSectionManager(data, currentUser, request);
+
+                    emailResponse = await _requestRepository.SendEmailAsync(data, currentUser);
+                    if (!emailResponse)
+                    {
+                        // Handle false response  
+                    }
+                    ////////////////////history///////////////////////////////////////
+
+                    await _historyRepository.CreateHistoryAsync(
+
+                        currentUser,
+                        request,
+                        initialStatusId,
+                        1,
+                        "Request submitted"
+                    );
+
+                    ////////////////////history///////////////////////////////////////
+                    return RedirectToAction("Main", "Account");
+                }
+                else if (await _userManager.IsInRoleAsync(currentUser, "DepartmentManager"))
+                {
+                    data.UserId = currentUser.Id;
+                    request = await _formRepo.HandleStep3Data(data, currentUser.UserId);
+                    _requestActionRepository.CreateDepartmentManager(data, currentUser, request);
+
+                    emailResponse = await _requestRepository.SendEmailAsync(data, currentUser);
+                    if (!emailResponse)
+                    {
+                        // Handle false response  
+                    }
+
+                    await _historyRepository.CreateHistoryAsync(
+                        currentUser,
+                        request,
+                        initialStatusId,
+                        1,
+                        "Request submitted"
+                    );
+                    return RedirectToAction("Main", "Account");
+                }
+                else if (await _userManager.IsInRoleAsync(currentUser, "ITManager"))
+                {
+                    data.UserId = currentUser.Id;
+                    request = await _formRepo.HandleStep3Data(data, currentUser.UserId);
+                    _requestActionRepository.CreateITManager(data, currentUser, request);
+
+                    emailResponse = await _requestRepository.SendEmailAsync(data, currentUser);
+                    if (!emailResponse)
+                    {
+                        // Handle false response  
+                    }
+                    await _historyRepository.CreateHistoryAsync(
+                        currentUser,
+                        request,
+                        initialStatusId,
+                        1,
+                        "Request submitted"
+                    );
+                    return RedirectToAction("Main", "Account");
+                }
+                else if (await _userManager.IsInRoleAsync(currentUser, "ApplicationManager"))
+                {
+                    data.UserId = currentUser.Id;
+                    request = await _formRepo.HandleStep3Data(data, currentUser.UserId);
+                    _requestActionRepository.CreateITManager(data, currentUser, request);
+
+                    emailResponse = await _requestRepository.SendEmailAsync(data, currentUser);
+                    if (!emailResponse)
+                    {
+                        // Handle false response  
+                    }
+                    await _historyRepository.CreateHistoryAsync(
+                        currentUser,
+                        request,
+                        initialStatusId,
+                        1,
+                        "Request submitted"
+                    );
+                    return RedirectToAction("Main", "Account");
+                }
+                else if (await _userManager.IsInRoleAsync(currentUser, "User"))
+                    data.UserId = currentUser.Id;
                 request = await _formRepo.HandleStep3Data(data, currentUser.UserId);
-                _requestActionRepository.CreateSectionManager(data, currentUser, request);
+
+                _requestActionRepository.Create(data, currentUser, request);
 
                 emailResponse = await _requestRepository.SendEmailAsync(data, currentUser);
                 if (!emailResponse)
@@ -87,8 +176,8 @@ namespace DSAR.Controllers
                 }
                 ////////////////////history///////////////////////////////////////
 
+                // "new submission" status
                 await _historyRepository.CreateHistoryAsync(
-
                     currentUser,
                     request,
                     initialStatusId,
@@ -99,89 +188,11 @@ namespace DSAR.Controllers
                 ////////////////////history///////////////////////////////////////
                 return RedirectToAction("Main", "Account");
             }
-            else if (await _userManager.IsInRoleAsync(currentUser, "DepartmentManager"))
+            else if(currentUser.TermsAccepted == false)
             {
-                data.UserId = currentUser.Id;
-                request = await _formRepo.HandleStep3Data(data, currentUser.UserId);
-                _requestActionRepository.CreateDepartmentManager(data, currentUser, request);
-
-                emailResponse = await _requestRepository.SendEmailAsync(data, currentUser);
-                if (!emailResponse)
-                {
-                    // Handle false response  
-                }
-
-                await _historyRepository.CreateHistoryAsync(
-                    currentUser,
-                    request,
-                    initialStatusId,
-                    1,
-                    "Request submitted"
-                );
-                return RedirectToAction("Main", "Account");
+                TempData["Error"] = "Please accept the terms and conditions before submitting a request.";
+                return RedirectToAction("Step3","Request");
             }
-            else if (await _userManager.IsInRoleAsync(currentUser, "ITManager"))
-            {
-                data.UserId = currentUser.Id;
-                request = await _formRepo.HandleStep3Data(data, currentUser.UserId);
-                _requestActionRepository.CreateITManager(data, currentUser, request);
-
-                emailResponse = await _requestRepository.SendEmailAsync(data, currentUser);
-                if (!emailResponse)
-                {
-                    // Handle false response  
-                }
-                await _historyRepository.CreateHistoryAsync(
-                    currentUser,
-                    request,
-                    initialStatusId,
-                    1,
-                    "Request submitted"
-                );
-                return RedirectToAction("Main", "Account");
-            }
-            else if (await _userManager.IsInRoleAsync(currentUser, "ApplicationManager"))
-            {
-                data.UserId = currentUser.Id;
-                request = await _formRepo.HandleStep3Data(data, currentUser.UserId);
-                _requestActionRepository.CreateITManager(data, currentUser, request);
-
-                emailResponse = await _requestRepository.SendEmailAsync(data, currentUser);
-                if (!emailResponse)
-                {
-                    // Handle false response  
-                }
-                await _historyRepository.CreateHistoryAsync(
-                    currentUser,
-                    request,
-                    initialStatusId,
-                    1,
-                    "Request submitted"
-                );
-                return RedirectToAction("Main", "Account");
-            }else if(await _userManager.IsInRoleAsync(currentUser, "User"))
-                data.UserId = currentUser.Id;
-            request = await _formRepo.HandleStep3Data(data, currentUser.UserId);
-
-            _requestActionRepository.Create(data, currentUser, request);
-
-            emailResponse = await _requestRepository.SendEmailAsync(data, currentUser);
-            if (!emailResponse)
-            {
-                // Handle false response  
-            }
-            ////////////////////history///////////////////////////////////////
-
-            // "new submission" status
-            await _historyRepository.CreateHistoryAsync(
-                currentUser,
-                request,
-                initialStatusId,
-                1,
-                "Request submitted"
-            );
-
-            ////////////////////history///////////////////////////////////////
             return RedirectToAction("Main", "Account");
         }
         //New Form
@@ -437,7 +448,7 @@ namespace DSAR.Controllers
             var requests = await _requestActionRepository.GetRequestsStillInProcessByUserId(currentUser.Id);
             if (requests.Count > 0)
             {
-                TempData["Error"] = "You already have a pending request. Please wait until it is completed before submitting a new one.";
+                TempData["Error"] = "لديك طلب معلق. يُرجى الانتظار حتى اكتماله قبل إرسال طلب جديد.";
                 return RedirectToAction("Main", "Account");
             }
 
@@ -647,10 +658,9 @@ namespace DSAR.Controllers
                 Description2 = d.Description2,
 
             }).ToList();
-            return View(new RequestViewModel
-            {
-                Descriptions = descriptions
-            });
+            var vm = await _formRepo.GetCurrentFormData();
+            vm.Descriptions = descriptions;
+            return View(vm);
         }
 
         // STEP DESCRIPTIONS - POST

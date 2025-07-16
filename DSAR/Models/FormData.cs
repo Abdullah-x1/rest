@@ -49,7 +49,6 @@ namespace DSAR.Models
         public string? DepartmentHeadName { get; set; }
         public string? AdditionalNotes { get; set; } //
         public string? FilePath { get; set; } // Store file name or path
-        public bool TermsAccepted { get; set; }
         [NotMapped]
 
         public IFormFile? Attachment1 { get; set; }

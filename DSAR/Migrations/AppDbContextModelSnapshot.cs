@@ -325,9 +325,6 @@ namespace DSAR.Migrations
                     b.Property<string>("TargetAudience")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("TermsAccepted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Timeline")
                         .HasColumnType("nvarchar(max)");
 
