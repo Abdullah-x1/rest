@@ -450,11 +450,7 @@ textarea {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
-    max-width: 1288px;
-    margin: 30px auto 20px;
-    padding: 0 15px;
-    box-sizing: border-box;
+    width: 1288px;
     margin: 30px auto 20px;
     direction: rtl;
     position: relative;
@@ -480,11 +476,9 @@ textarea {
         font-size: 20px;
         color: #666;
         z-index: 1;
-
     }
 
-    /* Active and completed steps get green background and white icon */
-    .step.active .circle,f
+    .step.active .circle,
     .step.completed .circle {
         background: #00c9a7;
         color: white;
@@ -497,7 +491,6 @@ textarea {
         color: #333;
     }
 
-    /* Connector lines between steps */
     .step::before {
         content: '';
         position: absolute;
@@ -509,17 +502,14 @@ textarea {
         z-index: 0;
     }
 
-    /* Active and completed connectors are green */
     .step.active::before,
     .step.completed::before {
         background: #00c9a7;
     }
 
-    /* No connector before the first step */
     .step:first-child::before {
         display: none;
-    }
-.button-footer {
+    }.button-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;

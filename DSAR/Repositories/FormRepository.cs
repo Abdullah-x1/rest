@@ -171,9 +171,7 @@ namespace DSAR.Repository
                 Documents = formData.Documents,
                 Timeline = formData.Timeline,
                 SystemNeeded = formData.SystemNeeded,
-                Cities2 = formData.Cities2,
-                DepartmentHeadName = formData.DepartmentHeadName,
-                AdditionalNotes = formData.AdditionalNotes,
+               
                 Departments = _requestRepository.GetAllDepartments()
                 .Select(d => new SelectListItem
                 {
@@ -412,6 +410,8 @@ namespace DSAR.Repository
             await _context.SaveChangesAsync();
 
             SaveDescriptions(snapshot, request.RequestId);
+            SaveAuthorizedContacts(snapshot, request.RequestId);
+
 
             _context.SnapshotForms.Remove(snapshot);
             await _context.SaveChangesAsync();
@@ -446,9 +446,7 @@ namespace DSAR.Repository
             data.Documents = snapshotData.Documents;
             data.Timeline = snapshotData.Timeline;
             data.SystemNeeded = snapshotData.SystemNeeded;
-            data.Cities2 = snapshotData.Cities2;
-            data.DepartmentHeadName = snapshotData.DepartmentHeadName;
-            data.AdditionalNotes = snapshotData.AdditionalNotes;
+         
         }
         private void MapAttachments(SnapshotFormData snapshot, RequestViewModel data)
 
@@ -498,9 +496,7 @@ namespace DSAR.Repository
                 Documents = data.Documents,
                 Timeline = data.Timeline,
                 SystemNeeded = data.SystemNeeded,
-                Cities2 = data.Cities2,
-                DepartmentHeadName = data.DepartmentHeadName,
-                AdditionalNotes = data.AdditionalNotes,
+               
               
                 SectionNotes = data.SectionNotes,
                 DepartmentNotes = data.DepartmentNotes,
@@ -527,7 +523,27 @@ namespace DSAR.Repository
                     Description2 = description.Description2
                 });
             }
+        } 
+        
+        
+        private void SaveAuthorizedContacts(SnapshotFormData snapshot, int requestId)
+
+        {
+            foreach (var snapshotAuthorizedContacts in snapshot.SnapshotAuthorizedContacts)
+            {
+                _context.AuthorizedContactEntries.Add(new AuthorizedContactEntry
+                {
+                    RequestId = requestId,
+                    ApprovedCities = snapshotAuthorizedContacts.ApprovedCities,
+                    SectorRepresentative = snapshotAuthorizedContacts.SectorRepresentative,
+                    SectorRepresentativeTitle = snapshotAuthorizedContacts.SectorRepresentativeTitle
+                });
+            }
         }
+
+        
+
+    
 
 
 
@@ -553,10 +569,7 @@ namespace DSAR.Repository
             currentData.Documents = data.Documents;
             currentData.Timeline = data.Timeline;
             currentData.SystemNeeded = data.SystemNeeded;
-            currentData.Cities2 = data.Cities2;
-            currentData.DepartmentHeadName = data.DepartmentHeadName;
-            currentData.AdditionalNotes = data.AdditionalNotes;
-
+           
             snapshot.SetFormData(currentData, _jsonOptions);
 
             // Remove previous attachments by field
@@ -609,11 +622,9 @@ namespace DSAR.Repository
                    current.UploadsRequired != incoming.UploadsRequired ||
                    current.Documents != incoming.Documents ||
                    current.Timeline != incoming.Timeline ||
-                   current.SystemNeeded != incoming.SystemNeeded ||
-                   current.Cities2 != incoming.Cities2 ||
-                   current.DepartmentHeadName != incoming.DepartmentHeadName ||
-                   current.AdditionalNotes != incoming.AdditionalNotes;
+                   current.SystemNeeded != incoming.SystemNeeded;
         }
+             
 
         public async Task AcceptTermsAsync()
         {
@@ -694,6 +705,69 @@ namespace DSAR.Repository
                 Description2 = d.Description2
             }).ToList();
         }
+
+        public async Task<bool> HandleAuthorizedContacts(List<AuthorizedContactEntry> contacts)
+        {
+            var snapshot = await GetOrCreateSnapshotAsync();
+
+            var existingContacts = snapshot.SnapshotAuthorizedContacts
+                .Select(c => new AuthorizedContactEntry
+                {
+                    ApprovedCities = c.ApprovedCities,
+                    SectorRepresentative = c.SectorRepresentative,
+                    SectorRepresentativeTitle = c.SectorRepresentativeTitle
+                })
+                .ToList();
+
+            if (!HasMeaningfulChangesAuthorizedContacts(existingContacts, contacts))
+                return false;
+
+            _context.SnapshotAuthorizedContactEntries.RemoveRange(snapshot.SnapshotAuthorizedContacts);
+            await _context.SaveChangesAsync();
+
+            foreach (var contact in contacts)
+            {
+                snapshot.SnapshotAuthorizedContacts.Add(new SnapshotAuthorizedContactEntry
+                {
+                    ApprovedCities = contact.ApprovedCities,
+                    SectorRepresentative = contact.SectorRepresentative,
+                    SectorRepresentativeTitle = contact.SectorRepresentativeTitle
+                });
+            }
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        private bool HasMeaningfulChangesAuthorizedContacts(List<AuthorizedContactEntry> current, List<AuthorizedContactEntry> incoming)
+        {
+            if (current.Count != incoming.Count)
+                return true;
+
+            for (int i = 0; i < current.Count; i++)
+            {
+                if (current[i].ApprovedCities?.Trim() != incoming[i].ApprovedCities?.Trim() ||
+                    current[i].SectorRepresentative?.Trim() != incoming[i].SectorRepresentative?.Trim() ||
+                    current[i].SectorRepresentativeTitle?.Trim() != incoming[i].SectorRepresentativeTitle?.Trim())
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        public async Task<List<AuthorizedContactEntry>> GetAuthorizedContacts()
+        {
+            var snapshot = await GetOrCreateSnapshotAsync();
+            return snapshot.SnapshotAuthorizedContacts.Select(c => new AuthorizedContactEntry
+            {
+                ApprovedCities = c.ApprovedCities,
+                SectorRepresentative = c.SectorRepresentative,
+                SectorRepresentativeTitle = c.SectorRepresentativeTitle
+
+            }).ToList();
+        }
+
         #endregion
 
         #region Helper Methods

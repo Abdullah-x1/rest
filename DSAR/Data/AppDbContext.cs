@@ -214,6 +214,9 @@ namespace DSAR.Data
         public DbSet<SnapshotDescriptionEntry> SnapshotDescriptionEntries { get; set; }
         public DbSet<CaseStudyAttachmentMetadata> CaseStudyAttachmentMetadata { get; set; }
         public DbSet<CaseStudyAttachmentData> CaseStudyAttachmentData { get; set; }
+        public DbSet<AuthorizedContactEntry> AuthorizedContactEntries { get; set; }
+public DbSet<SnapshotAuthorizedContactEntry> SnapshotAuthorizedContactEntries { get; set; }
+
 
         private void ConfigureMainFormRelationships(ModelBuilder modelBuilder)
         {
