@@ -45,9 +45,9 @@ namespace DSAR.Models
 
         public string? Timeline { get; set; }
         public string? SystemNeeded { get; set; }
-        public string? Cities2 { get; set; } // to avoid collision with existing Cities
-        public string? DepartmentHeadName { get; set; }
-        public string? AdditionalNotes { get; set; } //
+       // public string? Cities2 { get; set; } // to avoid collision with existing Cities
+       // public string? DepartmentHeadName { get; set; }
+       // public string? AdditionalNotes { get; set; } //
         public string? FilePath { get; set; } // Store file name or path
         [NotMapped]
 
@@ -71,6 +71,8 @@ namespace DSAR.Models
         //notes
         public string? SectionNotes { get; set; }
         public string? DepartmentNotes { get; set; }
+        public string? ITNotes { get; set; }
+        public string? ApplicationNotes { get; set; }
 
         public User User { get; set; }
         //public User Manager { get; set; }
@@ -78,6 +80,8 @@ namespace DSAR.Models
 
         public Department Department { get; set; } // Navigation property
         //Metadata
+
+        public ICollection<AuthorizedContactEntry> SnapshotAuthorizedContacts { get; set; } = new List<AuthorizedContactEntry>();
 
         public ICollection<AttachmentMetadata> Attachments { get; set; } = new List<AttachmentMetadata>();
         public ICollection<DescriptionEntry> Descriptions { get; set; } = new List<DescriptionEntry>();

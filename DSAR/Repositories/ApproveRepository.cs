@@ -38,7 +38,7 @@ namespace DSAR.Repositories
 
             if (decision == "approve")
             {
-                action.StatusId = 3; // Approved
+                action.StatusId = 2; // Approved
                 action.LevelId = 3;
                 request.DepartmentNotes = model.DepartmentNotes;
 
@@ -72,7 +72,7 @@ namespace DSAR.Repositories
             }
 
             _requestActionRepository.UpdateLevel(action);
-            _requestRepository.Update(request);
+            _requestRepository.UpdateNotes(request);
 
         }
 
@@ -116,7 +116,6 @@ namespace DSAR.Repositories
 
             _requestActionRepository.UpdateLevel(action);
 
-            // ✅ Update section note
             if (await _userManager.IsInRoleAsync(currentUser, "DepartmentManager"))
             {
                 request.DepartmentNotes = model.DepartmentNotes;
@@ -125,7 +124,7 @@ namespace DSAR.Repositories
             {
                 request.SectionNotes = model.SectionNotes;
             }
-            _requestRepository.Update(request);
+            _requestRepository.UpdateNotes(request);
         }
         public async Task ApproveRequestByITManager(RequestViewModel model, int actionId, int requestId, string decision, User currentUser, FormData request)
         {
@@ -136,6 +135,7 @@ namespace DSAR.Repositories
                     {
                         action.StatusId = 2;
                         action.LevelId = 4;
+                        request.ITNotes = model.ITNotes;
                         _requestActionRepository.UpdateLevel(action);
 
                         //history
@@ -153,7 +153,8 @@ namespace DSAR.Repositories
                     {
                         action.StatusId = 3;
                         action.LevelId = 8;
-                        _requestActionRepository.UpdateLevel(action);
+                        request.ITNotes = model.ITNotes;
+                    _requestActionRepository.UpdateLevel(action);
                         //history
                         const int initialStatusId = 3; // "approved" status
                         await _historyRepository.CreateHistoryAsync(
@@ -170,9 +171,9 @@ namespace DSAR.Repositories
                 {
                     action.StatusId = 4; // You can define 99 = Declined in your status table
                     action.LevelId = 9;   // Stays the same
-
-                    //history
-                    const int initialStatusId = 4; // "rejected" status
+                    request.ITNotes = model.ITNotes;
+                //history
+                const int initialStatusId = 4; // "rejected" status
                     await _historyRepository.CreateHistoryAsync(
                         currentUser,
                         request,
@@ -184,23 +185,24 @@ namespace DSAR.Repositories
                 }
                 // ✅ Optional: add note for administration
                 // request.AdministrationNote = notes;
-                _requestRepository.Update(request);
+                _requestRepository.UpdateNotes(request);
         }
         public async Task ApproveRequestByApplicationManager(RequestViewModel model, int actionId, int requestId, string decision, User currentUser, FormData request)
         {
           
                 var action = await _requestActionRepository.GetByIdAsync(actionId);
                 //if (action == null) return RedirectToAction("Main", "Account");
-
+                
 
                 if (decision == "approve")
                 {
                     action.LevelId = 7;
+                    request.ApplicationNotes = model.ApplicationNotes;
                     _requestActionRepository.UpdateLevel(action);
 
                     // ✅ Optional: add note for administration
                     // request.AdministrationNote = notes;
-                    _requestRepository.Update(request);
+                    _requestRepository.UpdateNotes(request);
                     //history
                     const int initialStatusId = 2; // "in progress" status
                     await _historyRepository.CreateHistoryAsync(
@@ -216,7 +218,8 @@ namespace DSAR.Repositories
                 {
                     action.StatusId = 4; // You can define 99 = Declined in your status table
                     action.LevelId = 9;   // Stays the same
-                    _requestRepository.Update(request);
+                    request.ApplicationNotes = model.ApplicationNotes;
+                _requestRepository.UpdateNotes(request);
                     //history
                     const int initialStatusId = 4; // "rejected" status
                     await _historyRepository.CreateHistoryAsync(

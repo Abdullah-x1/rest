@@ -26,24 +26,28 @@
         <partial name="_ValidationScriptsPartial" />
 
 
-        <div class="step-progress-container" data-current-step="1">
-            <div class="step" data-step="1">
-                <div class="circle"><i class="bi bi-info-circle"></i></div>
-                <div class="label">مقدمة عن الخدمة</div>
-            </div>
-            <div class="step" data-step="2">
-                <div class="circle"><i class="bi bi-clipboard-check"></i></div>
-                <div class="label">معلومات أولية عن الخدمة</div>
-            </div>
-            <div class="step" data-step="3">
-                <div class="circle"><i class="bi bi-list-ul"></i></div>
-                <div class="label">معلومات تفصيلية عن الخدمة</div>
-            </div>
-            <div class="step" data-step="4">
-                <div class="circle"><i class="bi bi-person-check"></i></div>
-                <div class="label">صلاحيات معتمديّ الخدمة</div>
-            </div>
+    <div class="step-progress-container" data-current-step="1">
+        <div class="step" data-step="1">
+            <div class="circle"><i class="bi bi-info-circle"></i></div>
+            <div class="label">مقدمة عن الخدمة</div>
         </div>
+        <div class="step" data-step="2">
+            <div class="circle"><i class="bi bi-clipboard-check"></i></div>
+            <div class="label">معلومات أولية عن الخدمة</div>
+        </div>
+        <div class="step" data-step="3">
+            <div class="circle"><i class="bi bi-list-ul"></i></div>
+            <div class="label">معلومات تفصيلية عن الخدمة</div>
+        </div>
+        <div class="step" data-step="4">
+            <div class="circle"><i class="bi bi-person-check"></i></div>
+            <div class="label">صلاحيات معتمديّ الخدمة</div>
+        </div>
+        <div class="step" data-step="5">
+            <div class="circle"><i class="bi bi-person-lines-fill"></i></div>
+            <div class="label">معلومات التواصل لأصحاب الصلاحية</div>
+        </div>
+    </div>
 
 
 
@@ -74,8 +78,8 @@
                     <div class="radio-section">
                         <label>هل توجد اعتمادية على خدمات حالية؟</label>
                         <div class="radio-options">
-                            <label><input type="radio" name="Depend" value="yes" @(Model.HasDependency == "yes" ? "checked" : "") /> نعم</label>
-                            <label><input type="radio" name="Depend" value="no" @(Model.HasDependency == "no" ? "checked" : "") /> لا</label>
+                            <label><input type="radio" name="HasDependency" value="yes" @(Model.HasDependency == "yes" ? "checked" : "") /> نعم</label>
+                            <label><input type="radio" name="HasDependency" value="no" @(Model.HasDependency == "no" ? "checked" : "") /> لا</label>
                         </div>
                     </div>
                 </div>

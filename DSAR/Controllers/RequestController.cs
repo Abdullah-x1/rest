@@ -349,7 +349,6 @@ namespace DSAR.Controllers
                 RequiredConditions = form.RequiredConditions,
                 Attachments = form.Attachments?.ToList(), // ✅ Add this line
                 History = historyVm,
-                Cities2 = form.Cities2
 
 
             };
@@ -396,9 +395,7 @@ namespace DSAR.Controllers
                 Documents = form.Documents,
                 Timeline = form.Timeline,
                 SystemNeeded = form.SystemNeeded,
-                Cities2 = form.Cities2,
-                DepartmentHeadName = form.DepartmentHeadName,
-                AdditionalNotes = form.AdditionalNotes,
+             
                 Attachments = form.Attachments?.ToList(), // ✅ Add this line
                 History = historyVm
 
@@ -628,7 +625,7 @@ namespace DSAR.Controllers
                     DocumentsFile
                 );
 
-                return RedirectToAction("StepDescriptions");
+                return RedirectToAction("StepAuthorizedContacts");
             }
 
             var vm = await _formRepo.GetCurrentFormData();
@@ -682,6 +679,63 @@ namespace DSAR.Controllers
 
             return View(model); // fallback
         }
+
+        [HttpGet]
+        public async Task<IActionResult> StepAuthorizedContacts()
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Unauthorized();
+
+            var requests = await _requestActionRepository.GetRequestsStillInProcessByUserId(currentUser.Id);
+            if (requests.Count > 0)
+            {
+                TempData["Error"] = "You already have a pending request. Please wait until it is completed before submitting a new one.";
+                return RedirectToAction("Main", "Account");
+            }
+
+            var contactsFromRepo = await _formRepo.GetAuthorizedContacts();
+
+            if (contactsFromRepo.Count == 0)
+            {
+                contactsFromRepo.Add(new AuthorizedContactEntry());
+            }
+
+            // Map repo model to clean ViewModel objects
+            var mappedContacts = contactsFromRepo.Select(c => new AuthorizedContactEntry
+            {
+                Id = c.Id,
+                ApprovedCities = c.ApprovedCities?.Trim(),
+                SectorRepresentative = c.SectorRepresentative?.Trim(),
+                SectorRepresentativeTitle = c.SectorRepresentativeTitle?.Trim(),
+                RequestId = c.RequestId
+            }).ToList();
+
+            var vm = await _formRepo.GetCurrentFormData();
+            vm.AuthorizedContacts = mappedContacts;
+
+            return View(vm);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> StepAuthorizedContacts(RequestViewModel model, string action)
+        {
+           
+                if (action == "save")
+                {
+                    await _formRepo.HandleAuthorizedContacts(model.AuthorizedContacts ?? new List<AuthorizedContactEntry>());
+                    return Json(new { success = true, message = "تم الحفظ بنجاح" });
+                }
+                else if (action == "next")
+                {
+                    await _formRepo.HandleAuthorizedContacts(model.AuthorizedContacts ?? new List<AuthorizedContactEntry>());
+                return RedirectToAction("StepDescriptions");
+            }
+
+            return View(model); // fallback
+        }
+
+
 
 
 
@@ -809,7 +863,9 @@ namespace DSAR.Controllers
                 WorkTeam = caseStudy?.WorkTeam,
                 Notes = caseStudy?.Notes,
                 restriction = caseStudy?.restriction,
-                LevelId = action.LevelId
+                LevelId = action.LevelId,
+                ITNotes = request.ITNotes,
+                ApplicationNotes = request.ApplicationNotes
             };
 
             return View(viewModel);
@@ -887,6 +943,8 @@ namespace DSAR.Controllers
                 CreatedAt = caseStudy.CreatedAt,
                 SectionNotes = request?.SectionNotes,
                 DepartmentNotes = request?.DepartmentNotes,
+                ApplicationNotes = request?.ApplicationNotes,
+                ITNotes = request?.ITNotes,
 
                 Attachments = attachments.Select(a => new AttachmentViewModel
                 {
