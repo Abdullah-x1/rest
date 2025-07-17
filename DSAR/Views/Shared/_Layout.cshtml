@@ -41,6 +41,8 @@
                     </a>
                 }
                 @if (
+                     User.IsInRole("SectionManager") ||
+                      User.IsInRole("DepartmentManager") ||
                       User.IsInRole("ITManager") ||
                       User.IsInRole("Analyzer") ||
                       User.IsInRole("ApplicationManager"))

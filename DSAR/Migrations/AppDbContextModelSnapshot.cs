@@ -78,6 +78,36 @@ namespace DSAR.Migrations
                     b.ToTable("AttachmentData");
                 });
 
+            modelBuilder.Entity("DSAR.Models.AuthorizedContactEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApprovedCities")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FormDataRequestId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RequestId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SectorRepresentative")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SectorRepresentativeTitle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormDataRequestId");
+
+                    b.ToTable("AuthorizedContactEntries");
+                });
+
             modelBuilder.Entity("DSAR.Models.CaseStudy", b =>
                 {
                     b.Property<int>("CaseId")
@@ -238,19 +268,13 @@ namespace DSAR.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RequestId"));
 
-                    b.Property<string>("AdditionalNotes")
+                    b.Property<string>("ApplicationNotes")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ApprovedTemplate")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Cities")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Cities2")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DepartmentHeadName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DepartmentId")
@@ -287,6 +311,9 @@ namespace DSAR.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HasDependency")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ITNotes")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Message")
@@ -355,8 +382,17 @@ namespace DSAR.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HistoryId"));
 
+                    b.Property<string>("ApplicationNotes")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DepartmentNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ITNotes")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Information")
                         .IsRequired()
@@ -371,6 +407,9 @@ namespace DSAR.Migrations
                     b.Property<string>("RoleId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SectionNotes")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
@@ -554,6 +593,33 @@ namespace DSAR.Migrations
                     b.HasIndex("SnapshotFormDataId");
 
                     b.ToTable("SnapshotAttachmentMetadatas");
+                });
+
+            modelBuilder.Entity("DSAR.Models.SnapshotAuthorizedContactEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApprovedCities")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SectorRepresentative")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SectorRepresentativeTitle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SnapshotFormDataId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SnapshotFormDataId");
+
+                    b.ToTable("SnapshotAuthorizedContactEntries");
                 });
 
             modelBuilder.Entity("DSAR.Models.SnapshotDescriptionEntry", b =>
@@ -886,6 +952,17 @@ namespace DSAR.Migrations
                     b.Navigation("AttachmentMetadata");
                 });
 
+            modelBuilder.Entity("DSAR.Models.AuthorizedContactEntry", b =>
+                {
+                    b.HasOne("DSAR.Models.FormData", "FormData")
+                        .WithMany("SnapshotAuthorizedContacts")
+                        .HasForeignKey("FormDataRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FormData");
+                });
+
             modelBuilder.Entity("DSAR.Models.CaseStudy", b =>
                 {
                     b.HasOne("DSAR.Models.FormData", "Request")
@@ -1104,6 +1181,17 @@ namespace DSAR.Migrations
                     b.Navigation("SnapshotFormData");
                 });
 
+            modelBuilder.Entity("DSAR.Models.SnapshotAuthorizedContactEntry", b =>
+                {
+                    b.HasOne("DSAR.Models.SnapshotFormData", "SnapshotFormData")
+                        .WithMany("SnapshotAuthorizedContacts")
+                        .HasForeignKey("SnapshotFormDataId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SnapshotFormData");
+                });
+
             modelBuilder.Entity("DSAR.Models.SnapshotDescriptionEntry", b =>
                 {
                     b.HasOne("DSAR.Models.SnapshotFormData", "SnapshotFormData")
@@ -1242,6 +1330,8 @@ namespace DSAR.Migrations
                     b.Navigation("Histories");
 
                     b.Navigation("RequestActions");
+
+                    b.Navigation("SnapshotAuthorizedContacts");
                 });
 
             modelBuilder.Entity("DSAR.Models.Levels", b =>
@@ -1272,6 +1362,8 @@ namespace DSAR.Migrations
                     b.Navigation("Attachments");
 
                     b.Navigation("Descriptions");
+
+                    b.Navigation("SnapshotAuthorizedContacts");
                 });
 
             modelBuilder.Entity("DSAR.Models.Status", b =>

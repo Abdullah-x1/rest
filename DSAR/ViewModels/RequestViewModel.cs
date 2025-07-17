@@ -156,7 +156,8 @@ namespace DSAR.ViewModels
         //notes
         public string? SectionNotes { get; set; }
         public string? DepartmentNotes { get; set; }
-
+        public string? ITNotes { get; set; }
+        public string? ApplicationNotes { get; set; }
         public IEnumerable<HistoryViewModel> History { get; set; }
         public List<int> CaseStudyAttachmentIds { get; set; } = new List<int>();
         public List<string> CaseStudyAttachmentNames { get; set; } = new List<string>();
@@ -167,8 +168,11 @@ namespace DSAR.ViewModels
         public int DepartmentId { get; set; }
 
         public List<SelectListItem> Departments { get; set; } = new List<SelectListItem>();
+        public List<AuthorizedContactEntry> AuthorizedContacts { get; set; } = new();
+
         //public int CityId { get; set; }
         //public List<SelectListItem> Cities { get; set; } = new List<SelectListItem>();
+
 
     }
 }

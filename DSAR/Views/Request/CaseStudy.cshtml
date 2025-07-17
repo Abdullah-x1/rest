@@ -38,6 +38,21 @@
                     <td><h6>ملاحظة مدير الإدارة</h6></td>
                 </tr>
             }
+            @if (!string.IsNullOrWhiteSpace(Model.ITNotes))
+            {
+                <tr>
+                    <td>@Model.ITNotes</td>
+                    <td><h6>ملاحظة رئيس إدارة تقنية المعلومات المشتركة</h6></td>
+                </tr>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Model.ApplicationNotes))
+            {
+                <tr>
+                    <td>@Model.ApplicationNotes</td>
+                    <td><h6>ملاحظة رئيس قسم التطبيقات</h6></td>
+                </tr>
+            }
 
        
         </table>
