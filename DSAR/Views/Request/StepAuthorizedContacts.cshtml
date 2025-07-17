@@ -1,23 +1,19 @@
-@model DSAR.ViewModels.RequestViewModel
+﻿@model DSAR.ViewModels.RequestViewModel
 
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8" />
-    <title>Step Descriptions</title>
-    <link rel="stylesheet" href="~/css/StepDescription.css" asp-append-version="true" />
-    <script src="~/css/Script.js" asp-append-version="true"></script>
+    <title>Authorization Contacts</title>
+    <link rel="stylesheet" href="~/css/StepAuthorizedContacts .css" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/js/form-handler.js" asp-append-version="true"></script>
     <script src="~/js/step-progress.js" asp-append-version="true"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
-
-
-
 </head>
 <body>
 
-    <div class="step-progress-container" data-current-step="5">
+    <div class="step-progress-container" data-current-step="4">
         <div class="step" data-step="1">
             <div class="circle"><i class="bi bi-info-circle"></i></div>
             <div class="label">مقدمة عن الخدمة</div>
@@ -36,32 +32,38 @@
         </div>
         <div class="step" data-step="5">
             <div class="circle"><i class="bi bi-person-lines-fill"></i></div>
-            <div class="label">
-                صلاحيات معتمديّ الخدمة
-            </div>
+            <div class="label">صلاحيات معتمديّ الخدمة</div>
         </div>
     </div>
-    <form asp-action="StepDescriptions" method="post" id="form" class="form-container" enctype="multipart/form-data">
-        <h3 style="text-align: center; margin-bottom: 20px;">صلاحيات المعتمدين</h3>
+
+    <form asp-action="StepAuthorizedContacts" method="post" id="form" class="form-container" enctype="multipart/form-data">
+        <h3 style="text-align: center; margin-bottom: 20px;">معلومات التواصل لأصحاب الصلاحية</h3>
 
         <div class="table-container">
             <table id="fieldsTable">
                 <thead>
                     <tr>
-                        <th>الإدارة</th>
-                        <th>اسم المعتمد</th>
+                        <th>المدينة</th>
+                        <th>ممثل القطاع</th>
+                        <th>المنصب</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
-                    @for (int i = 0; i < Model.Descriptions.Count; i++)
+                    @for (int i = 0; i < Model.AuthorizedContacts.Count; i++)
                     {
                         <tr>
-                            <td><input name="Descriptions[@i].Description1" value="@Model.Descriptions[i].Description1" class="form-control" /></td>
-                            <td><input name="Descriptions[@i].Description2" value="@Model.Descriptions[i].Description2" class="form-control" /></td>
+                            <td>
+                                <input name="AuthorizedContacts[@i].ApprovedCities" value="@Model.AuthorizedContacts[i].ApprovedCities" class="form-control" />
+                            </td>
+                            <td>
+                                <input name="AuthorizedContacts[@i].SectorRepresentative" value="@Model.AuthorizedContacts[i].SectorRepresentative" class="form-control" />
+                            </td>
+                            <td>
+                                <input name="AuthorizedContacts[@i].SectorRepresentativeTitle" value="@Model.AuthorizedContacts[i].SectorRepresentativeTitle" class="form-control" />
+                            </td>
                         </tr>
                     }
                 </tbody>
-
 
             </table>
         </div>
@@ -73,14 +75,12 @@
 
         <div class="d-flex justify-content-between align-items-center mt-4">
             <div class="button-footer">
-                <button type="button" class="btn-prev" onclick="location.href='@Url.Action("Main", "Account")'">السابق</button>     
+                <button type="button" class="btn-prev" onclick="location.href='@Url.Action("Step4", "Request")'">السابق</button>
             </div>
             <div class="d-flex gap-2">
                 @if (!User.IsInRole("ApplicationManager"))
                 {
                     <div class="button-footer">
-                        <button type="button" class="btn-prev" onclick="location.href='@Url.Action("StepAuthorizedContacts", "Request")'">السابق</button>
-
                         <div class="btn-group-custom">
                             <button type="button" id="saveButton" class="btn-save" name="action" value="save">
                                 <i class="bi bi-save me-2"></i> حفظ
@@ -97,8 +97,6 @@
                 }
             </div>
         </div>
-
-
     </form>
 
     <style>
@@ -112,17 +110,18 @@
         let index = document.querySelectorAll("#tableBody tr").length;
         function addRow() {
             const tableBody = document.getElementById("tableBody");
-            const buttonContainer = document.querySelector(".button-container");
-            if (tableBody.rows.length < 20) { // Maximum 10 rows
+            if (tableBody.rows.length < 20) {
                 const row = document.createElement("tr");
-                row.innerHTML = `
-                            <td><input name="Descriptions[${index}].Description1" class="form-control" /></td>
-                            <td><input name="Descriptions[${index}].Description2" class="form-control" /></td>
-                        `;
+                       row.innerHTML = `
+            <td><input name="AuthorizedContacts[${index}].ApprovedCities" class="form-control" /></td>
+            <td><input name="AuthorizedContacts[${index}].SectorRepresentative" class="form-control" /></td>
+            <td><input name="AuthorizedContacts[${index}].SectorRepresentativeTitle" class="form-control" /></td>
+        `;
+
                 tableBody.appendChild(row);
                 index++;
             }
-            // Disable add button if max rows reached
+
             if (tableBody.rows.length >= 20) {
                 document.querySelector(".btn-success").disabled = true;
             }
@@ -130,19 +129,19 @@
 
         function deleteLastRow() {
             const tableBody = document.getElementById("tableBody");
-            if (tableBody.rows.length > 1) { // Keep at least 4 rows
+            if (tableBody.rows.length > 1) {
                 tableBody.deleteRow(tableBody.rows.length - 1);
                 index--;
-                // Re-enable add button if below max rows
                 if (tableBody.rows.length < 20) {
                     document.querySelector(".btn-success").disabled = false;
                 }
             }
-        }</script>
-    <script>
-        setupAjaxSave('#form', '#saveButton', '@Url.Action("StepDescriptions", "Request")');
+        }
+    </script>
 
+    <script>
+        setupAjaxSave('#form', '#saveButton', '@Url.Action("StepAuthorizedContacts", "Request")');
     </script>
 
 </body>
-</html> 
+</html>

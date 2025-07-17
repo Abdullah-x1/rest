@@ -36,6 +36,9 @@ namespace DSAR.Repository
         Task<List<DescriptionEntry>> GetDescriptionsByRequestId(int requestId);
         Task<SnapshotAttachmentData> GetSnapshotAttachmentById(int id);
         Task<SnapshotFormData> GetCurrentSnapshotAsync();
+        Task<bool> HandleAuthorizedContacts(List<AuthorizedContactEntry> contacts);
+        Task<List<AuthorizedContactEntry>> GetAuthorizedContacts();
+
         Task AcceptTermsAsync();
 
 

@@ -10,22 +10,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تأكيد تقديم الطلب</title>
     <link rel="stylesheet" href="~/css/confirm.css" asp-append-version="true" />
-
-
 </head>
 <body>
-    <form asp-controller="Request" asp-action="Request" method="post" class="container">
-        <h1>هل أنت متأكد من تقديم الطلب؟</h1>
+    <div class="container">
+        <h1>ملخص الطلب</h1>
 
-        <div class="buttons">
-            <button type="button" class="btn btn-cancel" onclick="history.back()">رجوع</button>
-            <button type="submit" class="btn btn-submit">تأكيد وتقديم</button>
-        </div>
-    </form>
-    @section Scripts {
-        @{
-            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        <section>
+            <h2>معلومات مقدم الطلب</h2>
+            <p><strong>الاسم:</strong> @Model.Name</p>
+            <p><strong>البريد الإلكتروني:</strong> @Model.Email</p>
+            <p><strong>رسالة:</strong> @Model.Message</p>
+        </section>
+
+        <section>
+            <h2>معلومات الخدمة</h2>
+            <p><strong>اسم الخدمة:</strong> @Model.ServiceName</p>
+            <p><strong>نوع الخدمة والموقع:</strong> @Model.ServiceTypeAndLocation</p>
+            <p><strong>وصف الخدمة:</strong> @Model.ServiceDescription</p>
+            <p><strong>هل توجد اعتمادية؟</strong> @Model.HasDependency</p>
+            <p><strong>تفاصيل الاعتمادية:</strong> @Model.DependencyDetails</p>
+            <p><strong>رقم الإجراء الإداري:</strong> @Model.ProcedureNumber</p>
+        </section>
+
+        <section>
+            <h2>تفاصيل إضافية</h2>
+            <p><strong>عدد مرات التكرار:</strong> @Model.RepeatLimit</p>
+            <p><strong>الرسوم:</strong> @Model.Fees</p>
+            <p><strong>المدن المستهدفة:</strong> @Model.Cities</p>
+            <p><strong>الجمهور المستهدف:</strong> @Model.TargetAudience</p>
+        </section>
+
+        <section>
+            <h2>المخرجات المتوقعة</h2>
+            <p><strong>المخرج الأول:</strong> @Model.ExpectedOutput1</p>
+            <p><strong>المخرج الثاني:</strong> @Model.ExpectedOutput2</p>
+        </section>
+
+        <section>
+            <h2>المرفقات والشروط</h2>
+            <p><strong>النموذج المعتمد:</strong> @Model.ApprovedTemplate</p>
+            <p><strong>معلومات تفصيلية:</strong> @Model.DetailedInfo</p>
+            <p><strong>الشروط:</strong> @Model.RequiredConditions</p>
+            <p><strong>سير العمل:</strong> @Model.Workflow</p>
+            <p><strong>المرفقات المطلوبة:</strong> @Model.UploadsRequired</p>
+            <p><strong>المستندات:</strong> @Model.Documents</p>
+            <p><strong>الجدول الزمني:</strong> @Model.Timeline</p>
+            <p><strong>النظام المطلوب:</strong> @Model.SystemNeeded</p>
+        </section>
+
+        @if (Model.Descriptions != null && Model.Descriptions.Any())
+        {
+            <section>
+                <h2>الوصف الإضافي</h2>
+                <ul>
+                    @foreach (var desc in Model.Descriptions)
+                    {
+                        <li>@desc.Description1</li>
+                        <li>@desc.Description2</li>
+
+                    }
+                </ul>
+            </section>
         }
+
+        <form asp-controller="Request" asp-action="Request" method="post">
+            <div class="buttons">
+                <button type="button" class="btn btn-cancel" onclick="history.back()">رجوع</button>
+                <button type="submit" class="btn btn-submit">تأكيد وتقديم</button>
+            </div>
+        </form>
+    </div>
+
+    @section Scripts {
+        @await Html.PartialAsync("_ValidationScriptsPartial")
     }
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -33,15 +90,14 @@
         @if (TempData["Error"] != null)
         {
                 <text>
-                        Swal.fire({
-                            icon: 'info',
-                            title: 'تنبيه',
-                            text: '@Html.Raw(TempData["Error"])',
-                            confirmButtonText: 'حسناً'
-                        });
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'تنبيه',
+                        text: '@Html.Raw(TempData["Error"])',
+                        confirmButtonText: 'حسناً'
+                    });
                 </text>
         }
     </script>
 </body>
 </html>
-
