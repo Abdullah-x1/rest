@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DSAR.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250717081507_new2")]
-    partial class new2
+    [Migration("20250718150132_remove_Terms")]
+    partial class remove_Terms
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -92,6 +92,9 @@ namespace DSAR.Migrations
                     b.Property<string>("ApprovedCities")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("FormDataRequestId")
+                        .HasColumnType("int");
+
                     b.Property<int>("RequestId")
                         .HasColumnType("int");
 
@@ -103,7 +106,7 @@ namespace DSAR.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RequestId");
+                    b.HasIndex("FormDataRequestId");
 
                     b.ToTable("AuthorizedContactEntries");
                 });
@@ -268,6 +271,9 @@ namespace DSAR.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RequestId"));
 
+                    b.Property<string>("ApplicationNotes")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ApprovedTemplate")
                         .HasColumnType("nvarchar(max)");
 
@@ -308,6 +314,9 @@ namespace DSAR.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HasDependency")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ITNotes")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Message")
@@ -937,8 +946,8 @@ namespace DSAR.Migrations
             modelBuilder.Entity("DSAR.Models.AuthorizedContactEntry", b =>
                 {
                     b.HasOne("DSAR.Models.FormData", "FormData")
-                        .WithMany("AuthorizedContacts")
-                        .HasForeignKey("RequestId")
+                        .WithMany("SnapshotAuthorizedContacts")
+                        .HasForeignKey("FormDataRequestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1304,8 +1313,6 @@ namespace DSAR.Migrations
                 {
                     b.Navigation("Attachments");
 
-                    b.Navigation("AuthorizedContacts");
-
                     b.Navigation("CaseStudy")
                         .IsRequired();
 
@@ -1314,6 +1321,8 @@ namespace DSAR.Migrations
                     b.Navigation("Histories");
 
                     b.Navigation("RequestActions");
+
+                    b.Navigation("SnapshotAuthorizedContacts");
                 });
 
             modelBuilder.Entity("DSAR.Models.Levels", b =>

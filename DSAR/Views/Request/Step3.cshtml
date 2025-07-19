@@ -2,83 +2,245 @@
 @{
     Layout = null;
 }
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تأكيد تقديم الطلب</title>
+    <meta charset="utf-8" />
+    <title>ملخص الطلب</title>
     <link rel="stylesheet" href="~/css/confirm.css" asp-append-version="true" />
-</head>
-<body>
-    <div class="container">
-        <h1>ملخص الطلب</h1>
-
-        <section>
-            <h2>معلومات مقدم الطلب</h2>
-            <p><strong>الاسم:</strong> @Model.Name</p>
-            <p><strong>البريد الإلكتروني:</strong> @Model.Email</p>
-            <p><strong>رسالة:</strong> @Model.Message</p>
-        </section>
-
-        <section>
-            <h2>معلومات الخدمة</h2>
-            <p><strong>اسم الخدمة:</strong> @Model.ServiceName</p>
-            <p><strong>نوع الخدمة والموقع:</strong> @Model.ServiceTypeAndLocation</p>
-            <p><strong>وصف الخدمة:</strong> @Model.ServiceDescription</p>
-            <p><strong>هل توجد اعتمادية؟</strong> @Model.HasDependency</p>
-            <p><strong>تفاصيل الاعتمادية:</strong> @Model.DependencyDetails</p>
-            <p><strong>رقم الإجراء الإداري:</strong> @Model.ProcedureNumber</p>
-        </section>
-
-        <section>
-            <h2>تفاصيل إضافية</h2>
-            <p><strong>عدد مرات التكرار:</strong> @Model.RepeatLimit</p>
-            <p><strong>الرسوم:</strong> @Model.Fees</p>
-            <p><strong>المدن المستهدفة:</strong> @Model.Cities</p>
-            <p><strong>الجمهور المستهدف:</strong> @Model.TargetAudience</p>
-        </section>
-
-        <section>
-            <h2>المخرجات المتوقعة</h2>
-            <p><strong>المخرج الأول:</strong> @Model.ExpectedOutput1</p>
-            <p><strong>المخرج الثاني:</strong> @Model.ExpectedOutput2</p>
-        </section>
-
-        <section>
-            <h2>المرفقات والشروط</h2>
-            <p><strong>النموذج المعتمد:</strong> @Model.ApprovedTemplate</p>
-            <p><strong>معلومات تفصيلية:</strong> @Model.DetailedInfo</p>
-            <p><strong>الشروط:</strong> @Model.RequiredConditions</p>
-            <p><strong>سير العمل:</strong> @Model.Workflow</p>
-            <p><strong>المرفقات المطلوبة:</strong> @Model.UploadsRequired</p>
-            <p><strong>المستندات:</strong> @Model.Documents</p>
-            <p><strong>الجدول الزمني:</strong> @Model.Timeline</p>
-            <p><strong>النظام المطلوب:</strong> @Model.SystemNeeded</p>
-        </section>
-
-        @if (Model.Descriptions != null && Model.Descriptions.Any())
-        {
-            <section>
-                <h2>الوصف الإضافي</h2>
-                <ul>
-                    @foreach (var desc in Model.Descriptions)
-                    {
-                        <li>@desc.Description1</li>
-                        <li>@desc.Description2</li>
-
-                    }
-                </ul>
-            </section>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            margin: 20px;
         }
 
-        <form asp-controller="Request" asp-action="Request" method="post">
-            <div class="buttons">
-                <button type="button" class="btn btn-cancel" onclick="history.back()">رجوع</button>
+        .summary-container {
+            max-width: 1000px;
+            margin: auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            color: #444;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+
+            td.label {
+                font-weight: bold;
+                width: 30%;
+                color: #333;
+            }
+
+        .buttons {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-cancel {
+            background-color: #dc3545;
+            color: white;
+            margin-right: 10px;
+        }
+
+        ul.description-list {
+            list-style: none;
+            padding: 0;
+        }
+
+            ul.description-list li {
+                background-color: #f0f0f0;
+                padding: 10px;
+                margin-bottom: 8px;
+                border-radius: 6px;
+            }
+    </style>
+</head>
+<body>
+    <div class="summary-container">
+        <h1>ملخص الطلب قبل التقديم</h1>
+
+        <h2>بيانات مقدم الطلب</h2>
+        <table>
+            <tr><td class="label">الاسم:</td><td>@Model.Name</td></tr>
+            <tr><td class="label">البريد الإلكتروني:</td><td>@Model.Email</td></tr>
+            <tr><td class="label">الرسالة:</td><td>@Model.Message</td></tr>
+        </table>
+
+        <h2>معلومات الخدمة</h2>
+        <table>
+            <tr><td class="label">اسم الخدمة:</td><td>@Model.ServiceName</td></tr>
+            <tr><td class="label">النوع والموقع:</td><td>@Model.ServiceTypeAndLocation</td></tr>
+            <tr><td class="label">وصف الخدمة:</td><td>@Model.ServiceDescription</td></tr>
+            <tr>
+                <td class="label">هل هناك اعتماد على خدمة أخرى؟</td>
+                <td>@((Model.HasDependency?.ToLower() == "true") ? "نعم" : "لا")</td>
+            </tr>
+            <tr><td class="label">تفاصيل الاعتماد:</td><td>@Model.DependencyDetails</td></tr>
+            <tr><td class="label">رقم الإجراء:</td><td>@Model.ProcedureNumber</td></tr>
+            <tr><td class="label">حد التكرار:</td><td>@Model.RepeatLimit</td></tr>
+            <tr><td class="label">الرسوم:</td><td>@Model.Fees</td></tr>
+            <tr><td class="label">المدن:</td><td>@Model.Cities</td></tr>
+            <tr><td class="label">الجمهور المستهدف:</td><td>@Model.TargetAudience</td></tr>
+        </table>
+
+        <h2>المخرجات المتوقعة</h2>
+        <table>
+            <tr><td class="label">المخرج الأول:</td><td>@Model.ExpectedOutput1</td></tr>
+            <tr><td class="label">المخرج الثاني:</td><td>@Model.ExpectedOutput2</td></tr>
+            <tr><td class="label">النموذج المعتمد:</td><td>@Model.ApprovedTemplate</td></tr>
+        </table>
+
+        <h2>تفاصيل إضافية</h2>
+        <table>
+            <tr><td class="label">معلومات تفصيلية:</td><td>@Model.DetailedInfo</td></tr>
+            <tr><td class="label">الشروط:</td><td>@Model.RequiredConditions</td></tr>
+            <tr><td class="label">الإجراءات (Workflow):</td><td>@Model.Workflow</td></tr>
+            <tr><td class="label">المرفقات المطلوبة:</td><td>@Model.UploadsRequired</td></tr>
+            <tr><td class="label">الوثائق:</td><td>@Model.Documents</td></tr>
+            <tr><td class="label">الجدول الزمني:</td><td>@Model.Timeline</td></tr>
+            <tr><td class="label">هل يحتاج إلى نظام:</td><td>@Model.SystemNeeded</td></tr>
+        </table>
+
+        <h2>الوصف التفصيلي (Snapshot Descriptions)</h2>
+        @if (Model.SnapshotDescriptions != null && Model.SnapshotDescriptions.Any())
+        {
+            <ul class="description-list">
+                @foreach (var desc in Model.SnapshotDescriptions)
+                {
+                    <li>
+                        <strong>@desc.Description1:</strong> @desc.Description2
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>لا توجد أوصاف حالياً.</p>
+        }
+        <div class="attachment-section">
+            @if (Model.Attachment1Id != null && Model.Attachment1Id.Any())
+            {
+                <div class="text-info mt-1">
+                    <i class="bi bi-paperclip me-1"></i> الملفات الحالية:
+                    <ul class="attached-files">
+                        @for (int i = 0; i < Model.Attachment1Id.Count; i++)
+                        {
+                            <li>
+                                <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = Model.Attachment1Id[i] })" target="_blank">
+                                    @Model.Attachment1Name[i]
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+            @if (Model.Attachment2Id != null && Model.Attachment2Id.Any())
+            {
+                <div class="text-info">
+                    <i class="bi bi-paperclip me-1"></i>
+                    <ul class="attached-files">
+                        @for (int i = 0; i < Model.Attachment2Id.Count; i++)
+                        {
+                            <li>
+                                <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = Model.Attachment2Id[i] })" target="_blank">
+                                    @Model.Attachment2Name[i]
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+
+            @if (Model.UploadsRequiredAttachmentId != null && Model.UploadsRequiredAttachmentId.Any())
+            {
+                <div class="text-info mt-1">
+                    <i class="bi bi-paperclip me-1"></i> الملفات الحالية للمرفقات المطلوبة:
+                    <ul class="attached-files">
+                        @for (int i = 0; i < Model.UploadsRequiredAttachmentId.Count; i++)
+                        {
+                            <li>
+                                <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = Model.UploadsRequiredAttachmentId[i] })" target="_blank">
+                                    @Model.UploadsRequiredName[i]
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+
+            @if (Model.DocumentsAttachmentId != null && Model.DocumentsAttachmentId.Any())
+            {
+                <div class="text-info mt-1">
+                    <i class="bi bi-paperclip me-1"></i> الملفات الحالية لوثائق الدعم:
+                    <ul class="attached-files">
+                        @for (int i = 0; i < Model.DocumentsAttachmentId.Count; i++)
+                        {
+                            <li>
+                                <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = Model.DocumentsAttachmentId[i] })" target="_blank">
+                                    @Model.DocumentsName[i]
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+            @if (Model.WorkflowAttachmentId != null && Model.WorkflowAttachmentId.Any())
+            {
+                <div class="text-info mt-1">
+                    <i class="bi bi-paperclip me-1"></i> الملفات الحالية لمسار العمل:
+                    <ul class="attached-files">
+                        @for (int i = 0; i < Model.WorkflowAttachmentId.Count; i++)
+                        {
+                            <li>
+                                <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = Model.WorkflowAttachmentId[i] })" target="_blank">
+                                    @Model.WorkflowName[i]
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+
+
+        </div>
+
+        <div class="buttons">
+            <button type="button" class="btn btn-cancel" onclick="history.back()">رجوع</button>
+            <form method="post" asp-action="Request" asp-controller="Request" style="display:inline;">
                 <button type="submit" class="btn btn-submit">تأكيد وتقديم</button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 
     @section Scripts {

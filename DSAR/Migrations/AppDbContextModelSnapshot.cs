@@ -52,7 +52,7 @@ namespace DSAR.Migrations
 
                     b.HasIndex("FormDataId");
 
-                    b.ToTable("AttachmentMetadata");
+                    b.ToTable("AttachmentMetadata", (string)null);
                 });
 
             modelBuilder.Entity("DSAR.Models.AttachmentData", b =>
@@ -75,7 +75,7 @@ namespace DSAR.Migrations
                     b.HasIndex("AttachmentMetadataId")
                         .IsUnique();
 
-                    b.ToTable("AttachmentData");
+                    b.ToTable("AttachmentData", (string)null);
                 });
 
             modelBuilder.Entity("DSAR.Models.AuthorizedContactEntry", b =>
@@ -89,6 +89,9 @@ namespace DSAR.Migrations
                     b.Property<string>("ApprovedCities")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("FormDataRequestId")
+                        .HasColumnType("int");
+
                     b.Property<int>("RequestId")
                         .HasColumnType("int");
 
@@ -100,9 +103,9 @@ namespace DSAR.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RequestId");
+                    b.HasIndex("FormDataRequestId");
 
-                    b.ToTable("AuthorizedContactEntries");
+                    b.ToTable("AuthorizedContactEntries", (string)null);
                 });
 
             modelBuilder.Entity("DSAR.Models.CaseStudy", b =>
@@ -139,7 +142,7 @@ namespace DSAR.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CaseStudy");
+                    b.ToTable("CaseStudy", (string)null);
                 });
 
             modelBuilder.Entity("DSAR.Models.CaseStudyAttachmentData", b =>
@@ -153,7 +156,7 @@ namespace DSAR.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CaseStudyAttachmentData");
+                    b.ToTable("CaseStudyAttachmentData", (string)null);
                 });
 
             modelBuilder.Entity("DSAR.Models.CaseStudyAttachmentMetadata", b =>
@@ -186,7 +189,7 @@ namespace DSAR.Migrations
 
                     b.HasIndex("CaseStudyId");
 
-                    b.ToTable("CaseStudyAttachmentMetadata");
+                    b.ToTable("CaseStudyAttachmentMetadata", (string)null);
                 });
 
             modelBuilder.Entity("DSAR.Models.City", b =>
@@ -203,7 +206,7 @@ namespace DSAR.Migrations
 
                     b.HasKey("CityId");
 
-                    b.ToTable("City");
+                    b.ToTable("City", (string)null);
                 });
 
             modelBuilder.Entity("DSAR.Models.Department", b =>
@@ -225,7 +228,7 @@ namespace DSAR.Migrations
 
                     b.HasIndex("SectorId");
 
-                    b.ToTable("Department");
+                    b.ToTable("Department", (string)null);
                 });
 
             modelBuilder.Entity("DSAR.Models.DescriptionEntry", b =>
@@ -254,7 +257,7 @@ namespace DSAR.Migrations
 
                     b.HasIndex("FormDataRequestId");
 
-                    b.ToTable("DescriptionEntries");
+                    b.ToTable("DescriptionEntries", (string)null);
                 });
 
             modelBuilder.Entity("DSAR.Models.FormData", b =>
@@ -264,6 +267,9 @@ namespace DSAR.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RequestId"));
+
+                    b.Property<string>("ApplicationNotes")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ApprovedTemplate")
                         .HasColumnType("nvarchar(max)");
@@ -365,7 +371,7 @@ namespace DSAR.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Forms");
+                    b.ToTable("Forms", (string)null);
                 });
 
             modelBuilder.Entity("DSAR.Models.History", b =>
@@ -412,7 +418,7 @@ namespace DSAR.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Histories");
+                    b.ToTable("Histories", (string)null);
                 });
 
             modelBuilder.Entity("DSAR.Models.Levels", b =>
@@ -429,7 +435,7 @@ namespace DSAR.Migrations
 
                     b.HasKey("LevelId");
 
-                    b.ToTable("Level");
+                    b.ToTable("Level", (string)null);
                 });
 
             modelBuilder.Entity("DSAR.Models.RequestActions", b =>
@@ -474,7 +480,7 @@ namespace DSAR.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RequestActions");
+                    b.ToTable("RequestActions", (string)null);
                 });
 
             modelBuilder.Entity("DSAR.Models.Section", b =>
@@ -496,7 +502,7 @@ namespace DSAR.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.ToTable("Section");
+                    b.ToTable("Section", (string)null);
                 });
 
             modelBuilder.Entity("DSAR.Models.Sector", b =>
@@ -518,7 +524,7 @@ namespace DSAR.Migrations
 
                     b.HasIndex("CityId");
 
-                    b.ToTable("Sector");
+                    b.ToTable("Sector", (string)null);
                 });
 
             modelBuilder.Entity("DSAR.Models.SnapshotAttachmentData", b =>
@@ -541,7 +547,7 @@ namespace DSAR.Migrations
                     b.HasIndex("SnapshotAttachmentMetadataId")
                         .IsUnique();
 
-                    b.ToTable("SnapshotAttachmentDatas");
+                    b.ToTable("SnapshotAttachmentDatas", (string)null);
                 });
 
             modelBuilder.Entity("DSAR.Models.SnapshotAttachmentMetadata", b =>
@@ -574,7 +580,7 @@ namespace DSAR.Migrations
 
                     b.HasIndex("SnapshotFormDataId");
 
-                    b.ToTable("SnapshotAttachmentMetadatas");
+                    b.ToTable("SnapshotAttachmentMetadatas", (string)null);
                 });
 
             modelBuilder.Entity("DSAR.Models.SnapshotAuthorizedContactEntry", b =>
@@ -601,7 +607,7 @@ namespace DSAR.Migrations
 
                     b.HasIndex("SnapshotFormDataId");
 
-                    b.ToTable("SnapshotAuthorizedContactEntries");
+                    b.ToTable("SnapshotAuthorizedContactEntries", (string)null);
                 });
 
             modelBuilder.Entity("DSAR.Models.SnapshotDescriptionEntry", b =>
@@ -627,7 +633,7 @@ namespace DSAR.Migrations
 
                     b.HasIndex("SnapshotFormDataId");
 
-                    b.ToTable("SnapshotDescriptionEntries");
+                    b.ToTable("SnapshotDescriptionEntries", (string)null);
                 });
 
             modelBuilder.Entity("DSAR.Models.SnapshotFormData", b =>
@@ -654,7 +660,7 @@ namespace DSAR.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SnapshotForms");
+                    b.ToTable("SnapshotForms", (string)null);
                 });
 
             modelBuilder.Entity("DSAR.Models.Status", b =>
@@ -671,7 +677,7 @@ namespace DSAR.Migrations
 
                     b.HasKey("StatusId");
 
-                    b.ToTable("Status");
+                    b.ToTable("Status", (string)null);
                 });
 
             modelBuilder.Entity("DSAR.Models.User", b =>
@@ -937,8 +943,8 @@ namespace DSAR.Migrations
             modelBuilder.Entity("DSAR.Models.AuthorizedContactEntry", b =>
                 {
                     b.HasOne("DSAR.Models.FormData", "FormData")
-                        .WithMany("AuthorizedContacts")
-                        .HasForeignKey("RequestId")
+                        .WithMany("SnapshotAuthorizedContacts")
+                        .HasForeignKey("FormDataRequestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1304,8 +1310,6 @@ namespace DSAR.Migrations
                 {
                     b.Navigation("Attachments");
 
-                    b.Navigation("AuthorizedContacts");
-
                     b.Navigation("CaseStudy")
                         .IsRequired();
 
@@ -1314,6 +1318,8 @@ namespace DSAR.Migrations
                     b.Navigation("Histories");
 
                     b.Navigation("RequestActions");
+
+                    b.Navigation("SnapshotAuthorizedContacts");
                 });
 
             modelBuilder.Entity("DSAR.Models.Levels", b =>

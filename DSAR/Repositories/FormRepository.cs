@@ -78,6 +78,12 @@ namespace DSAR.Repository
                 .Where(d => d.RequestId == requestId)
                 .ToListAsync();
         }
+        public async Task<List<SnapshotDescriptionEntry>> GetDescriptionsSanpshotByRequestIdsanpshot(int requestId)
+        {
+            return await _context.SnapshotDescriptionEntries
+                .Where(d => d.SnapshotFormDataId == requestId)
+                .ToListAsync();
+        }
 
 
         public async Task Create(FormData data)
@@ -142,11 +148,12 @@ namespace DSAR.Repository
         {
             var userId = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var snapshot = await GetOrCreateSnapshotAsync();
-
+            
 
             var formData = snapshot.GetFormData(_jsonOptions);
-            
-            
+            var description = await GetDescriptionsSanpshotByRequestIdsanpshot(snapshot.Id);
+
+
             // Map FormData to RequestViewModel  
             var requestViewModel = new RequestViewModel
             {
@@ -174,7 +181,7 @@ namespace DSAR.Repository
                 Documents = formData.Documents,
                 Timeline = formData.Timeline,
                 SystemNeeded = formData.SystemNeeded,
-                Descriptions = snapshot.ToList() ?? new List<DescriptionEntry>(),
+                SnapshotDescriptions = description.ToList() ?? new List<SnapshotDescriptionEntry>(),
                 Departments = _requestRepository.GetAllDepartments()
                 .Select(d => new SelectListItem
                 {
@@ -187,6 +194,7 @@ namespace DSAR.Repository
                 //    Value = d.CityId.ToString(),
                 //    Text = d.CityName
                 //}).ToList()
+                Attachments = formData.Attachments?.ToList()
 
             };
             requestViewModel.Attachment1Id = snapshot.Attachments
