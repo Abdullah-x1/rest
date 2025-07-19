@@ -145,6 +145,28 @@ namespace DSAR.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SnapshotAuthorizedContactEntries",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SnapshotFormDataId = table.Column<int>(type: "int", nullable: false),
+                    ApprovedCities = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    SectorRepresentative = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    SectorRepresentativeTitle = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SnapshotAuthorizedContactEntries", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SnapshotAuthorizedContactEntries_SnapshotForms_SnapshotFormDataId",
+                        column: x => x.SnapshotFormDataId,
+                        principalTable: "SnapshotForms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SnapshotDescriptionEntries",
                 columns: table => new
                 {
@@ -400,13 +422,11 @@ namespace DSAR.Migrations
                     Documents = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Timeline = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SystemNeeded = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Cities2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DepartmentHeadName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AdditionalNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FilePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TermsAccepted = table.Column<bool>(type: "bit", nullable: false),
                     SectionNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DepartmentNotes = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    DepartmentNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ITNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ApplicationNotes = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -446,6 +466,28 @@ namespace DSAR.Migrations
                         principalTable: "Forms",
                         principalColumn: "RequestId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AuthorizedContactEntries",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ApprovedCities = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SectorRepresentative = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SectorRepresentativeTitle = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RequestId = table.Column<int>(type: "int", nullable: false),
+                    FormDataRequestId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AuthorizedContactEntries", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AuthorizedContactEntries_Forms_FormDataRequestId",
+                        column: x => x.FormDataRequestId,
+                        principalTable: "Forms",
+                        principalColumn: "RequestId");
                 });
 
             migrationBuilder.CreateTable(
@@ -740,6 +782,11 @@ namespace DSAR.Migrations
                 column: "FormDataId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AuthorizedContactEntries_FormDataRequestId",
+                table: "AuthorizedContactEntries",
+                column: "FormDataRequestId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CaseStudy_RequestId",
                 table: "CaseStudy",
                 column: "RequestId",
@@ -853,6 +900,11 @@ namespace DSAR.Migrations
                 column: "SnapshotFormDataId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SnapshotAuthorizedContactEntries_SnapshotFormDataId",
+                table: "SnapshotAuthorizedContactEntries",
+                column: "SnapshotFormDataId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SnapshotDescriptionEntries_SnapshotFormDataId",
                 table: "SnapshotDescriptionEntries",
                 column: "SnapshotFormDataId");
@@ -880,6 +932,9 @@ namespace DSAR.Migrations
                 name: "AttachmentData");
 
             migrationBuilder.DropTable(
+                name: "AuthorizedContactEntries");
+
+            migrationBuilder.DropTable(
                 name: "CaseStudyAttachmentData");
 
             migrationBuilder.DropTable(
@@ -893,6 +948,9 @@ namespace DSAR.Migrations
 
             migrationBuilder.DropTable(
                 name: "SnapshotAttachmentDatas");
+
+            migrationBuilder.DropTable(
+                name: "SnapshotAuthorizedContactEntries");
 
             migrationBuilder.DropTable(
                 name: "SnapshotDescriptionEntries");

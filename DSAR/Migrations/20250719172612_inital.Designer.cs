@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DSAR.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250717060621_new1")]
-    partial class new1
+    [Migration("20250719172612_inital")]
+    partial class inital
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -92,6 +92,9 @@ namespace DSAR.Migrations
                     b.Property<string>("ApprovedCities")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("FormDataRequestId")
+                        .HasColumnType("int");
+
                     b.Property<int>("RequestId")
                         .HasColumnType("int");
 
@@ -103,7 +106,7 @@ namespace DSAR.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RequestId");
+                    b.HasIndex("FormDataRequestId");
 
                     b.ToTable("AuthorizedContactEntries");
                 });
@@ -268,6 +271,9 @@ namespace DSAR.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RequestId"));
 
+                    b.Property<string>("ApplicationNotes")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ApprovedTemplate")
                         .HasColumnType("nvarchar(max)");
 
@@ -308,6 +314,9 @@ namespace DSAR.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HasDependency")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ITNotes")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Message")
@@ -586,13 +595,16 @@ namespace DSAR.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ApprovedCities")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("SectorRepresentative")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("SectorRepresentativeTitle")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("SnapshotFormDataId")
                         .HasColumnType("int");
@@ -938,9 +950,7 @@ namespace DSAR.Migrations
                 {
                     b.HasOne("DSAR.Models.FormData", "FormData")
                         .WithMany("AuthorizedContacts")
-                        .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("FormDataRequestId");
 
                     b.Navigation("FormData");
                 });

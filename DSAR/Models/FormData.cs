@@ -81,9 +81,9 @@ namespace DSAR.Models
         public Department Department { get; set; } // Navigation property
         //Metadata
 
-        public ICollection<AuthorizedContactEntry> SnapshotAuthorizedContacts { get; set; } = new List<AuthorizedContactEntry>();
 
         public ICollection<AttachmentMetadata> Attachments { get; set; } = new List<AttachmentMetadata>();
         public ICollection<DescriptionEntry> Descriptions { get; set; } = new List<DescriptionEntry>();
+        public List<AuthorizedContactEntry> AuthorizedContacts { get; set; } = new();
     }
 }

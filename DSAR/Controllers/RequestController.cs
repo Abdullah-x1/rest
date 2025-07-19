@@ -248,19 +248,8 @@ namespace DSAR.Controllers
             return View(viewModels);
         }
 
-        public async Task<IActionResult> ViewSubmission(int id)
+        public async Task<IActionResult> CombinedView(int id, int actionId)
         {
-
-            var histories = await _historyRepository.GetHistoriesByRequestIdAsync(id);
-
-            var historyVm = histories.Select(h => new HistoryViewModel
-            {
-                CreationDate = h.CreationDate,
-                LevelName = h.Levels.LevelName,
-                StatusName = h.Status.StatusName,
-                RoleName = h.Role.Name,
-                Information = h.Information
-            }).ToList();
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
 
@@ -273,13 +262,12 @@ namespace DSAR.Controllers
             var requestAction = await _requestActionRepository.GetRequestActionByRequestIdAsync(request.RequestId);
             if (requestAction == null) return NotFound();
 
-
             var allowed = await _requestActionRepository.ProtectViewPages(id, currentUser, request, requestAction);
-            if (!allowed)
-            {
-                // Redirect to Main page if not allowed
-                return RedirectToAction("Main", "Account");
-            }
+            if (!allowed) return RedirectToAction("Main", "Account");
+
+            var history = await _historyRepository.GetHistoriesByRequestIdAsync(id);
+            var descriptions = await _formRepo.GetDescriptionsByRequestId(id);
+            var contacts = await _formRepo.GetAuthorizedContactsByRequestId(id);
 
             var viewModel = new RequestViewModel
             {
@@ -290,55 +278,11 @@ namespace DSAR.Controllers
                 HasDependency = form.HasDependency,
                 DependencyDetails = form.DependencyDetails,
                 ProcedureNumber = form.ProcedureNumber,
-                Attachments = form.Attachments?.ToList(),
-                History = historyVm
-            };
 
-            return View(viewModel);
-        }
-
-
-        public async Task<IActionResult> ViewSubmission2(int id)
-        {
-            var histories = await _historyRepository.GetHistoriesByRequestIdAsync(id);
-
-            var historyVm = histories.Select(h => new HistoryViewModel
-            {
-                CreationDate = h.CreationDate,
-                LevelName = h.Levels.LevelName,
-                StatusName = h.Status.StatusName,
-                RoleName = h.Role.Name,
-                Information = h.Information
-            }).ToList();
-            var currentUser = await _userManager.GetUserAsync(User);
-            if (currentUser == null) return Unauthorized();
-
-            var form = await _formRepo.GetById(id);
-            if (form == null) return NotFound();
-            var request = _requestRepository.GetById(id);
-            if (request == null) return NotFound();
-
-            var requestAction = await _requestActionRepository.GetRequestActionByRequestIdAsync(request.RequestId);
-            if (requestAction == null) return NotFound();
-
-
-            var allowed = await _requestActionRepository.ProtectViewPages(id, currentUser, request, requestAction);
-            if (!allowed)
-            {
-                // Redirect to Main page if not allowed
-                return RedirectToAction("Main", "Account");
-            }
-            await _requestRepository.GetDepartmentNameByRequestId(id);
-
-            await _requestRepository.GetDepartmentNameByRequestId(id); 
-
-            var viewModel = new RequestViewModel
-            {
-                RequestId = form.RequestId,
                 Name = form.Name,
                 Email = form.Email,
                 RepeatLimit = form.RepeatLimit,
-                DepartmentName = form.Department.DepartmentName,
+                DepartmentName = form.Department?.DepartmentName,
                 Fees = form.Fees,
                 TargetAudience = form.TargetAudience,
                 DepName = form.Departments,
@@ -347,60 +291,31 @@ namespace DSAR.Controllers
                 ApprovedTemplate = form.ApprovedTemplate,
                 DetailedInfo = form.DetailedInfo,
                 RequiredConditions = form.RequiredConditions,
-                Attachments = form.Attachments?.ToList(), // ✅ Add this line
-                History = historyVm,
 
-
-            };
-            return viewModel == null ? NotFound() : View(viewModel);
-        }
-        public async Task<IActionResult> ViewSubmission3(int id)
-        {
-
-            var histories = await _historyRepository.GetHistoriesByRequestIdAsync(id);
-
-            var historyVm = histories.Select(h => new HistoryViewModel
-            {
-                CreationDate = h.CreationDate,
-                LevelName = h.Levels.LevelName,
-                StatusName = h.Status.StatusName,
-                RoleName = h.Role.Name,
-                Information = h.Information
-            }).ToList();
-            var currentUser = await _userManager.GetUserAsync(User);
-            if (currentUser == null) return Unauthorized();
-
-            var form = await _formRepo.GetById(id);
-            if (form == null) return NotFound();
-            var request = _requestRepository.GetById(id);
-            if (request == null) return NotFound();
-
-            var requestAction = await _requestActionRepository.GetRequestActionByRequestIdAsync(request.RequestId);
-            if (requestAction == null) return NotFound();
-
-
-            var allowed = await _requestActionRepository.ProtectViewPages(id, currentUser, request, requestAction);
-            if (!allowed)
-            {
-                // Redirect to Main page if not allowed
-                return RedirectToAction("Main", "Account");
-            }
-
-
-            var viewModel = new RequestViewModel
-            {
-                RequestId = form.RequestId,
                 Workflow = form.Workflow,
                 UploadsRequired = form.UploadsRequired,
                 Documents = form.Documents,
                 Timeline = form.Timeline,
                 SystemNeeded = form.SystemNeeded,
-             
-                Attachments = form.Attachments?.ToList(), // ✅ Add this line
-                History = historyVm
 
+                Attachments = form.Attachments?.ToList(),
+                Descriptions = descriptions?.ToList() ?? new List<DescriptionEntry>(),
+                AuthorizedContacts = contacts?.ToList() ?? new List<AuthorizedContactEntry>(),
+
+                History = history.Select(h => new HistoryViewModel
+                {
+                    CreationDate = h.CreationDate,
+                    LevelName = h.Levels.LevelName,
+                    StatusName = h.Status.StatusName,
+                    RoleName = h.Role.Name,
+                    Information = h.Information
+                }).ToList(),
+
+                ActionId = requestAction?.ActionId ?? 0,
+                LevelId = requestAction?.LevelId ?? 0
             };
-            return viewModel == null ? NotFound() : View(viewModel);
+
+            return View(viewModel);
         }
         public async Task<IActionResult> StepDescriptionsView(int id, int actionId)
         {
@@ -437,6 +352,7 @@ namespace DSAR.Controllers
 
             return View(viewModel);
         }
+
 
         // STEP 1 - GET
         public async Task<IActionResult> Step1()
@@ -679,6 +595,7 @@ namespace DSAR.Controllers
             return View(model); // fallback
         }
 
+
         [HttpGet]
         public async Task<IActionResult> StepAuthorizedContacts()
         {
@@ -716,18 +633,19 @@ namespace DSAR.Controllers
         }
 
 
+
         [HttpPost]
         public async Task<IActionResult> StepAuthorizedContacts(RequestViewModel model, string action)
         {
-           
-                if (action == "save")
-                {
-                    await _formRepo.HandleAuthorizedContacts(model.AuthorizedContacts ?? new List<AuthorizedContactEntry>());
-                    return Json(new { success = true, message = "تم الحفظ بنجاح" });
-                }
-                else if (action == "next")
-                {
-                    await _formRepo.HandleAuthorizedContacts(model.AuthorizedContacts ?? new List<AuthorizedContactEntry>());
+
+            if (action == "save")
+            {
+                await _formRepo.HandleAuthorizedContacts(model.AuthorizedContacts ?? new List<AuthorizedContactEntry>());
+                return Json(new { success = true, message = "تم الحفظ بنجاح" });
+            }
+            else if (action == "next")
+            {
+                await _formRepo.HandleAuthorizedContacts(model.AuthorizedContacts ?? new List<AuthorizedContactEntry>());
                 return RedirectToAction("StepDescriptions");
             }
 
@@ -751,6 +669,8 @@ namespace DSAR.Controllers
             return File(attachment.Data, "application/octet-stream",
                        $"{attachment.AttachmentMetadata.FileName}{attachment.AttachmentMetadata.FileExtension}");
         }
+        [HttpGet]
+       
         public async Task<IActionResult> Submissions()
         {
             return View(await _formRepo.GetAll());

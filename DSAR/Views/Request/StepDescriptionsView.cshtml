@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>عرض الوصف التفصيلي</title>
-    <link rel="stylesheet" href="~/css/StepDescreptionView.cSs" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/StepDescreptionView.css" asp-append-version="true" />
 
 </head>
 <body>
@@ -38,7 +38,7 @@
             <div class="button-footer">
                 <button type="button"
                         class="btn-prev"
-                        onclick="location.href='@Url.Action("ViewSubmission3", "Request", new { id = Model.RequestId })'">
+                        onclick="location.href='@Url.Action("StepAuthorizedContactsView", "Request", new { id = Model.RequestId })'">
                     السابق
                 </button>
                 <div class="btn-group-custom">
