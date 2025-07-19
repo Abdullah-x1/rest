@@ -1,0 +1,56 @@
+﻿@model DSAR.ViewModels.RequestViewModel
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <title>عرض معلومات أصحاب الصلاحية</title>
+    <link rel="stylesheet" href="~/css/StepDescreptionView.css" asp-append-version="true" />
+</head>
+<body>
+
+    <div class="form-container">
+        <div class="content-wrapper">
+            <h3>معلومات التواصل لأصحاب الصلاحية</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>المدينة</th>
+                        <th>ممثل القطاع</th>
+                        <th>المنصب</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.AuthorizedContacts)
+                    {
+                        <tr>
+                            <td>@item.ApprovedCities</td>
+                            <td>@item.SectorRepresentative</td>
+                            <td>@item.SectorRepresentativeTitle</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="button-footer">
+                <button type="button"
+                        class="btn-prev"
+                        onclick="location.href='@Url.Action("ViewSubmission3", "Request", new { id = Model.RequestId })'">
+                    السابق
+                </button>
+
+                <div class="btn-group-custom">
+                    <form method="post" asp-action="StepDescriptionsView" asp-controller="Request">
+                        <input type="hidden" name="id" value="@Model.RequestId" />
+                        <button type="submit" class="btn-next" name="action" value="next">
+                            التالي
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

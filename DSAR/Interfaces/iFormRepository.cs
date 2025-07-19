@@ -40,6 +40,11 @@ namespace DSAR.Repository
         Task<SnapshotFormData> GetCurrentSnapshotAsync();
         Task<bool> HandleAuthorizedContacts(List<AuthorizedContactEntry> contacts);
         Task<List<AuthorizedContactEntry>> GetAuthorizedContacts();
+        Task<IEnumerable<AuthorizedContactEntry>> GetAuthorizedContactsByRequestId(int requestId);
+        Task<IEnumerable<SnapshotAuthorizedContactEntry>> GetAuthorizedContactsSnapshotByRequestIdSnapshot(int requestId);
+
+        Task<SnapshotFormData> GetSnapshotById(int id);
+
 
         Task AcceptTermsAsync();
 

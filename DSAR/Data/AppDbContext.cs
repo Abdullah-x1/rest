@@ -242,6 +242,25 @@ public DbSet<SnapshotAuthorizedContactEntry> SnapshotAuthorizedContactEntries { 
             modelBuilder.Entity<SnapshotDescriptionEntry>()
                 .Property(d => d.Description2)
                 .HasMaxLength(500);
+
+            modelBuilder.Entity<SnapshotAuthorizedContactEntry>()
+    .HasOne(c => c.SnapshotFormData)
+    .WithMany(s => s.SnapshotAuthorizedContacts)
+    .HasForeignKey(c => c.SnapshotFormDataId)
+    .OnDelete(DeleteBehavior.Cascade);
+
+modelBuilder.Entity<SnapshotAuthorizedContactEntry>()
+    .Property(c => c.ApprovedCities)
+    .HasMaxLength(500);
+
+modelBuilder.Entity<SnapshotAuthorizedContactEntry>()
+    .Property(c => c.SectorRepresentative)
+    .HasMaxLength(500);
+
+modelBuilder.Entity<SnapshotAuthorizedContactEntry>()
+    .Property(c => c.SectorRepresentativeTitle)
+    .HasMaxLength(500);
+
         }
     }
 

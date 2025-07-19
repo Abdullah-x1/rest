@@ -1,12 +1,12 @@
 ﻿@model DSAR.ViewModels.RequestViewModel
 
 @{
-    var step1Attachments = Model.SnapshotAttachments.Where(a => a.FieldName == "Step1").ToList();
-    var step2Attachments1 = Model.SnapshotAttachments.Where(a => a.FieldName == "Step2_1").ToList();
-    var step2Attachments2 = Model.SnapshotAttachments.Where(a => a.FieldName == "Step2_2").ToList();
-    var step4Attachments1 = Model.SnapshotAttachments.Where(a => a.FieldName == "Step4_Workflow").ToList();
-    var step4Attachments2 = Model.SnapshotAttachments.Where(a => a.FieldName == "Step4_uploadsRequiredFile").ToList();
-    var step4Attachments3 = Model.SnapshotAttachments.Where(a => a.FieldName == "Step4_documentsFile").ToList();
+    var step1Attachments = Model.Attachments.Where(a => a.FieldName == "Step1").ToList();
+    var step2Attachments1 = Model.Attachments.Where(a => a.FieldName == "Step2_1").ToList();
+    var step2Attachments2 = Model.Attachments.Where(a => a.FieldName == "Step2_2").ToList();
+    var step4Attachments1 = Model.Attachments.Where(a => a.FieldName == "Step4_Workflow").ToList();
+    var step4Attachments2 = Model.Attachments.Where(a => a.FieldName == "Step4_uploadsRequiredFile").ToList();
+    var step4Attachments3 = Model.Attachments.Where(a => a.FieldName == "Step4_documentsFile").ToList();
 }
 
 <!DOCTYPE html>
@@ -21,7 +21,31 @@
 </head>
 <body>
 
-   
+    <div class="sidebar">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>المستوى</th>
+                    <th>الحالة</th>
+                    <th>الدور</th>
+                    <th>معلومات إضافية</th>
+                    <th>الوقت والتاريخ</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var entry in Model.History)
+                {
+                    <tr>
+                        <td>@entry.LevelName</td>
+                        <td>@entry.StatusName</td>
+                        <td>@entry.RoleName</td>
+                        <td>@entry.Information</td>
+                        <td>@entry.CreationDate.ToString("yyyy-MM-dd HH:mm")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
     <!-- Step 1 Section -->
     <div class="step1-section content-area">
@@ -66,7 +90,7 @@
                             @foreach (var att in step1Attachments)
                             {
                                 <li>
-                                    <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = att.Id })"
+                                    <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = att.Id })"
                                        class="attachment-link" target="_blank">
                                         @att.FileName@att.FileExtension
                                     </a>
@@ -100,7 +124,7 @@
                 <input type="text" class="in1" value="@Model.TargetAudience" readonly />
 
                 <label class="form-label small-label">الإدارة المسؤولة عن الخدمة</label>
-                <input type="text" class="in1" value="@Model.DepartmentName" readonly />
+                <input type="text" class="in1" value="@Model.DepName" readonly />
             </div>
 
             <div class="left-column column">
@@ -118,7 +142,7 @@
                             @foreach (var att in step2Attachments1)
                             {
                                 <li>
-                                    <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = att.Id })"
+                                    <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = att.Id })"
                                        class="attachment-link" target="_blank">
                                         @att.FileName@att.FileExtension
                                     </a>
@@ -143,7 +167,7 @@
                             @foreach (var att in step2Attachments2)
                             {
                                 <li>
-                                    <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = att.Id })"
+                                    <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = att.Id })"
                                        class="attachment-link" target="_blank">
                                         @att.FileName@att.FileExtension
                                     </a>
@@ -178,7 +202,7 @@
                             @foreach (var att in step4Attachments2)
                             {
                                 <li>
-                                    <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = att.Id })" target="_blank" class="attachment-link">
+                                    <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = att.Id })" target="_blank" class="attachment-link">
                                         @att.FileName@att.FileExtension
                                     </a>
                                 </li>
@@ -202,7 +226,7 @@
                             @foreach (var att in step4Attachments3)
                             {
                                 <li>
-                                    <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = att.Id })" target="_blank" class="attachment-link">
+                                    <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = att.Id })" target="_blank" class="attachment-link">
                                         @att.FileName@att.FileExtension
                                     </a>
                                 </li>
@@ -223,7 +247,7 @@
                             @foreach (var att in step4Attachments1)
                             {
                                 <li>
-                                    <a href="@Url.Action("DownloadSnapshotAttachment", "Request", new { attachmentId = att.Id })" target="_blank" class="attachment-link">
+                                    <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = att.Id })" target="_blank" class="attachment-link">
                                         @att.FileName@att.FileExtension
                                     </a>
                                 </li>
@@ -270,7 +294,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.SnapshotAuthorizedContacts)
+                    @foreach (var item in Model.AuthorizedContacts)
                     {
                         <tr>
                             <td>@item.ApprovedCities</td>
@@ -287,65 +311,59 @@
     <div class="form-container content-wrapper">
         <div class="content-wrapper">
 
-            <h3>صلاحيات المعتمدين</h3>
+        <h3>صلاحيات المعتمدين</h3>
 
-            <table>
-                <thead>
+        <table>
+            <thead>
+                <tr>
+                    <th>الإدارة</th>
+                    <th>اسم المعتمد</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Descriptions)
+                {
                     <tr>
-                        <th>الإدارة</th>
-                        <th>اسم المعتمد</th>
+                        <td>@item.Description1</td>
+                        <td>@item.Description2</td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.SnapshotDescriptions)
-                    {
-                        <tr>
-                            <td>@item.Description1</td>
-                            <td>@item.Description2</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                }
+            </tbody>
+        </table>
 
-            <div class="button-footer">
-                <button type="button"
-                        class="btn-prev"
-                        onclick="location.href='@Url.Action("StepAuthorizedContacts", "Request", new { id = Model.RequestId })'">
-                    السابق
-                </button>
+        <div class="button-footer">
+            <button type="button"
+                    class="btn-prev"
+                    onclick="location.href='@Url.Action("StepAuthorizedContactsView", "Request", new { id = Model.RequestId })'">
+                السابق
+            </button>
 
-                <div class="btn-group-custom">
-
-
-                    <form method="post" asp-action="Request" asp-controller="Request" asp-route-actionId="@Model.ActionId">
-                            <button type="submit" class="btn-next">تقديم الطلب</button>
-                        </form>
-                    
-                </div>
+            <div class="btn-group-custom">
+                @if (User.IsInRole("ApplicationManager") && Model.LevelId == 6)
+                {
+                    <a class="btn btn-primary" asp-action="ApprovePage" asp-route-requestId="@Model.RequestId" asp-route-actionId="@Model.ActionId">التالي</a>
+                }
+                else if (User.IsInRole("ApplicationManager") && Model.LevelId == 4)
+                {
+                    <a class="btn btn-primary" asp-action="AnalyzerUsers" asp-route-requestId="@Model.RequestId">التالي</a>
+                }
+                else if (User.IsInRole("SectionManager") || User.IsInRole("DepartmentManager") || User.IsInRole("ITManager"))
+                {
+                    <a class="btn btn-primary" asp-action="ApprovePage" asp-route-requestId="@Model.RequestId" asp-route-actionId="@Model.ActionId">التالي</a>
+                }
+                else if (User.IsInRole("Analyzer"))
+                {
+                    <a class="btn btn-primary" asp-action="CaseStudy" asp-route-requestId="@Model.RequestId">التالي</a>
+                }
+                else if (User.IsInRole("User"))
+                {
+                    <form method="post" asp-action="CancelRequest" asp-controller="Request" asp-route-actionId="@Model.ActionId">
+                        <button type="submit" class="btn-next">الغاء الطلب</button>
+                    </form>
+                }
             </div>
         </div>
     </div>
-
-
-
-       
-    @section Scripts {
-        @await Html.PartialAsync("_ValidationScriptsPartial")
-    }
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        @if (TempData["Error"] != null)
-        {
-                <text>
-                    Swal.fire({
-                        icon: 'info',
-                        title: 'تنبيه',
-                        text: '@Html.Raw(TempData["Error"])',
-                        confirmButtonText: 'حسناً'
-                    });
-                </text>
-        }
-    </script>
+    </div>
 </body>
 </html>

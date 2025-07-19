@@ -13,6 +13,6 @@ namespace DSAR.Models
         public string? SectorRepresentativeTitle { get; set; } // منصب ممثل القطاع
 
         public int RequestId { get; set; }
-        public FormData FormData { get; set; }
+        public FormData? FormData { get; set; }  // navigation property
     }
 }

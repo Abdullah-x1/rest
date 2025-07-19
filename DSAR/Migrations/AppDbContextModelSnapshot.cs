@@ -89,7 +89,7 @@ namespace DSAR.Migrations
                     b.Property<string>("ApprovedCities")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("FormDataRequestId")
+                    b.Property<int?>("FormDataRequestId")
                         .HasColumnType("int");
 
                     b.Property<int>("RequestId")
@@ -592,13 +592,16 @@ namespace DSAR.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ApprovedCities")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("SectorRepresentative")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("SectorRepresentativeTitle")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("SnapshotFormDataId")
                         .HasColumnType("int");
@@ -943,10 +946,8 @@ namespace DSAR.Migrations
             modelBuilder.Entity("DSAR.Models.AuthorizedContactEntry", b =>
                 {
                     b.HasOne("DSAR.Models.FormData", "FormData")
-                        .WithMany("SnapshotAuthorizedContacts")
-                        .HasForeignKey("FormDataRequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("AuthorizedContacts")
+                        .HasForeignKey("FormDataRequestId");
 
                     b.Navigation("FormData");
                 });
@@ -1310,6 +1311,8 @@ namespace DSAR.Migrations
                 {
                     b.Navigation("Attachments");
 
+                    b.Navigation("AuthorizedContacts");
+
                     b.Navigation("CaseStudy")
                         .IsRequired();
 
@@ -1318,8 +1321,6 @@ namespace DSAR.Migrations
                     b.Navigation("Histories");
 
                     b.Navigation("RequestActions");
-
-                    b.Navigation("SnapshotAuthorizedContacts");
                 });
 
             modelBuilder.Entity("DSAR.Models.Levels", b =>

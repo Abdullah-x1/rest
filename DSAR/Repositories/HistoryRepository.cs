@@ -46,15 +46,15 @@ namespace DSAR.Repositories
             await _db.SaveChangesAsync();
         }
 
-        public async Task<List<History>> GetHistroyRequestsByUserId(string UserId)
-        {
-            return await _db.Histories // Fixed '_context' to '_db' to match the existing field name
-                           .Include(r => r.User)
-                           .Include(r => r.Levels)
-                           .Include(r => r.FormData)
-                           .Where(r => r.UserId == UserId && r.LevelId != 8 && r.LevelId != 9 && r.LevelId != 5)
-                           .ToListAsync();
-        }
+            public async Task<List<History>> GetHistroyRequestsByUserId(string UserId)
+            {
+                return await _db.Histories // Fixed '_context' to '_db' to match the existing field name
+                               .Include(r => r.User)
+                               .Include(r => r.Levels)
+                               .Include(r => r.FormData)
+                               .Where(r => r.UserId == UserId && r.LevelId != 8 && r.LevelId != 9 && r.LevelId != 5)
+                               .ToListAsync();
+            }
 
         public async Task<List<History>> GetAllHistroyRequestsByUserId(string UserId)
         {

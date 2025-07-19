@@ -164,13 +164,17 @@ namespace DSAR.ViewModels
 
         public ICollection<AttachmentMetadata> Attachments { get; set; } = new List<AttachmentMetadata>();
         //public ICollection<DescriptionEntry> Descriptions { get; set; } = new List<DescriptionEntry>();
+        public ICollection<SnapshotAttachmentMetadata> SnapshotAttachments { get; set; } = new List<SnapshotAttachmentMetadata>();
 
         public int DepartmentId { get; set; }
 
         public List<SelectListItem> Departments { get; set; } = new List<SelectListItem>();
         public List<AuthorizedContactEntry> AuthorizedContacts { get; set; } = new();
+        public List<SnapshotAuthorizedContactEntry> SnapshotAuthorizedContacts { get; set; } = new();
 
         public List<SnapshotDescriptionEntry> SnapshotDescriptions { get; set; }
+
+
 
 
         //public int CityId { get; set; }
