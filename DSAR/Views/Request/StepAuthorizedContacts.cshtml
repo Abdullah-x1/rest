@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>Authorization Contacts</title>
-    <link rel="stylesheet" href="~/css/StepAuthorizedContacts .css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/StepDescription.css" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/js/form-handler.js" asp-append-version="true"></script>
@@ -72,39 +72,22 @@
             <button type="button" class="btn btn-success" onclick="addRow()">+ إضافة صف</button>
             <button type="button" class="btn btn-danger" onclick="deleteLastRow()">حذف صف</button>
         </div>
-
         <div class="d-flex justify-content-between align-items-center mt-4">
-            <div class="button-footer">
-                <button type="button" class="btn-prev" onclick="location.href='@Url.Action("Step4", "Request")'">السابق</button>
-            </div>
-            <div class="d-flex gap-2">
-                @if (!User.IsInRole("ApplicationManager"))
-                {
-                    <div class="button-footer">
-                        <div class="btn-group-custom">
-                            <button type="button" id="saveButton" class="btn-save" name="action" value="save">
-                                <i class="bi bi-save me-2"></i> حفظ
-                            </button>
 
-                            <button type="submit" class="btn-next" name="action" value="next">التالي</button>
-                        </div>
-                    </div>
-                }
+        <div class="button-footer">
+            <button type="button" class="btn-prev" onclick="location.href='@Url.Action("Step4", "Request")'">السابق</button>
 
-                @if (User.IsInRole("ApplicationManager"))
-                {
-                    <a asp-action="AnalyzerUsers" asp-route-requestId="@Model.FormId" class="btn btn-info">Choose Analyzer</a>
-                }
+            <div class="btn-group-custom">
+                <button type="button" id="saveButton" class="btn-save" name="action" value="save">
+                    <i class="bi bi-save me-2"></i> حفظ
+                </button>
+
+                <button type="submit" class="btn-next" name="action" value="next">التالي</button>
             </div>
+        </div>
         </div>
     </form>
 
-    <style>
-        .btn-danger {
-            background-color: #dc3545;
-            color: white;
-        }
-    </style>
 
     <script>
         let index = document.querySelectorAll("#tableBody tr").length;

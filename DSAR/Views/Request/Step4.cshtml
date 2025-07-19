@@ -49,6 +49,8 @@
 
 
     <form asp-action="Step4" id="step4Form" method="post" enctype="multipart/form-data">
+        <div class="main-container">
+
         <div class="form-container">
             <!-- Right Column -->
             <div class="right-column column">
@@ -161,14 +163,6 @@
                 <label class="form-label small-label">الربط الخارجي</label>
                 <textarea asp-for="SystemNeeded" class="in2" placeholder="هي انظمة مطلوب التكامل معها؛ مثل (وزارة الموارد البشرية، وزارة التجارة، وزارة العدل)"></textarea>
 
-                <label class="form-label small-label">المدن الموافقة على النموذج</label>
-                <textarea asp-for="Cities2" class="in3" placeholder="يتم ذكر المدن الموافقة على النموذج"></textarea>
-
-                <label class="form-label small-label"> ممثل القطاع الموافق على النموذج</label>
-                <textarea asp-for="DepartmentHeadName" class="in3" placeholder="اسم ممثل القطاع الموافق على النموذج"></textarea>
-
-                <label class="form-label small-label">منصب ممثل القطاع</label>
-                <textarea asp-for="AdditionalNotes" class="in3" placeholder="ذكر منصب ممثل القطاع"></textarea>
             </div>
 
             <!-- Navigation Arrows -->
@@ -183,6 +177,7 @@
                     <button type="submit" class="btn-next" name="action" value="next">التالي</button>
                 </div>
             </div>
+        </div>
         </div>
     </form>
 
