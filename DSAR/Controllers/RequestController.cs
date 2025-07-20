@@ -214,7 +214,7 @@ namespace DSAR.Controllers
             }
             else if (await _userManager.IsInRoleAsync(currentUser, "SectionManager"))
             {
-                requests = await _requestActionRepository.GetRequestsForSectionManagerAsync(userId, currentUser.SectionId);
+                requests = await _requestActionRepository.GetRequestsForSectionManagerAsync(userId, currentUser.SectionId,currentUser.DepartmentId);
             }
             else if (await _userManager.IsInRoleAsync(currentUser, "ITManager"))
             {
@@ -862,11 +862,17 @@ namespace DSAR.Controllers
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
-
+            
             var caseStudy = await _caseStudyRepository.GetCaseStudyByUserIdAsync(currentUser.Id, requestId);
             if (caseStudy == null) return NotFound();
 
             var request = await _requestRepository.GetByIdAsync(requestId);
+
+            var requestAction = await _requestActionRepository.GetRequestActionByRequestIdAsync(requestId);
+
+            var allowed = await _requestActionRepository.ProtectCaseStudyPage(requestId, currentUser, request, requestAction);
+            if (!allowed) return RedirectToAction("Main", "Account");
+
 
             var attachments = await _caseStudyRepository.GetAttachmentsByCaseStudyIdAsync(caseStudy.CaseId);
 
@@ -1041,20 +1047,60 @@ namespace DSAR.Controllers
         public async Task<IActionResult> GetAllRequestsManager()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get logged-in user's ID
+            var currentUser = await _userManager.GetUserAsync(User);
 
-            var requestAction = await _historyRepository.GetAllHistroyRequestsByUserId(userId); // Filtered list
-            var viewModel = requestAction.Select(r => new HistoryViewModel
+            var historyRequests = await _historyRepository.GetAllHistroyRequestsByUserId(userId); // Filtered list
+
+            List<RequestActions> allRequests;
+
+            
+            if (await _userManager.IsInRoleAsync(currentUser, "DepartmentManager"))
+            {
+                allRequests = await _requestActionRepository.GetRequestsForDepartmentManagerAsync(userId, currentUser.DepartmentId);
+            }
+            else if (await _userManager.IsInRoleAsync(currentUser, "SectionManager"))
+            {
+                allRequests = await _requestActionRepository.GetRequestsForSectionManagerAsync(userId, currentUser.SectionId, currentUser.DepartmentId);
+            }
+            else if (await _userManager.IsInRoleAsync(currentUser, "ITManager"))
+            {
+                allRequests = await _requestActionRepository.GetRequestsForITManager(userId, currentUser.DepartmentId);
+            }
+            else if (await _userManager.IsInRoleAsync(currentUser, "Analyzer"))
+            {
+                allRequests = await _requestActionRepository.GetRequestsForAnalyzer(userId, currentUser.DepartmentId);
+            }
+            else if (await _userManager.IsInRoleAsync(currentUser, "ApplicationManager"))
+            {
+                allRequests = await _requestActionRepository.GetRequestsForApplicationManager(userId, currentUser.DepartmentId);
+            }
+            else
+            {
+                return RedirectToAction("Account", "Main");
+            }
+            var historyRequestIds = new HashSet<int>(historyRequests.Select(h => h.RequestId));
+
+            var newRequests = allRequests.Where(r => !historyRequestIds.Contains(r.RequestId)).ToList();
+
+            var combined = historyRequests.Select(r => new HistoryViewModel
             {
                 RequestId = r.RequestId,
                 StatusName = r.Status?.StatusName,
-                 DepartmentName = r.User.Department?.DepartmentName,
-                RequestNumber = r.FormData.RequestNumber,
-                LevelId = r.LevelId,
-                 //ActionId = r.ActionId
-
+                DepartmentName = r.User?.Department?.DepartmentName,
+                RequestNumber = (double)(r.FormData?.RequestNumber ?? 0),
+                LevelId = r.LevelId
             }).ToList();
 
-            return View(viewModel);
+            combined.AddRange(newRequests.Select(r => new HistoryViewModel
+            {
+                RequestId = r.RequestId,
+                StatusName = r.Status?.StatusName,
+                DepartmentName = r.User?.Department?.DepartmentName,
+                RequestNumber = (double)(r.FormData?.RequestNumber ?? 0),
+                LevelId = r.LevelId
+            }));
+
+            return View(combined);
         }
 
         [Authorize]

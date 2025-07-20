@@ -25,10 +25,11 @@ namespace DSAR.Interfaces
 
        
         Task<bool> ProtectViewPages(int Id, User currentUser, FormData form, RequestActions requestActions);
+        Task<bool> ProtectCaseStudyPage(int Id, User currentUser, FormData form, RequestActions requestActions);
 
 
 
-        Task<List<RequestActions>> GetRequestsForSectionManagerAsync(string managerId, int userSectionId);
+        Task<List<RequestActions>> GetRequestsForSectionManagerAsync(string managerId, int userSectionId,int userDepartmentId);
         Task<List<RequestActions>> GetRequestsForDepartmentManagerAsync(string bigManagerId, int userDepartmentId);
         Task<List<RequestActions>> GetRequestsForITManager(string ITManagerId, int userDepartmentId);
         Task<List<RequestActions>> GetRequestsForApplicationManager(string ApplicationManagerId, int userDepartmentId);

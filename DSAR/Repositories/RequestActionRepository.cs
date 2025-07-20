@@ -210,65 +210,73 @@ namespace DSAR.Repositories
             bool isAnalyzer = await _userManager.IsInRoleAsync(currentUser, "Analyzer");
             bool isUser = await _userManager.IsInRoleAsync(currentUser, "User");
             bool isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
+
+            // Get history
             var histories = await _historyRepository.GetHistoriesByRequestIdAsync(request.RequestId);
             bool isAnyActor = histories.Any(h => h.UserId == currentUser.Id);
 
-            if (isUser && request.UserId != currentUser.Id)
-            {
-                return false;
-            }
-            if (isAdmin)
-            {
-                return true;
-            }
+            // ✅ Admin can view anything
+            if (isAdmin) return true;
 
+            // ✅ User can only view their own request
+            if (isUser)
+            {
+                return request.UserId == currentUser.Id;
+            }
 
             // ✅ Check department match for all managers/analyzers
-            if ((isSectionManager || isDepartmentManager || isITManager || isAnalyzer) &&
+            if ((isSectionManager || isDepartmentManager || isITManager || isApplicationManager || isAnalyzer) &&
                 requestDepartmentId != currentDepartmentId)
             {
                 return false;
             }
 
-            // Get all history entries for this request
-
-
-            // ... your role checks ...
-
-            if (isSectionManager && requestActions.LevelId != 1 && !isAnyActor)
-                return false;
-
-            if (isDepartmentManager && requestActions.LevelId != 2 && !isAnyActor)
-                return false;
-
-            if (isITManager && !(requestActions.LevelId == 3 || requestActions.LevelId == 7) && !isAnyActor)
-                return false;
-
-            if (isApplicationManager && !(requestActions.LevelId == 4 || requestActions.LevelId == 6) && !isAnyActor)
-                return false;
-
-            if (isAnalyzer && requestActions.LevelId != 5 && !isAnyActor)
-                return false;
-
-            // Final fallback
-            if (!isUser && !isSectionManager && !isDepartmentManager && !isITManager && !isApplicationManager && !isAnalyzer && !isAnyActor)
+            // ✅ Check level matching or actor
+            if (isSectionManager)
             {
+                if (requestActions.LevelId == 1 || isAnyActor) return true;
                 return false;
             }
 
-            // Get the last history entry for this request
-
-            // ✅ Final fallback check: allow if user is in any allowed role OR is the last actor
-            if (!isUser && !isSectionManager && !isDepartmentManager && !isITManager && !isApplicationManager && !isAnalyzer && !isAnyActor)
+            if (isDepartmentManager)
             {
+                if (requestActions.LevelId == 2 || isAnyActor) return true;
                 return false;
             }
 
-            return true;
+            if (isITManager)
+            {
+                if (requestActions.LevelId == 3 || requestActions.LevelId == 7 || isAnyActor) return true;
+                return false;
+            }
+
+            if (isApplicationManager)
+            {
+                if (requestActions.LevelId == 4 || requestActions.LevelId == 6 || isAnyActor) return true;
+                return false;
+            }
+
+            if (isAnalyzer)
+            {
+                if (requestActions.LevelId == 5 || isAnyActor) return true;
+                return false;
+            }
+
+            // ❌ Default deny
+            return false;
         }
+        public async Task<bool> ProtectCaseStudyPage(int id, User currentUser, FormData request, RequestActions requestActions)
+        {
+            bool isAnalyzer = await _userManager.IsInRoleAsync(currentUser, "Analyzer");
 
-
-        public async Task<List<RequestActions>> GetRequestsForSectionManagerAsync(string managerId, int userSectionId)
+            if (isAnalyzer)
+            {
+                if (requestActions.LevelId == 5) return true;
+                return false;
+            }
+            return false;
+        }
+        public async Task<List<RequestActions>> GetRequestsForSectionManagerAsync(string managerId, int userSectionId, int userDepartmentId)
         {
             var managerRequests = await _context.RequestActions.Include(r => r.User)
                 //.Include(f => f.Attachments)
@@ -278,7 +286,7 @@ namespace DSAR.Repositories
                 .Include(r => r.FormData)
                .Include(u => u.Department)
                .Include(s => s.Status)  
-                .Where(r => r.SectionId == userSectionId && r.LevelId == 1)
+                .Where(r => r.SectionId == userSectionId && r.DepartmentId == userDepartmentId && r.LevelId == 1)
                 .ToListAsync();
 
             return managerRequests;
