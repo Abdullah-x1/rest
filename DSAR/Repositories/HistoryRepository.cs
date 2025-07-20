@@ -55,7 +55,9 @@ namespace DSAR.Repositories
             {
                 return await _db.Histories // Fixed '_context' to '_db' to match the existing field name
                                .Include(r => r.User)
+                               .ThenInclude(r => r.Department)
                                .Include(r => r.Levels)
+                               .Include(r => r.Status)
                                .Include(r => r.FormData)
                                .Where(r => r.UserId == UserId && r.LevelId != 8 && r.LevelId != 9 && r.LevelId != 5)
                                .ToListAsync();
@@ -65,6 +67,8 @@ namespace DSAR.Repositories
         {
             return await _db.Histories // Fixed '_context' to '_db' to match the existing field name
                            .Include(r => r.User)
+                           .ThenInclude(r => r.Department)
+                           .Include(r=> r.Status)
                            .Include(r => r.Levels)
                            .Include(r => r.FormData)
                            .Where(r => r.UserId == UserId)

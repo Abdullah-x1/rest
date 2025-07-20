@@ -27,6 +27,7 @@
                     <tr>
                         <th>رقم الطلب</th>
                         <th>القسم</th>
+                            <td>الحالة</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,7 +40,7 @@
                                 </a>
                             </td>
                             <td>@request.DepartmentName</td>
-                            @* <td>@request.StatusName</td> *@
+                            <td>@request?.StatusName</td>
                         </tr>
 
 

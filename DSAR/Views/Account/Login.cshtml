@@ -67,5 +67,25 @@
             toggle.textContent = isHidden ? 'إخفاء' : 'عرض';
         }
     </script>
+
+
+    @section Scripts {
+        @await Html.PartialAsync("_ValidationScriptsPartial")
+    }
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if (TempData["Error"] != null)
+        {
+            <text>
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'تنبيه',
+                            text: '@Html.Raw(TempData["Error"])',
+                            confirmButtonText: 'حسناً'
+                        });
+            </text>
+        }
+    </script>
 </body>
 </html>

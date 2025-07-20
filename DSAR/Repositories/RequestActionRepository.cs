@@ -209,7 +209,7 @@ namespace DSAR.Repositories
             bool isApplicationManager = await _userManager.IsInRoleAsync(currentUser, "ApplicationManager");
             bool isAnalyzer = await _userManager.IsInRoleAsync(currentUser, "Analyzer");
             bool isUser = await _userManager.IsInRoleAsync(currentUser, "User");
-            bool isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin"); 
+            bool isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
             var histories = await _historyRepository.GetHistoriesByRequestIdAsync(request.RequestId);
             bool isAnyActor = histories.Any(h => h.UserId == currentUser.Id);
 
@@ -221,7 +221,7 @@ namespace DSAR.Repositories
             {
                 return true;
             }
-                
+
 
             // ✅ Check department match for all managers/analyzers
             if ((isSectionManager || isDepartmentManager || isITManager || isAnalyzer) &&
@@ -267,7 +267,79 @@ namespace DSAR.Repositories
             return true;
         }
 
-     
+
+        public async Task<List<RequestActions>> GetRequestsForSectionManagerAsync(string managerId, int userSectionId)
+        {
+            var managerRequests = await _context.RequestActions.Include(r => r.User)
+                //.Include(f => f.Attachments)
+                //.ThenInclude(a => a.AttachmentData)
+                //.Include(f => f.Descriptions)
+                //.Include(a => a.RequestActions)
+                .Include(r => r.FormData)
+               .Include(u => u.Department)
+               .Include(s => s.Status)  
+                .Where(r => r.SectionId == userSectionId && r.LevelId == 1)
+                .ToListAsync();
+
+            return managerRequests;
+
+        }
+        public async Task<List<RequestActions>> GetRequestsForDepartmentManagerAsync(string bigManagerId, int userDepartmentId)
+        {
+
+            var managerRequests = await _context.RequestActions.Include(r => r.User)
+
+               .Include(r => r.FormData)
+               .Include(u => u.Department)
+               .Include(s => s.Status)
+               .Where(r => r.DepartmentId == userDepartmentId && r.LevelId == 2)
+               .ToListAsync();
+
+            return managerRequests;
+
+
+        }
+        public async Task<List<RequestActions>> GetRequestsForITManager(string ITManagerId, int userDepartmentId)
+        {
+            var managerRequests = await _context.RequestActions.Include(r => r.User)
+               .Include(r => r.FormData)
+               .Include(u => u.Department)
+               .Include(s => s.Status)
+                .Where(r => r.LevelId == 3 || r.LevelId == 7)
+                .ToListAsync();
+
+            return managerRequests;
+
+        }
+        public async Task<List<RequestActions>> GetRequestsForApplicationManager(string ApplicationManagerId, int userDepartmentId)
+        {
+            var managerRequests = await _context.RequestActions.Include(r => r.User)
+                .Include(r => r.FormData)
+               .Include(u => u.Department)
+               .Include(s => s.Status)
+                .Where(r => r.LevelId == 4 || r.LevelId == 6)
+                .ToListAsync();
+
+            return managerRequests;
+
+        }
+
+        public async Task<List<RequestActions>> GetRequestsForAnalyzer(string AnalyzerId, int userDepartmentId)
+        {
+            var caseStudyRequestIds = await _context.CaseStudy
+                .Where(cs => cs.UserId == AnalyzerId)
+                .Select(cs => cs.RequestId)
+                .ToListAsync();
+
+            var requests = await _context.RequestActions.Include(r => r.User)
+                 .Include(r => r.FormData)
+               .Include(u => u.Department)
+               .Include(s => s.Status)
+                .Where(r => caseStudyRequestIds.Contains(r.RequestId) && r.LevelId == 5)
+                .ToListAsync();
+
+            return requests;
+        }
     }
 }
 

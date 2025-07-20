@@ -205,28 +205,28 @@ namespace DSAR.Controllers
             var currentUser = await _userManager.GetUserAsync(User);
             var userId = currentUser.Id;
 
-            List<FormData> requests;
+            List<RequestActions> requests;
 
 
             if (await _userManager.IsInRoleAsync(currentUser, "DepartmentManager"))
             {
-                requests = await _requestRepository.GetRequestsFromManagersInDepartmentAsync(userId, currentUser.DepartmentId);
+                requests = await _requestActionRepository.GetRequestsForDepartmentManagerAsync(userId, currentUser.DepartmentId);
             }
             else if (await _userManager.IsInRoleAsync(currentUser, "SectionManager"))
             {
-                requests = await _requestRepository.GetRequestsForManagerDepartmentAsync(userId, currentUser.SectionId);
+                requests = await _requestActionRepository.GetRequestsForSectionManagerAsync(userId, currentUser.SectionId);
             }
             else if (await _userManager.IsInRoleAsync(currentUser, "ITManager"))
             {
-                requests = await _requestRepository.GetRequestsForITManager(userId, currentUser.DepartmentId);
+                requests = await _requestActionRepository.GetRequestsForITManager(userId, currentUser.DepartmentId);
             }
             else if (await _userManager.IsInRoleAsync(currentUser, "Analyzer"))
             {
-                requests = await _requestRepository.GetRequestsForAnalyzer(userId, currentUser.DepartmentId);
+                requests = await _requestActionRepository.GetRequestsForAnalyzer(userId, currentUser.DepartmentId);
             }
             else if (await _userManager.IsInRoleAsync(currentUser, "ApplicationManager"))
             {
-                requests = await _requestRepository.GetRequestsForApplicationManager(userId, currentUser.DepartmentId);
+                requests = await _requestActionRepository.GetRequestsForApplicationManager(userId, currentUser.DepartmentId);
             }
             else
             {
@@ -237,13 +237,13 @@ namespace DSAR.Controllers
             var viewModels = requests.Select(r => new RequestViewModel
             {
                 RequestId = r.RequestId,
-                LevelId = r.RequestActions.LevelId,
+                LevelId = r.LevelId,
                 FirstName = r.User.FirstName,
                 LastName = r.User.LastName,
                 DepartmentName = r.User.Department.DepartmentName,
-                RequestNumber = r.RequestNumber,
-                ActionId = r.RequestActions.ActionId,
-                StatusName = r.RequestActions.Status?.StatusName,
+                RequestNumber = r.FormData.RequestNumber,
+                ActionId = r.ActionId,
+                StatusName = r.Status?.StatusName,
             }).ToList();
             return View(viewModels);
         }
@@ -468,7 +468,7 @@ namespace DSAR.Controllers
             return View(vm);
         }
 
-
+        
         // STEP 3 - GET
         public async Task<IActionResult> Step3()
         {
@@ -1028,7 +1028,7 @@ namespace DSAR.Controllers
             {
                 RequestId = r.RequestId,
                 StatusName = r.Status?.StatusName,
-                // DepartmentName = r.Department?.DepartmentName,
+                 DepartmentName = r.User.Department?.DepartmentName,
                 RequestNumber = r.FormData.RequestNumber,
                 LevelId = r.LevelId,
                 // ActionId = r.ActionId
@@ -1042,15 +1042,15 @@ namespace DSAR.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get logged-in user's ID
 
-            var requestAction = await _historyRepository.GetHistroyRequestsByUserId(userId); // Filtered list
+            var requestAction = await _historyRepository.GetAllHistroyRequestsByUserId(userId); // Filtered list
             var viewModel = requestAction.Select(r => new HistoryViewModel
             {
                 RequestId = r.RequestId,
                 StatusName = r.Status?.StatusName,
-                // DepartmentName = r.Department?.DepartmentName,
+                 DepartmentName = r.User.Department?.DepartmentName,
                 RequestNumber = r.FormData.RequestNumber,
                 LevelId = r.LevelId,
-                // ActionId = r.ActionId
+                 //ActionId = r.ActionId
 
             }).ToList();
 

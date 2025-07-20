@@ -19,7 +19,7 @@ namespace DSAR.Interfaces
         void Save();
          
          Task<List<FormData>> GetRequestsForManagerDepartmentAsync(string managerId, int userSectionId);
-        Task<List<FormData>> GetRequestsFromManagersInDepartmentAsync(string bigManagerId, int userDepartmentId);
+        Task<List<RequestActions>> GetRequestsFromManagersInDepartmentAsync(string bigManagerId, int userDepartmentId);
         Task<List<FormData>> GetRequestsForITManager(string ITManagerId, int userDepartmentId);
         Task<List<FormData>> GetRequestsForApplicationManager(string ApplicationManagerId, int userDepartmentId);
         Task<List<FormData>> GetRequestsForAnalyzer(string AnalyzerId, int userDepartmentId);

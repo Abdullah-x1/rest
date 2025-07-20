@@ -123,8 +123,9 @@ namespace DSAR.Controllers
             // Check if the user is authenticated
             if (terms == "Accept" && termsAccepted != "on")
             {
-                ModelState.AddModelError("", "ÌÃ» «·„Ê«›ﬁ… ⁄·Ï «·‘—Êÿ Ê«·√Õﬂ«„ ﬁ»· «·„ «»⁄….");
-                return View();
+                TempData["Error"] = "ÌÃ» «·„Ê«›ﬁ… ⁄·Ï «·‘—Êÿ Ê«·√Õﬂ«„ ﬁ»· «·„ «»⁄….";
+                await Logout();
+                return RedirectToAction("Login", "Account");
             }
 
             if (terms == "Accept")
@@ -136,7 +137,7 @@ namespace DSAR.Controllers
             {
                 await Logout();
             }
-                return View();
+            return RedirectToAction("Login", "Account");
         }
 
         [HttpPost]

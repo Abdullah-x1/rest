@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DSAR.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250720102313_HistoryNotes")]
-    partial class HistoryNotes
+    [Migration("20250720134549_intial")]
+    partial class intial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

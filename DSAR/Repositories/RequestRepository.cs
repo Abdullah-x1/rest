@@ -206,14 +206,15 @@ namespace DSAR.Repositories
         }
 
 
-        public async Task<List<FormData>> GetRequestsFromManagersInDepartmentAsync(string bigManagerId, int userDepartmentId)
+        public async Task<List<RequestActions>> GetRequestsFromManagersInDepartmentAsync(string bigManagerId, int userDepartmentId)
         {
 
-            var managerRequests = await _context.Forms.Include(r => r.User)
+            var managerRequests = await _context.RequestActions.Include(r => r.User)
 
-               .Include(a => a.RequestActions)
-               .ThenInclude(u => u.Department)
-               .Where(r => r.RequestActions.DepartmentId == userDepartmentId && r.RequestActions.LevelId == 2)
+               .Include(r => r.FormData)
+               .Include(u => u.Department)
+               .Include(s => s.Status)
+               .Where(r => r.DepartmentId == userDepartmentId && r.LevelId == 2)
                .ToListAsync();
 
             return managerRequests;

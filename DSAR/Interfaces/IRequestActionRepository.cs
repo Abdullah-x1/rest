@@ -28,5 +28,11 @@ namespace DSAR.Interfaces
 
 
 
+        Task<List<RequestActions>> GetRequestsForSectionManagerAsync(string managerId, int userSectionId);
+        Task<List<RequestActions>> GetRequestsForDepartmentManagerAsync(string bigManagerId, int userDepartmentId);
+        Task<List<RequestActions>> GetRequestsForITManager(string ITManagerId, int userDepartmentId);
+        Task<List<RequestActions>> GetRequestsForApplicationManager(string ApplicationManagerId, int userDepartmentId);
+        Task<List<RequestActions>> GetRequestsForAnalyzer(string AnalyzerId, int userDepartmentId);
+
     }
 }
