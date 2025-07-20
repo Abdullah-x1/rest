@@ -180,5 +180,6 @@ namespace DSAR.ViewModels
         //public int CityId { get; set; }
         //public List<SelectListItem> Cities { get; set; } = new List<SelectListItem>();
 
+
     }
 }

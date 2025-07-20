@@ -34,5 +34,11 @@ namespace DSAR.Models
         public IdentityRole Role { get; set; }
 
         public string Information { get; set; }
+
+        //notes
+        public string? SectionNotes { get; set; }
+        public string? DepartmentNotes { get; set; }
+        public string? ITNotes { get; set; }
+        public string? ApplicationNotes { get; set; }
     }
 }

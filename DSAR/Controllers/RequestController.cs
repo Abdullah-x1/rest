@@ -250,6 +250,10 @@ namespace DSAR.Controllers
 
         public async Task<IActionResult> CombinedView(int id, int actionId)
         {
+
+            var histories = await _historyRepository.GetHistoriesByRequestIdAsync(id);
+
+           
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
 
@@ -308,7 +312,15 @@ namespace DSAR.Controllers
                     LevelName = h.Levels.LevelName,
                     StatusName = h.Status.StatusName,
                     RoleName = h.Role.Name,
-                    Information = h.Information
+                    Information = h.Information,
+                    Notes = h.Role.Name switch
+                    {
+                        "SectionManager" => h.SectionNotes ?? "",
+                        "DepartmentManager" => h.DepartmentNotes ?? "",
+                        "ITManager" => h.ITNotes ?? "",
+                        "ApplicationManager" => h.ApplicationNotes ?? "",
+                        _ => "لا يوجد"
+                    }
                 }).ToList(),
 
                 ActionId = requestAction?.ActionId ?? 0,
@@ -1036,8 +1048,8 @@ namespace DSAR.Controllers
         public async Task<IActionResult> History(int requestId)
         {
 
+            ViewBag.RequestId = requestId;
             var histories = await _historyRepository.GetHistoriesByRequestIdAsync(requestId);
-
 
             var historiesVm = histories.Select(h => new HistoryViewModel
             {
@@ -1045,12 +1057,19 @@ namespace DSAR.Controllers
                 LevelName = h.Levels.LevelName,
                 StatusName = h.Status.StatusName,
                 RoleName = h.Role.Name,
-                Information = h.Information
+                Information = h.Information,
+
+                // pick the correct notes column
+                Notes = h.Role.Name switch
+                {
+                    "SectionManager" => h.SectionNotes ?? "",
+                    "DepartmentManager" => h.DepartmentNotes ?? "",
+                    "ITManager" => h.ITNotes ?? "",
+                    "ApplicationManager" => h.ApplicationNotes ?? "",
+                    _ => "لا يوجد"
+                }
             })
             .ToList();
-
-
-            ViewBag.RequestId = requestId;
 
 
             return View(historiesVm);
