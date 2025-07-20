@@ -250,6 +250,25 @@ namespace DSAR.Controllers
 
         public async Task<IActionResult> CombinedView(int id, int actionId)
         {
+
+            var histories = await _historyRepository.GetHistoriesByRequestIdAsync(id);
+
+            var historyVm = histories.Select(h => new HistoryViewModel
+            {
+                CreationDate = h.CreationDate,
+                LevelName = h.Levels.LevelName,
+                StatusName = h.Status.StatusName,
+                RoleName = h.Role.Name,
+                Information = h.Information,
+                Notes = h.Role.Name switch
+                {
+                    "SectionManager" => h.SectionNotes ?? "",
+                    "DepartmentManager" => h.DepartmentNotes ?? "",
+                    "ITManager" => h.ITNotes ?? "",
+                    "ApplicationManager" => h.ApplicationNotes ?? "",
+                    _ => " لا يوجد "
+                }
+            }).ToList();
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
 
@@ -879,7 +898,7 @@ namespace DSAR.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Analyzer")]
-        public async Task<IActionResult> CaseStudy(CaseStudyViewModel model, IFormFile CaseStudyAttachment)
+        public async Task<IActionResult> CaseStudy(CaseStudyViewModel model, List<IFormFile> CaseStudyAttachment)
         {
             var caseStudy = await _caseStudyRepository.GetByIdAsync(model.CaseId);
             if (caseStudy == null) RedirectToAction("Account", "Main");
@@ -891,9 +910,15 @@ namespace DSAR.Controllers
             caseStudy.CreatedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
 
-            if (CaseStudyAttachment != null && CaseStudyAttachment.Length > 0)
+            if (CaseStudyAttachment != null && CaseStudyAttachment.Count > 0)
             {
-                await _caseStudyRepository.AddAttachmentAsync(caseStudy.CaseId, CaseStudyAttachment);
+                foreach (var file in CaseStudyAttachment)
+                {
+                    if (file != null && file.Length > 0)
+                    {
+                        await _caseStudyRepository.AddAttachmentAsync(caseStudy.CaseId, file);
+                    }
+                }
             }
 
             _caseStudyRepository.Update(caseStudy);
@@ -1036,8 +1061,8 @@ namespace DSAR.Controllers
         public async Task<IActionResult> History(int requestId)
         {
 
+            ViewBag.RequestId = requestId;
             var histories = await _historyRepository.GetHistoriesByRequestIdAsync(requestId);
-
 
             var historiesVm = histories.Select(h => new HistoryViewModel
             {
@@ -1045,12 +1070,19 @@ namespace DSAR.Controllers
                 LevelName = h.Levels.LevelName,
                 StatusName = h.Status.StatusName,
                 RoleName = h.Role.Name,
-                Information = h.Information
+                Information = h.Information,
+
+                // pick the correct notes column
+                Notes = h.Role.Name switch
+                {
+                    "SectionManager" => h.SectionNotes ?? "",
+                    "DepartmentManager" => h.DepartmentNotes ?? "",
+                    "ITManager" => h.ITNotes ?? "",
+                    "ApplicationManager" => h.ApplicationNotes ?? "",
+                    _ => ""
+                }
             })
             .ToList();
-
-
-            ViewBag.RequestId = requestId;
 
 
             return View(historiesVm);
