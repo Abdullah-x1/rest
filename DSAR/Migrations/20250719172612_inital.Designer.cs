@@ -12,8 +12,13 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DSAR.Migrations
 {
     [DbContext(typeof(AppDbContext))]
+<<<<<<<< HEAD:DSAR/Migrations/20250720045215_new6.Designer.cs
+    [Migration("20250720045215_new6")]
+    partial class new6
+========
     [Migration("20250719172612_inital")]
     partial class inital
+>>>>>>>> 8f3e087544d858f52326f4cf1052234384e10d12:DSAR/Migrations/20250719172612_inital.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
