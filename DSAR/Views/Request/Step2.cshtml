@@ -50,6 +50,8 @@
     </div>
 
     <form asp-action="Step2" id="step2Form" method="post" enctype="multipart/form-data">
+        <div class="main-container">
+
         <div class="form-container">
             <!-- Right Column -->
             <div class="right-column column">
@@ -69,7 +71,7 @@
                 <label class="form-label small-label">الفئة المستهدفة</label>
                 <div class="required-wrapper">
                     <span class="required-asterisk">*</span>
-                    <select asp-for="TargetAudience" class="form-control">
+                        <select asp-for="TargetAudience" class="form-select">
                         <option value="افراد">افراد</option>
                         <option value="مؤسسه">مؤسسه</option>
                     </select>
@@ -95,7 +97,7 @@
                 <textarea asp-for="ExpectedOutput1" class="in1" placeholder="يتم ذكر المخرجات المتوقعة بعد طلب الخدمة؛ مثل (رخصة أو شهادة أو تنفيذ الخدمة) مع ارفاق نموذج من المخرج النهائي"></textarea>
 
                 <label class="form-label small-label">  النماذج المستخدمة</label>
-                <textarea asp-for="ApprovedTemplate" rows="4" class="auto-expand" placeholder="يتم إضافة نموذج معتمد للخدمة حيث يتم فيه إضافة جميع الحقول المطلوبة ووصفها وتحديد نوع الحقول وتحديد الزاميتها باللغتين العربية والإنجليزية"></textarea>
+                    <textarea asp-for="ApprovedTemplate" class="in2" rows="4" class="auto-expand" placeholder="يتم إضافة نموذج معتمد للخدمة حيث يتم فيه إضافة جميع الحقول المطلوبة ووصفها وتحديد نوع الحقول وتحديد الزاميتها باللغتين العربية والإنجليزية"></textarea>
 
                 <!-- Attachment2 -->
                 <div class="attachment-section">
@@ -128,7 +130,7 @@
 
 
                 <label class="form-label small-label"> البيانات الاعتمادية</label>
-                <textarea asp-for="DetailedInfo" rows="4" placeholder="يتم ذكر بيانات تفصيلية للحقول المضافة في النموذج، في حال وجود تصنيفات معتمدة لأي حقل من الحقول وفي حال وجود حقل معتمد على حقل آخر (يمكن إدراج ملف إكسل)"></textarea>
+                    <textarea asp-for="DetailedInfo" class="in2" rows="4" placeholder="يتم ذكر بيانات تفصيلية للحقول المضافة في النموذج، في حال وجود تصنيفات معتمدة لأي حقل من الحقول وفي حال وجود حقل معتمد على حقل آخر (يمكن إدراج ملف إكسل)"></textarea>
 
 
                 <div class="attachment-section">
@@ -163,7 +165,7 @@
 
 
                 <label class="form-label small-label">شروط الخدمة</label>
-                <textarea asp-for="RequiredConditions" rows="4" placeholder="يتم ذكر جميع الشروط اللازمة لطلب الخدمة أو تنفيذها من قبل المستخدم المستهدف (مقدم الطلب)"></textarea>
+                    <textarea asp-for="RequiredConditions" class="in2" rows="4" placeholder="يتم ذكر جميع الشروط اللازمة لطلب الخدمة أو تنفيذها من قبل المستخدم المستهدف (مقدم الطلب)"></textarea>
             </div>
 
             <!-- Navigation -->
@@ -178,6 +180,7 @@
                     <button type="submit" class="btn-next" name="action" value="next">التالي</button>
                 </div>
             </div>
+        </div>
         </div>
     </form>
 

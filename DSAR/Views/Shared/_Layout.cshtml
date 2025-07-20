@@ -21,34 +21,36 @@
 <body>
     <!-- fixed header -->
 
-  
+
     <header class="site-header bg-light border-bottom">
         <div class="container-fluid d-flex justify-content-between align-items-center h-100 px-3">
             <div class="d-flex align-items-center">
                 <a asp-controller="Account" asp-action="Main" class="me-3">
                     <img src="~/images/logo.png" alt="Logo" class="header-logo" />
                 </a>
+                <!-- Always show الرئيسية -->
                 <a asp-controller="Account" asp-action="Main" class="nav-link header-link">
                     الرئيسية
                 </a>
-                 @if (
-                      User.IsInRole("User") ||
-                      User.IsInRole("SectionManager") ||
-                      User.IsInRole("DepartmentManager"))
+
+                <!-- Show طلباتي only if NOT in any of the roles -->
+                @if (!User.IsInRole("ApplicationManager") && !User.IsInRole("ITManager") && !User.IsInRole("Analayzer"))
                 {
                     <a asp-controller="Request" asp-action="MyRequest" class="nav-link header-link">
                         طلباتي
                     </a>
                 }
-                @if (
-                      User.IsInRole("ITManager") ||
-                      User.IsInRole("Analyzer") ||
-                      User.IsInRole("ApplicationManager"))
+
+                <!-- Show مراجعة الطلبات only if in one of the roles -->
+                @if (User.IsInRole("SectionManager") || User.IsInRole("DepartmentManager") ||
+                User.IsInRole("ApplicationManager") || User.IsInRole("ITManager") || User.IsInRole("Analayzer"))
                 {
-                    <a asp-controller="Request" asp-action="OrderPage" class="nav-link header-link">
+                    <a asp-controller="Request" asp-action="orderpage" class="nav-link header-link">
                         مراجعة الطلبات
                     </a>
                 }
+
+
             </div>
             <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
                 <button type="submit" class="btn btn-link p-0" style="background: none; border: none;">
