@@ -198,6 +198,7 @@
                 SnapshotDescriptions = description.ToList() ?? new List<SnapshotDescriptionEntry>(),
                 SnapshotAuthorizedContacts = authorizedContacts.ToList() ?? new List<SnapshotAuthorizedContactEntry>(),
                 DepartmentName = selectedDepartment?.DepartmentName ?? string.Empty,
+                DepartmentId = formData.DepartmentId,
                 Departments = _requestRepository.GetAllDepartments()
                 .Select(d => new SelectListItem
                 {

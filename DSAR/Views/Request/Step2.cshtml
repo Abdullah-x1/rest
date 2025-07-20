@@ -66,7 +66,7 @@
                 </div>
 
                 <label class="form-label small-label">المدن المتاحة للخدمة</label>
-                <textarea asp-for="Cities2" class="in3" placeholder="تحديد مدن الهيئة الملكية المقدمة للخدمة"></textarea>
+                <textarea asp-for="Cities" class="in3" placeholder="تحديد مدن الهيئة الملكية المقدمة للخدمة"></textarea>
 
                 <label class="form-label small-label">الفئة المستهدفة</label>
                 <div class="required-wrapper">
@@ -81,8 +81,7 @@
                 <label class="form-label small-label">الإدارة المسؤولة عن الخدمة </label>
                 <div class="required-wrapper">
                     <span class="required-asterisk">*</span>
-
-                    <select asp-for="DepartmentId" asp-items="Model.Departments" class="form-control">
+                        <select asp-for="DepartmentId" asp-items="Model.Departments" class="form-select">
                         <option value="">اختر القسم</option>
                     </select>
                     <span asp-validation-for="DepartmentId" class="text-danger"></span>
