@@ -39,7 +39,12 @@ namespace DSAR.Repositories
                 StatusId = statusId,
                 LevelId = levelId,
                 Information = information,
-                CreationDate = DateTime.UtcNow
+                CreationDate = DateTime.UtcNow,
+                SectionNotes = request.SectionNotes,
+                DepartmentNotes = request.DepartmentNotes,
+                ITNotes =  request.ITNotes,
+                ApplicationNotes =  request.ApplicationNotes
+
             };
 
             _db.Histories.Add(history);
