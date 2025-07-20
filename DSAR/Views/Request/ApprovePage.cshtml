@@ -33,6 +33,7 @@
             </tr>
 
         </table>
+        <div class="notes-input-wrapper">
         @if (User.IsInRole("SectionManager"))
         {
             <textarea asp-for="SectionNotes" class="notes-input" placeholder="ذكر الملاحظات إن وجدت"></textarea>
@@ -41,7 +42,7 @@
         {
             <textarea asp-for="DepartmentNotes" class="notes-input" placeholder="ذكر الملاحظات إن وجدت"></textarea>
         }
-
+        </div>
         @if ((User.IsInRole("ApplicationManager") || User.IsInRole("ITManager")) && Model.LevelId >= 4)
         {
             

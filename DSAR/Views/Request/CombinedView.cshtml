@@ -331,7 +331,7 @@
                         }
                         else if (User.IsInRole("SectionManager") || User.IsInRole("DepartmentManager") || User.IsInRole("ITManager"))
                         {
-                            <a class="btn btn-primary" asp-action="ApprovePage" asp-route-requestId="@Model.RequestId" asp-route-actionId="@Model.ActionId">ارسال النموذج</a>
+                            <a class="btn btn-primary" asp-action="ApprovePage" asp-route-requestId="@Model.RequestId" asp-route-actionId="@Model.ActionId"> مراجعة الطلب </a>
                         }
                         else if (User.IsInRole("Analyzer"))
                         {
