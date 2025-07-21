@@ -31,6 +31,13 @@
     height: 40px;
     width:40px;
 }
+header.site-header .btn-link {
+    /* force it back to its natural size */
+    width: auto !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
 
 /* push page content below the fixed header */
 body {
