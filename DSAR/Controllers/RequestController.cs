@@ -182,7 +182,7 @@ namespace DSAR.Controllers
                     request,
                     initialStatusId,
                     1,
-                    "Request submitted"
+                    "Request submitted By "+currentUser.FirstName + " " + currentUser.LastName
                 );
 
                 ////////////////////history///////////////////////////////////////
@@ -253,22 +253,7 @@ namespace DSAR.Controllers
 
             var histories = await _historyRepository.GetHistoriesByRequestIdAsync(id);
 
-            var historyVm = histories.Select(h => new HistoryViewModel
-            {
-                CreationDate = h.CreationDate,
-                LevelName = h.Levels.LevelName,
-                StatusName = h.Status.StatusName,
-                RoleName = h.Role.Name,
-                Information = h.Information,
-                Notes = h.Role.Name switch
-                {
-                    "SectionManager" => h.SectionNotes ?? "",
-                    "DepartmentManager" => h.DepartmentNotes ?? "",
-                    "ITManager" => h.ITNotes ?? "",
-                    "ApplicationManager" => h.ApplicationNotes ?? "",
-                    _ => " لا يوجد "
-                }
-            }).ToList();
+           
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized();
 
@@ -327,7 +312,15 @@ namespace DSAR.Controllers
                     LevelName = h.Levels.LevelName,
                     StatusName = h.Status.StatusName,
                     RoleName = h.Role.Name,
-                    Information = h.Information
+                    Information = h.Information,
+                    Notes = h.Role.Name switch
+                    {
+                        "SectionManager" => h.SectionNotes ?? "",
+                        "DepartmentManager" => h.DepartmentNotes ?? "",
+                        "ITManager" => h.ITNotes ?? "",
+                        "ApplicationManager" => h.ApplicationNotes ?? "",
+                        _ => "لا يوجد"
+                    }
                 }).ToList(),
 
                 ActionId = requestAction?.ActionId ?? 0,
@@ -1125,7 +1118,7 @@ namespace DSAR.Controllers
                     "DepartmentManager" => h.DepartmentNotes ?? "",
                     "ITManager" => h.ITNotes ?? "",
                     "ApplicationManager" => h.ApplicationNotes ?? "",
-                    _ => ""
+                    _ => "لا يوجد"
                 }
             })
             .ToList();
