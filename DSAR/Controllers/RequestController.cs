@@ -161,7 +161,9 @@ namespace DSAR.Controllers
                         1,
                         "Request submitted"
                     );
+
                     return RedirectToAction("Main", "Account");
+
                 }
                 else if (await _userManager.IsInRoleAsync(currentUser, "User"))
                     data.UserId = currentUser.Id;
@@ -186,6 +188,7 @@ namespace DSAR.Controllers
                 );
 
                 ////////////////////history///////////////////////////////////////
+                TempData["Success"] = "تم إرسال الطلب بنجاح.";
                 return RedirectToAction("Main", "Account");
             }
             else if(currentUser.TermsAccepted == false)
@@ -193,7 +196,10 @@ namespace DSAR.Controllers
                 TempData["Error"] = "Please accept the terms and conditions before submitting a request.";
                 return RedirectToAction("Step3","Request");
             }
+
+            TempData["Success"] = "تم إرسال الطلب بنجاح.";
             return RedirectToAction("Main", "Account");
+
         }
         //New Form
 
@@ -748,7 +754,7 @@ namespace DSAR.Controllers
                 await _approveRepository.ApproveRequestByApplicationManager(model, actionId, requestId, decision, currentUser, request);
 
             }
-           
+            TempData["Success"] = "تمت معالجة الطلب بنجاح";
             return RedirectToAction("Main", "Account");
 
         }
@@ -852,7 +858,7 @@ namespace DSAR.Controllers
                 );
                 //history
             }
-
+            TempData["Success"] = "تم أختيار المحلل بنجاح";
             return RedirectToAction("Main", "Account");
         }
 
@@ -955,7 +961,7 @@ namespace DSAR.Controllers
                 );
                 // history
             }
-
+            TempData["Success"] = "تمت معالجة الطلب بنجاح";
             return RedirectToAction("Main", "Account");
         }
         public async Task<IActionResult> CancelRequest(int actionId)

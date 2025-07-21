@@ -11,6 +11,7 @@
     <title>المراجع والملاحظات</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/analyzer.css" asp-append-version="true" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
 <body>
@@ -50,6 +51,11 @@
         {
             <textarea asp-for="DepartmentNotes" class="notes-input" placeholder="ذكر الملاحظات إن وجدت"></textarea>
         }
+ else if (User.IsInRole("ITManager") && Model.LevelId <=    4)
+        {
+            <textarea asp-for="ITNotes" class="notes-input" placeholder="ذكر الملاحظات إن وجدت"></textarea>
+        }
+       
         </div>
         @if ((User.IsInRole("ApplicationManager") || User.IsInRole("ITManager")) && Model.LevelId >= 4)
         {
@@ -118,6 +124,22 @@
             <button name="decision" value="approve" class="btn accept-btn">قبول الطلب</button>
         </div>
     </form>
+
+    <script>
+        @if (TempData["Success"] != null)
+        {
+            <text>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'نجاح',
+                    text: '@Html.Raw(TempData["Success"])',
+                    confirmButtonText: 'حسناً'
+                });
+            </text>
+        }
+    </script>
+
+
 </body>
 </html>
 

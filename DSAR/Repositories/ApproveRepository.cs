@@ -147,9 +147,8 @@ namespace DSAR.Repositories
                             4,
                             "Request approved initially by " + currentUser.FirstName + " " + currentUser.LastName
                         );
-                        //history
-                    }
-                    else if (action.LevelId == 7)
+                }
+                else if (action.LevelId == 7)
                     {
                         action.StatusId = 3;
                         action.LevelId = 8;

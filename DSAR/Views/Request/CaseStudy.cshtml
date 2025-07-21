@@ -116,5 +116,20 @@
             <button type="submit" class="btn accept-btn">قبول الطلب</button>
         </div>
     </form>
+
+
+    <script>
+        @if (TempData["Success"] != null)
+        {
+            <text>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'نجاح',
+                    text: '@Html.Raw(TempData["Success"])',
+                    confirmButtonText: 'حسناً'
+                });
+            </text>
+        }
+    </script>
 </body>
 </html>

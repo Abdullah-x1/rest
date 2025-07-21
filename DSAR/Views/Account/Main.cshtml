@@ -125,3 +125,21 @@
         });
     </script>
 }
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if (TempData["Success"] != null)
+        {
+            <text>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم الإرسال',
+                    text: '@Html.Raw(TempData["Success"])',
+                    confirmButtonText: 'حسناً',
+                    allowOutsideClick: false,
+                });
+            </text>
+        }
+    </script>
+}
