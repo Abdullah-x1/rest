@@ -12,8 +12,13 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DSAR.Migrations
 {
     [DbContext(typeof(AppDbContext))]
+<<<<<<<< HEAD:DSAR/Migrations/20250720105137_111.Designer.cs
+    [Migration("20250720105137_111")]
+    partial class _111
+========
     [Migration("20250720102313_HistoryNotes")]
     partial class HistoryNotes
+>>>>>>>> 4e5be314c0ce591a75e89a8b6758fed20b830e20:DSAR/Migrations/20250720102313_HistoryNotes.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
