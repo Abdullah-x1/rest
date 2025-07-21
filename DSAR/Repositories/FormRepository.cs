@@ -286,32 +286,33 @@
 
                 return requestViewModel;
             }
-            #endregion
+        #endregion
 
-            #region Step Handlers
-            public async Task<bool> HandleStep1Data(RequestViewModel data, List<IFormFile> attachments)
+        #region Step Handlers
+        public async Task<bool> HandleStep1Data(RequestViewModel data, List<IFormFile> attachments)
+        {
+            var snapshot = await GetOrCreateSnapshotAsync();
+            var currentData = snapshot.GetFormData(_jsonOptions);
+
+            bool hasNewAttachments = attachments != null && attachments.Any(f => f.Length > 0);
+
+            if (!HasMeaningfulChanges(currentData, data) && !hasNewAttachments)
             {
-                var snapshot = await GetOrCreateSnapshotAsync();
-                var currentData = snapshot.GetFormData(_jsonOptions);
+                return false;
+            }
 
-                // Check if there are meaningful changes or a new attachment
-                if (!HasMeaningfulChanges(currentData, data) && (attachments == null || !attachments.Any()))
-                {
-                    // No changes detected, return false to indicate nothing saved
-                    return false;
-                }
+            // Update the data with new values
+            currentData.ServiceName = data.ServiceName;
+            currentData.ServiceTypeAndLocation = data.ServiceTypeAndLocation;
+            currentData.ServiceDescription = data.ServiceDescription;
+            currentData.HasDependency = data.HasDependency;
+            currentData.DependencyDetails = data.DependencyDetails;
+            currentData.ProcedureNumber = data.ProcedureNumber;
 
-                // Update the data with new values
-                currentData.ServiceName = data.ServiceName;
-                currentData.ServiceTypeAndLocation = data.ServiceTypeAndLocation;
-                currentData.ServiceDescription = data.ServiceDescription;
-                currentData.HasDependency = data.HasDependency;
-                currentData.DependencyDetails = data.DependencyDetails;
-                currentData.ProcedureNumber = data.ProcedureNumber;
+            snapshot.SetFormData(currentData, _jsonOptions);
 
-                snapshot.SetFormData(currentData, _jsonOptions);
-
-                // Clear existing attachments for "Step1"
+            if (hasNewAttachments)
+            {
                 var existingAttachments = snapshot.Attachments
                     .Where(a => a.FieldName == "Step1")
                     .ToList();
@@ -321,23 +322,21 @@
                     snapshot.Attachments.Remove(existing);
                 }
 
-                if (attachments != null && attachments.Any())
+                if (attachments.Count(f => f.Length > 0) > 5)
+                    throw new InvalidOperationException("You can upload a maximum of 5 attachments for Step1.");
+
+                foreach (var file in attachments.Where(f => f.Length > 0))
                 {
-                    if (attachments.Count(f => f.Length > 0) > 5)
-                        throw new InvalidOperationException("You can upload a maximum of 5 attachments for Step1.");
-
-                    foreach (var file in attachments.Where(f => f.Length > 0))
-                    {
-                        await HandleAttachment(file, snapshot, "Step1");
-                    }
+                    await HandleAttachment(file, snapshot, "Step1");
                 }
-
-                await _context.SaveChangesAsync();
-
-                return true;
             }
 
-            private bool HasMeaningfulChanges(FormData current, RequestViewModel incoming)
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        private bool HasMeaningfulChanges(FormData current, RequestViewModel incoming)
             {
                 return current.ServiceName != incoming.ServiceName ||
                        current.ServiceTypeAndLocation != incoming.ServiceTypeAndLocation ||
@@ -374,31 +373,37 @@
 
                 snapshot.SetFormData(currentData, _jsonOptions);
 
-                // Remove old attachments for Step2_1
+            // Remove old attachments for Step2_1
+            if (hasFiles2)
+            {
                 var toRemove2_1 = snapshot.Attachments.Where(a => a.FieldName == "Step2_1").ToList();
                 foreach (var att in toRemove2_1)
                     snapshot.Attachments.Remove(att);
-                if (hasFiles2)
-                {
-                    if (attachments2.Count(f => f.Length > 0) > 5)
-                        throw new InvalidOperationException("You can upload a maximum of 5 attachments for Step2_1.");
-                    foreach (var file in attachments2.Where(f => f.Length > 0))
-                        await HandleAttachment(file, snapshot, "Step2_1");
-                }
 
-                // Remove old attachments for Step2_2
+                if (attachments2.Count(f => f.Length > 0) > 5)
+                    throw new InvalidOperationException("You can upload a maximum of 5 attachments for Step2_1.");
+
+                foreach (var file in attachments2.Where(f => f.Length > 0))
+                    await HandleAttachment(file, snapshot, "Step2_1");
+            }
+
+
+            // Remove old attachments for Step2_2
+            if (hasFiles3)
+            {
                 var toRemove2_2 = snapshot.Attachments.Where(a => a.FieldName == "Step2_2").ToList();
                 foreach (var att in toRemove2_2)
                     snapshot.Attachments.Remove(att);
-                if (hasFiles3)
-                {
-                    if (attachments3.Count(f => f.Length > 0) > 5)
-                        throw new InvalidOperationException("You can upload a maximum of 5 attachments for Step2_2.");
-                    foreach (var file in attachments3.Where(f => f.Length > 0))
-                        await HandleAttachment(file, snapshot, "Step2_2");
-                }
 
-                await _context.SaveChangesAsync();
+                if (attachments3.Count(f => f.Length > 0) > 5)
+                    throw new InvalidOperationException("You can upload a maximum of 5 attachments for Step2_2.");
+
+                foreach (var file in attachments3.Where(f => f.Length > 0))
+                    await HandleAttachment(file, snapshot, "Step2_2");
+            }
+
+
+            await _context.SaveChangesAsync();
                 return true;
             }
 
@@ -570,82 +575,90 @@
                 }
             }
 
-        
-
-    
 
 
 
-            public async Task<(bool isSaved, string workflowName, string uploadsName, string documentsName)> HandleStep4Data(
-              RequestViewModel data,
-              List<IFormFile> workflowFiles,
-              List<IFormFile> uploadsRequiredFiles,
-              List<IFormFile> documentsFiles)
+
+
+
+        public async Task<(bool isSaved, string workflowName, string uploadsName, string documentsName)> HandleStep4Data(
+  RequestViewModel data,
+  List<IFormFile> workflowFiles,
+  List<IFormFile> uploadsRequiredFiles,
+  List<IFormFile> documentsFiles)
+        {
+            var snapshot = await GetOrCreateSnapshotAsync();
+            var currentData = snapshot.GetFormData(_jsonOptions);
+
+            bool anyWorkflow = workflowFiles != null && workflowFiles.Any(f => f.Length > 0);
+            bool anyUploads = uploadsRequiredFiles != null && uploadsRequiredFiles.Any(f => f.Length > 0);
+            bool anyDocuments = documentsFiles != null && documentsFiles.Any(f => f.Length > 0);
+
+            if (!HasMeaningfulChangesStep4(currentData, data) && !anyWorkflow && !anyUploads && !anyDocuments)
+                return (false, null, null, null);
+
+            // Update form fields
+            currentData.Workflow = data.Workflow;
+            currentData.UploadsRequired = data.UploadsRequired;
+            currentData.Documents = data.Documents;
+            currentData.Timeline = data.Timeline;
+            currentData.SystemNeeded = data.SystemNeeded;
+
+            snapshot.SetFormData(currentData, _jsonOptions);
+
+            string workflowName = null, uploadsName = null, documentsName = null;
+
+            if (anyWorkflow)
             {
-                var snapshot = await GetOrCreateSnapshotAsync();
-                var currentData = snapshot.GetFormData(_jsonOptions);
+                var oldWorkflow = snapshot.Attachments
+                    .Where(a => a.FieldName == "Step4_Workflow")
+                    .ToList();
 
-                bool anyWorkflow = workflowFiles != null && workflowFiles.Any(f => f.Length > 0);
-                bool anyUploads = uploadsRequiredFiles != null && uploadsRequiredFiles.Any(f => f.Length > 0);
-                bool anyDocuments = documentsFiles != null && documentsFiles.Any(f => f.Length > 0);
+                foreach (var att in oldWorkflow)
+                    snapshot.Attachments.Remove(att);
 
-                if (!HasMeaningfulChangesStep4(currentData, data) && !anyWorkflow && !anyUploads && !anyDocuments)
-                    return (false, null, null, null);
+                foreach (var file in workflowFiles.Where(f => f.Length > 0))
+                    await HandleAttachment(file, snapshot, "Step4_Workflow");
 
-                // Update form fields
-                currentData.Workflow = data.Workflow;
-                currentData.UploadsRequired = data.UploadsRequired;
-                currentData.Documents = data.Documents;
-                currentData.Timeline = data.Timeline;
-                currentData.SystemNeeded = data.SystemNeeded;
-           
-                snapshot.SetFormData(currentData, _jsonOptions);
-
-                // Remove previous attachments by field
-                var oldWorkflow = snapshot.Attachments.Where(a => a.FieldName == "Step4_Workflow").ToList();
-                foreach (var att in oldWorkflow) snapshot.Attachments.Remove(att);
-
-                var oldUploads = snapshot.Attachments.Where(a => a.FieldName == "Step4_uploadsRequiredFile").ToList();
-                foreach (var att in oldUploads) snapshot.Attachments.Remove(att);
-
-                var oldDocs = snapshot.Attachments.Where(a => a.FieldName == "Step4_documentsFile").ToList();
-                foreach (var att in oldDocs) snapshot.Attachments.Remove(att);
-
-                // Save new attachments
-                string workflowName = null, uploadsName = null, documentsName = null;
-
-                if (anyWorkflow)
-                {
-                    foreach (var file in workflowFiles.Where(f => f.Length > 0))
-                    {
-                        await HandleAttachment(file, snapshot, "Step4_Workflow");
-                    }
-                    workflowName = string.Join(", ", workflowFiles.Select(f => Path.GetFileName(f.FileName)));
-                }
-
-                if (anyUploads)
-                {
-                    foreach (var file in uploadsRequiredFiles.Where(f => f.Length > 0))
-                    {
-                        await HandleAttachment(file, snapshot, "Step4_uploadsRequiredFile");
-                    }
-                    uploadsName = string.Join(", ", uploadsRequiredFiles.Select(f => Path.GetFileName(f.FileName)));
-                }
-
-                if (anyDocuments)
-                {
-                    foreach (var file in documentsFiles.Where(f => f.Length > 0))
-                    {
-                        await HandleAttachment(file, snapshot, "Step4_documentsFile");
-                    }
-                    documentsName = string.Join(", ", documentsFiles.Select(f => Path.GetFileName(f.FileName)));
-                }
-
-                await _context.SaveChangesAsync();
-                return (true, workflowName, uploadsName, documentsName);
+                workflowName = string.Join(", ", workflowFiles.Select(f => Path.GetFileName(f.FileName)));
             }
 
-            private bool HasMeaningfulChangesStep4(FormData current, RequestViewModel incoming)
+            if (anyUploads)
+            {
+                var oldUploads = snapshot.Attachments
+                    .Where(a => a.FieldName == "Step4_uploadsRequiredFile")
+                    .ToList();
+
+                foreach (var att in oldUploads)
+                    snapshot.Attachments.Remove(att);
+
+                foreach (var file in uploadsRequiredFiles.Where(f => f.Length > 0))
+                    await HandleAttachment(file, snapshot, "Step4_uploadsRequiredFile");
+
+                uploadsName = string.Join(", ", uploadsRequiredFiles.Select(f => Path.GetFileName(f.FileName)));
+            }
+
+            if (anyDocuments)
+            {
+                var oldDocs = snapshot.Attachments
+                    .Where(a => a.FieldName == "Step4_documentsFile")
+                    .ToList();
+
+                foreach (var att in oldDocs)
+                    snapshot.Attachments.Remove(att);
+
+                foreach (var file in documentsFiles.Where(f => f.Length > 0))
+                    await HandleAttachment(file, snapshot, "Step4_documentsFile");
+
+                documentsName = string.Join(", ", documentsFiles.Select(f => Path.GetFileName(f.FileName)));
+            }
+
+            await _context.SaveChangesAsync();
+            return (true, workflowName, uploadsName, documentsName);
+        }
+
+
+        private bool HasMeaningfulChangesStep4(FormData current, RequestViewModel incoming)
             {
                 return current.Workflow != incoming.Workflow ||
                        current.UploadsRequired != incoming.UploadsRequired ||

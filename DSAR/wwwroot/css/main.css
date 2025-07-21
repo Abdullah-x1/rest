@@ -114,12 +114,14 @@ body {
     z-index: 9999;
 }
 
+/* Popup Content */
 .popup-content {
     background: white;
     width: 100%;
     max-width: 1288px;
+    max-height: 90vh;
     height: auto;
-    min-height: 500px;
+    overflow-y: auto;
     border-radius: 20px;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     padding: 40px;
@@ -128,21 +130,22 @@ body {
 
     .popup-content h1 {
         color: #333;
-        font-size: 1.75rem; /* 28px equivalent */
+        font-family: 'Tajawal', sans-serif;
+        font-size: 28px;
         margin-bottom: 30px;
         font-weight: 600;
-        text-align: center;
     }
 
+/* Requirements List */
 .requirements {
     list-style: none;
-    padding: 0;
 }
 
     .requirements li {
         color: #444;
-        font-size: 1.125rem; /* 18px equivalent */
-        margin-bottom: 20px;
+        font-family: 'Tajawal', sans-serif;
+        font-size: 18px;
+        margin-bottom: 40px;
         position: relative;
         padding-right: 20px;
     }
@@ -153,17 +156,17 @@ body {
             right: 0;
         }
 
+/* Checkbox Container */
 .checkbox-container {
     margin-top: 95px;
-    display: flex;
-    justify-content: center;
 }
 
     .checkbox-container label {
         display: flex;
         align-items: center;
         color: #444;
-        font-size: 1rem; /* 16px equivalent */
+        font-family: 'Tajawal', sans-serif;
+        font-size: 16px;
         cursor: pointer;
     }
 
@@ -173,19 +176,29 @@ body {
         height: 18px;
     }
 
+/* Popup Buttons */
 .popup-buttons {
     position: absolute;
     bottom: 40px;
     left: 40px;
     display: flex;
     gap: 20px;
+    flex-wrap: wrap;
 }
+
+    .popup-buttons.flex-column {
+        flex-direction: column;
+        gap: 10px;
+        left: 20px;
+        right: 20px;
+    }
 
 .popup-btn {
     padding: 12px 30px;
     border: none;
-    border-radius: 20px;
-    font-size: 1rem; /* 16px equivalent */
+    border-radius: 8px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 16px;
     font-weight: 500;
     color: white;
     cursor: pointer;
@@ -198,10 +211,12 @@ body {
 
 .back-btn {
     background: #CC281B;
+    border-radius: 20px;
 }
 
 .confirm-btn {
     background: #287067;
+    border-radius: 20px;
 }
 
     .confirm-btn:disabled {

@@ -1,13 +1,13 @@
-﻿@model DSAR.ViewModels.RequestViewModel
+﻿    @model DSAR.ViewModels.RequestViewModel
 
-@{
-    var step1Attachments = Model.SnapshotAttachments.Where(a => a.FieldName == "Step1").ToList();
-    var step2Attachments1 = Model.SnapshotAttachments.Where(a => a.FieldName == "Step2_1").ToList();
-    var step2Attachments2 = Model.SnapshotAttachments.Where(a => a.FieldName == "Step2_2").ToList();
-    var step4Attachments1 = Model.SnapshotAttachments.Where(a => a.FieldName == "Step4_Workflow").ToList();
-    var step4Attachments2 = Model.SnapshotAttachments.Where(a => a.FieldName == "Step4_uploadsRequiredFile").ToList();
-    var step4Attachments3 = Model.SnapshotAttachments.Where(a => a.FieldName == "Step4_documentsFile").ToList();
-}
+    @{
+        var step1Attachments = Model.SnapshotAttachments.Where(a => a.FieldName == "Step1").ToList();
+        var step2Attachments1 = Model.SnapshotAttachments.Where(a => a.FieldName == "Step2_1").ToList();
+        var step2Attachments2 = Model.SnapshotAttachments.Where(a => a.FieldName == "Step2_2").ToList();
+        var step4Attachments1 = Model.SnapshotAttachments.Where(a => a.FieldName == "Step4_Workflow").ToList();
+        var step4Attachments2 = Model.SnapshotAttachments.Where(a => a.FieldName == "Step4_uploadsRequiredFile").ToList();
+        var step4Attachments3 = Model.SnapshotAttachments.Where(a => a.FieldName == "Step4_documentsFile").ToList();
+    }
 
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -263,7 +263,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model.AuthorizedContacts)
+                    @foreach (var item in Model.SnapshotAuthorizedContacts)
                         {
                             <tr>
                                 <td>@item.ApprovedCities</td>
@@ -288,7 +288,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model.Descriptions)
+                        @foreach (var item in Model.SnapshotDescriptions)
                         {
                             <tr>
                                 <td>@item.Description1</td>
@@ -298,45 +298,44 @@
                     </tbody>
                 </table>
 
-            <div class="button-footer">
-                <button type="button"
-                        class="btn-prev"
-                        onclick="location.href='@Url.Action("StepAuthorizedContacts", "Request", new { id = Model.RequestId })'">
-                    السابق
-                </button>
+                <div class="button-footer">
+                    <button type="button"
+                            class="btn-prev"
+                            onclick="location.href='@Url.Action("StepAuthorizedContacts", "Request", new { id = Model.RequestId })'">
+                        السابق
+                    </button>
 
-                <div class="btn-group-custom">
+                    <div class="btn-group-custom">
 
 
-                    <form method="post" asp-action="Request" asp-controller="Request" asp-route-actionId="@Model.ActionId">
-                            <button type="submit" class="btn-next">تقديم الطلب</button>
-                        </form>
+                        <form method="post" asp-action="Request" asp-controller="Request" asp-route-actionId="@Model.ActionId">
+                                <button type="submit" class="btn-next">تقديم الطلب</button>
+                            </form>
                     
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
 
 
        
-    @section Scripts {
-        @await Html.PartialAsync("_ValidationScriptsPartial")
-    }
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        @if (TempData["Error"] != null)
-        {
-                <text>
-                    Swal.fire({
-                        icon: 'info',
-                        title: 'تنبيه',
-                        text: '@Html.Raw(TempData["Error"])',
-                        confirmButtonText: 'حسناً'
-                    });
-                </text>
+        @section Scripts {
+            @await Html.PartialAsync("_ValidationScriptsPartial")
         }
-    </script>
-</body>
-</html>
+
+        <script>
+            @if (TempData["Error"] != null)
+            {
+                    <text>
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'تنبيه',
+                            text: '@Html.Raw(TempData["Error"])',
+                            confirmButtonText: 'حسناً'
+                        });
+                    </text>
+            }
+        </script>
+    </body>
+    </html>

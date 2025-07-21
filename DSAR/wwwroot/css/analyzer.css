@@ -84,6 +84,9 @@ label {
 textarea.form-control {
     height: 120px;
     overflow-y: auto;
+   
+    border: 1px solid #ccc;
+    resize: none;
 }
 
 textarea.notes-input {
@@ -98,6 +101,7 @@ textarea.notes-input {
     display: block;
     text-align: right;
     direction: rtl;
+   
 
 }
 
@@ -118,17 +122,17 @@ textarea.notes-input {
 }
 
 .btn {
-    padding: 12px 30px;
+    padding: 9px 30px;
     border: none;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 500;
     color: white;
+    background-color: cadetblue;
     cursor: pointer;
     text-decoration: none;
     transition: opacity 0.3s ease;
 }
-
     .btn:hover {
         opacity: 0.9;
     }
@@ -146,6 +150,29 @@ textarea.notes-input {
     cursor: pointer;
 }
 
+.attached-files {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 200px;
+    overflow-y: auto;
+}
+    .attached-files li {
+        background-color: #f2f2f2;
+        padding: 4px 10px;
+        border-radius: 5px;
+        font-family: 'Tajawal', sans-serif;
+        font-size: 13px;
+        max-width: 250px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+        
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {

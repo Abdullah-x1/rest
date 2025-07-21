@@ -1,8 +1,7 @@
 ﻿@model IEnumerable<DSAR.ViewModels.CaseStudyViewModel>
-@{
-    Layout = null;
-}
+
 <link rel="stylesheet" href="~/css/analyzer.css" asp-append-version="true" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -45,5 +44,21 @@
             </tbody>
         </table>
     </div>
+
+    <script>
+        @if (TempData["Success"] != null)
+        {
+            <text>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'نجاح',
+                    text: '@Html.Raw(TempData["Success"])',
+                    confirmButtonText: 'حسناً'
+                });
+            </text>
+        }
+    </script>
+
+
 </body>
 </html>

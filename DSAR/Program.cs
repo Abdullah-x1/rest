@@ -79,9 +79,9 @@ using (var scope = app.Services.CreateScope())
             Email = adminEmail,
             FirstName = "System Admin",
             UserId = userId,
-            CityId = 1,
-            DepartmentId = 1, // Assuming 1 is the ID for the Admin department
-            SectorId = 1, // Assuming 1 is the ID for the Admin sector    
+            CityId = 2,
+            DepartmentId = 2, // Assuming 1 is the ID for the Admin department
+            SectorId = 2, // Assuming 1 is the ID for the Admin sector    
             SectionId = 2, // Assuming 1 is the ID for the Admin section
         };
         var result = await userManager.CreateAsync(newAdmin, adminPassword);
@@ -102,9 +102,9 @@ using (var scope = app.Services.CreateScope())
             Email = ManagerEmail,
             FirstName = "DepartmentManager",
             UserId = ManagerUserId,
-            CityId = 1,
-            DepartmentId = 1, // Assuming 1 is the ID for the Admin department
-            SectorId = 1, // Assuming 1 is the ID for the Admin sector    
+            CityId = 2,
+            DepartmentId = 2, // Assuming 1 is the ID for the Admin department
+            SectorId = 2, // Assuming 1 is the ID for the Admin sector    
             SectionId = 2, // Assuming 1 is the ID for the Admin section
         };
         var result = await userManager.CreateAsync(newManager, adminPassword);
@@ -125,9 +125,9 @@ using (var scope = app.Services.CreateScope())
             Email = Manager2Email,
             FirstName = "SectionManager",
             UserId = Manager2UserId,
-            CityId = 1,
-            DepartmentId = 1, // Assuming 1 is the ID for the Admin department
-            SectorId = 1, // Assuming 1 is the ID for the Admin sector    
+            CityId = 2,
+            DepartmentId = 2, // Assuming 1 is the ID for the Admin department
+            SectorId = 2, // Assuming 1 is the ID for the Admin sector    
             SectionId = 2, // Assuming 1 is the ID for the Admin section
 
         };
@@ -149,9 +149,9 @@ using (var scope = app.Services.CreateScope())
             Email = ITManagerEmail,
             FirstName = "ITManager",
             UserId = ITManagerUserId,
-            CityId = 1,
-            DepartmentId = 1, // Assuming 1 is the ID for the Admin department
-            SectorId = 1, // Assuming 1 is the ID for the Admin sector    
+            CityId = 2,
+            DepartmentId = 2, // Assuming 1 is the ID for the Admin department
+            SectorId = 2, // Assuming 1 is the ID for the Admin sector    
             SectionId = 2, // Assuming 1 is the ID for the Admin section
 
         };
@@ -173,9 +173,9 @@ using (var scope = app.Services.CreateScope())
             Email = ApplicationEmail,
             FirstName = "ApplicationManager",
             UserId = ApplicationUserId,
-            CityId = 1,
-            DepartmentId = 1, // Assuming 1 is the ID for the Admin department
-            SectorId = 1, // Assuming 1 is the ID for the Admin sector    
+            CityId = 2,
+            DepartmentId = 2, // Assuming 1 is the ID for the Admin department
+            SectorId = 2, // Assuming 1 is the ID for the Admin sector    
             SectionId = 2, // Assuming 1 is the ID for the Admin section
 
         };
@@ -198,9 +198,9 @@ using (var scope = app.Services.CreateScope())
             Email = AnalyzerEmail,
             FirstName = "Analyzer",
             UserId = AnalyzerUserId,
-            CityId = 1,
-            DepartmentId = 1, // Assuming 1 is the ID for the Admin department
-            SectorId = 1, // Assuming 1 is the ID for the Admin sector    
+            CityId = 2,
+            DepartmentId = 2, // Assuming 1 is the ID for the Admin department
+            SectorId = 2, // Assuming 1 is the ID for the Admin sector    
             SectionId = 2, // Assuming 1 is the ID for the Admin section
 
         };
@@ -224,9 +224,9 @@ using (var scope = app.Services.CreateScope())
             Email = Analyzer2Email,
             FirstName = "Analyzer2",
             UserId = Analyzer2UserId,
-            CityId = 1,
-            DepartmentId = 1, // Assuming 1 is the ID for the Admin department
-            SectorId = 1, // Assuming 1 is the ID for the Admin sector    
+            CityId = 2,
+            DepartmentId = 2, // Assuming 1 is the ID for the Admin department
+            SectorId = 2, // Assuming 1 is the ID for the Admin sector    
             SectionId = 2, // Assuming 1 is the ID for the Admin section
 
         };

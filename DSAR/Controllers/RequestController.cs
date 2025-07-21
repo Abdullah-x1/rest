@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.SqlServer.Server;
 using System;
 using System.Security.Claims;
 using static Azure.Core.HttpHeader;
@@ -161,7 +162,9 @@ namespace DSAR.Controllers
                         1,
                         "Request submitted"
                     );
+
                     return RedirectToAction("Main", "Account");
+
                 }
                 else if (await _userManager.IsInRoleAsync(currentUser, "User"))
                     data.UserId = currentUser.Id;
@@ -186,6 +189,7 @@ namespace DSAR.Controllers
                 );
 
                 ////////////////////history///////////////////////////////////////
+                TempData["Success"] = "تم إرسال الطلب بنجاح.";
                 return RedirectToAction("Main", "Account");
             }
             else if(currentUser.TermsAccepted == false)
@@ -193,7 +197,10 @@ namespace DSAR.Controllers
                 TempData["Error"] = "Please accept the terms and conditions before submitting a request.";
                 return RedirectToAction("Step3","Request");
             }
+
+            TempData["Success"] = "تم إرسال الطلب بنجاح.";
             return RedirectToAction("Main", "Account");
+
         }
         //New Form
 
@@ -272,7 +279,9 @@ namespace DSAR.Controllers
             var history = await _historyRepository.GetHistoriesByRequestIdAsync(id);
             var descriptions = await _formRepo.GetDescriptionsByRequestId(id);
             var contacts = await _formRepo.GetAuthorizedContactsByRequestId(id);
-
+            var selectedDepartment = _requestRepository
+           .GetAllDepartments()
+           .FirstOrDefault(d => d.DepartmentId == form.DepartmentId);
             var viewModel = new RequestViewModel
             {
                 RequestId = form.RequestId,
@@ -286,7 +295,6 @@ namespace DSAR.Controllers
                 Name = form.Name,
                 Email = form.Email,
                 RepeatLimit = form.RepeatLimit,
-                DepartmentName = form.Department?.DepartmentName,
                 Fees = form.Fees,
                 TargetAudience = form.TargetAudience,
                 DepName = form.Departments,
@@ -295,6 +303,8 @@ namespace DSAR.Controllers
                 ApprovedTemplate = form.ApprovedTemplate,
                 DetailedInfo = form.DetailedInfo,
                 RequiredConditions = form.RequiredConditions,
+                Cities = form.Cities,
+                DepartmentName = selectedDepartment?.DepartmentName ?? string.Empty,
 
                 Workflow = form.Workflow,
                 UploadsRequired = form.UploadsRequired,
@@ -741,7 +751,7 @@ namespace DSAR.Controllers
                 await _approveRepository.ApproveRequestByApplicationManager(model, actionId, requestId, decision, currentUser, request);
 
             }
-           
+            TempData["Success"] = "تمت معالجة الطلب بنجاح";
             return RedirectToAction("Main", "Account");
 
         }
@@ -845,7 +855,7 @@ namespace DSAR.Controllers
                 );
                 //history
             }
-
+            TempData["Success"] = "تم أختيار المحلل بنجاح";
             return RedirectToAction("Main", "Account");
         }
 
@@ -948,7 +958,7 @@ namespace DSAR.Controllers
                 );
                 // history
             }
-
+            TempData["Success"] = "تمت معالجة الطلب بنجاح";
             return RedirectToAction("Main", "Account");
         }
         public async Task<IActionResult> CancelRequest(int actionId)

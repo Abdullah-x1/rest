@@ -161,7 +161,7 @@ label {
 
 .sidebar {
     position: fixed;
-    top: 50%;
+    top: 57%;
     left: 20px;
     transform: translateY(-50%);
     width: 370px;
