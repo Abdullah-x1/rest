@@ -39,6 +39,14 @@ header.site-header .btn-link {
     margin: 0 !important;
 }
 
+header.site-header .btn-link {
+    /* force it back to its natural size */
+    width: auto !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
 /* push page content below the fixed header */
 body {
     margin: 0;

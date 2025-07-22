@@ -204,9 +204,9 @@ namespace DSAR.Repositories
             return new InsertUserViewModel
             {
                 Cities = await GetAllCitiesAsync(),
-                Sections = await GetAllSectionsAsync(),
-                Departments = await GetAllDepartmentsAsync(),
                 Sectors = await GetAllSectorsAsync(),
+                Departments = await GetAllDepartmentsAsync(),
+                Sections = new List<SelectListItem>(),       // start empty
                 Roles = await GetAllRolesAsync()
             };
         }
@@ -241,6 +241,20 @@ namespace DSAR.Repositories
             vm.Sectors = await GetAllSectorsAsync();
             vm.Roles = await GetAllRolesAsync();
         }
+
+        public async Task<List<SelectListItem>> GetSectionsByDepartmentAsync(int departmentId)
+        {
+            return await _db.Section
+                .Where(s => s.DepartmentId == departmentId)
+                .OrderBy(s => s.SectionName)
+                .Select(s => new SelectListItem
+                {
+                    Value = s.SectionId.ToString(),
+                    Text = s.SectionName
+                })
+                .ToListAsync();
+        }
+
 
         public async Task<ChangeLevelViewModel> BuildChangeLevelViewModelAsync(int requestId)
         {

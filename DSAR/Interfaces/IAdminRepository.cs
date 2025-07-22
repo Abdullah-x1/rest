@@ -42,5 +42,8 @@ namespace DSAR.Repositories
         Task PopulateUserDropdownsAsync(EditUserViewModel vm);
         Task<ChangeLevelViewModel> BuildChangeLevelViewModelAsync(int requestId);
 
+        Task<List<SelectListItem>> GetSectionsByDepartmentAsync(int departmentId);
+
+
     }
 }

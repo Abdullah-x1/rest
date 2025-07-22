@@ -46,12 +46,13 @@
             <span asp-validation-for="CityId" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <label asp-for="SectionId"></label>
-            <select asp-for="SectionId" asp-items="Model.Sections" class="form-control">
-                <option value="">-- اختر القسم --</option>
+            <label asp-for="SectorId"></label>
+            <select asp-for="SectorId" asp-items="Model.Sectors" class="form-control">
+                <option value="">-- اختر القطاع --</option>
             </select>
-            <span asp-validation-for="SectionId" class="text-danger"></span>
+            <span asp-validation-for="SectorId" class="text-danger"></span>
         </div>
+      
         <div class="form-group">
             <label asp-for="DepartmentId"></label>
             <select asp-for="DepartmentId" asp-items="Model.Departments" class="form-control">
@@ -60,11 +61,11 @@
             <span asp-validation-for="DepartmentId" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <label asp-for="SectorId"></label>
-            <select asp-for="SectorId" asp-items="Model.Sectors" class="form-control">
-                <option value="">-- اختر القطاع --</option>
+            <label asp-for="SectionId"></label>
+            <select asp-for="SectionId" asp-items="Model.Sections" class="form-control">
+                <option value="">-- اختر القسم --</option>
             </select>
-            <span asp-validation-for="SectorId" class="text-danger"></span>
+            <span asp-validation-for="SectionId" class="text-danger"></span>
         </div>
         <div class="form-group">
             <label asp-for="Role"></label>
@@ -78,8 +79,34 @@
     </form>
 </div>
 
-@section Scripts {
+@* @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+} *@
+@section Scripts {
+    <script>
+        document
+          .getElementById('DepartmentId')
+          .addEventListener('change', function() {
+            var deptId = this.value;
+            var sectionSelect = document.getElementById('SectionId');
+
+            // reset
+            sectionSelect.innerHTML = '<option value="">-- Select Section --</option>';
+
+            if (!deptId) return;
+
+            fetch('@Url.Action("GetSections", "Admin")?departmentId=' + deptId)
+              .then(r => r.json())
+              .then(list => {
+                list.forEach(item => {
+                  var opt = document.createElement('option');
+                  opt.value = item.value;
+                  opt.textContent = item.text;
+                  sectionSelect.appendChild(opt);
+                });
+              });
+          });
+    </script>
 }
