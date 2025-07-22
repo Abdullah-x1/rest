@@ -80,6 +80,13 @@ namespace DSAR.Controllers
             return RedirectToAction(nameof(ListAllUsers));
         }
 
+        [HttpGet]
+        public async Task<JsonResult> GetSections(int departmentId)
+        {
+            var sections = await _repo.GetSectionsByDepartmentAsync(departmentId);
+            return Json(sections);
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> EditUser(string id)
@@ -184,5 +191,6 @@ namespace DSAR.Controllers
             await _repo.UpdateRequestLevelAsync(vm.RequestId, vm.SelectedLevelId, vm.SelectedStatusId);
             return RedirectToAction(nameof(ListRequests));
         }
+
     }
 }
