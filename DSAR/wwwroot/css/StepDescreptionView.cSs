@@ -41,6 +41,8 @@
     border-radius: 10px;
     position: relative;
     overflow-y: auto;
+    transform: scale(0.8);
+    transform-origin: top center;
 }
 
 .content-wrapper {

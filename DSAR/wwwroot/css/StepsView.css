@@ -32,6 +32,8 @@
     border-radius: 10px;
     margin: 10px 0; /* Reduced margin to connect sections */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transform: scale(0.9);
+    transform-origin: top center;
 }
 
 .section-header {
@@ -161,19 +163,21 @@ label {
 
 .sidebar {
     position: fixed;
-    top: 57%;
+    top: 30%;
     left: 20px;
-    transform: translateY(-50%);
+    transform: translateY(-50%) scale(0.8);
     width: 370px;
     background: linear-gradient(to bottom, #ffffff, #f4faff);
     border: 1px solid #e0e0e0;
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-    max-height: 85vh;
+    max-height: 65vh;
     overflow-y: auto;
     direction: rtl;
     font-family: 'Tajawal', sans-serif;
+    transform: scale(0.8);
+    transform-origin: top center;
 }
 
 .sidebar-title {
@@ -188,6 +192,30 @@ label {
     border-radius: 8px;
     padding: 10px;
 }
+
+
+/* Scrollbar Styling - for WebKit browsers */
+.sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: #35AC90;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+/* For Firefox */
+.sidebar {
+    scrollbar-width: thin;
+    scrollbar-color: #35AC90 #f0f0f0;
+}   
 
 .timeline {
     position: relative;

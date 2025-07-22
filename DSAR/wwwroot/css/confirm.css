@@ -13,19 +13,20 @@
         min-height: 100vh;
     }
 
-    .container {
-        background: white;
-        width: auto;
-        height: auto;
-        border-radius: 20px;
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        padding: 60px 40px;
-        direction: rtl;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-
-    }
+.container {
+    background: white;
+    width: auto;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    padding: 60px 40px;
+    direction: rtl;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transform: scale(0.8);
+    transform-origin: top center;
+}
 
     h1 {
         font-size: 32px;

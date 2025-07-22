@@ -22,6 +22,8 @@ body {
     direction: rtl;
     margin: 20px auto;
     box-sizing: border-box;
+    transform: scale(0.8);
+    transform-origin: top center;
 }
 
 h2 {

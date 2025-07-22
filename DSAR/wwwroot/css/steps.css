@@ -33,7 +33,12 @@ body {
     box-sizing: border-box;
     position: relative;
     padding-bottom: 80px;
+    transform: scale(0.8);
+    transform-origin: top center;
 }
+
+
+
 
 /* Columns */
 .column {
@@ -384,6 +389,8 @@ select.form-select {
     direction: rtl;
     position: relative;
     z-index: 2;
+    transform: scale(0.8);
+    transform-origin: top center;
 }
 
 .step {
@@ -443,7 +450,7 @@ select.form-select {
     }
 
 /* Footer Buttons */
-.button-footer {
+    .button-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;

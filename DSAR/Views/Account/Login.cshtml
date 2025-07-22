@@ -29,13 +29,13 @@
                         <div asp-validation-summary="ModelOnly" class="text-danger text-center mb-3"></div>
 
                         <div class="mb-3">
-                            <label asp-for="Email" class="form-label"></label>
+                            <label asp-for="Email" class="form-label">الايميل</label>
                             <input asp-for="Email" class="form-control" />
                             <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
 
                         <div class="mb-4 password-group">
-                            <label asp-for="Password" class="form-label"></label>
+                            <label asp-for="Password" class="form-label">الرمز السري</label>
                             <input asp-for="Password" class="form-control" id="password" />
                             <button type="button" class="toggle-password" onclick="togglePassword()">عرض</button>
                             <span asp-validation-for="Password" class="text-danger"></span>
@@ -46,12 +46,7 @@
 
                         <button type="submit" class="btn btn-login w-100">تسجيل الدخول</button>
 
-                        <p class="text-center mt-3">
-                            لا تملك حسابًا؟
-                            <a asp-controller="Account" asp-action="Register" class="text-decoration-none">إنشاء حساب</a>
-                        </p>
-
-
+                        
                     </form>
                 </div>
             </div>
