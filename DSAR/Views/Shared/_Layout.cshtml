@@ -21,7 +21,6 @@
 <body>
     <!-- fixed header -->
 <div class="zoom-wrapper">
-
     <header class="site-header bg-light border-bottom">
         <div class="container-fluid d-flex justify-content-between align-items-center h-100 px-3">
             <div class="d-flex align-items-center">
@@ -32,17 +31,14 @@
                 <a asp-controller="Account" asp-action="Main" class="nav-link header-link">
                     الرئيسية
                 </a>
-
                 @if (User.IsInRole("ApplicationManager") || User.IsInRole("ITManager") || User.IsInRole("Analayzer"))
                 {
                     <a asp-controller="Request" asp-action="orderpage" class="nav-link header-link">
                         مراجعة الطلبات
                     </a>
                 }
-
                 @if (User.IsInRole("SectionManager") || User.IsInRole("DepartmentManager"))
                 {
-                    
                     <a asp-controller="Request" asp-action="MyRequest" class="nav-link header-link">
                         طلباتي
                     </a>
@@ -50,21 +46,22 @@
                         مراجعة الطلبات
                     </a>
                 }
-                
                 @if (User.IsInRole("User"))
                 {
-                    
                     <a asp-controller="Request" asp-action="MyRequest" class="nav-link header-link">
                         طلباتي
                     </a>
                 }
-
             </div>
-            <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
-                <button type="submit" class="btn btn-link p-0" style="background: none; border: none;">
-                    <img src="~/images/logout.png" alt="Logout" class="header-logout" />
-                </button>
-            </form>
+            <div class="header-right">
+                <span class="welcome-text">مرحباً يا @User.FindFirst("FirstName")?.Value @User.FindFirst("LastName")?.Value</span>
+
+                <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                    <button type="submit" class="btn btn-link p-0" style="background: none; border: none;">
+                        <img src="~/images/logout.png" alt="Logout" class="header-logout" />
+                    </button>
+                </form>
+            </div>
         </div>
     </header>
 
@@ -75,7 +72,6 @@
         </main>
     </div>
 
-  
     <!-- fixed footer -->
     <footer class="site-footer text-center">
         <div class="container-fluid">
@@ -86,21 +82,15 @@
     <!-- Scripts: load once, in order -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
     <script src="~/js/updateFileName.js" asp-append-version="true"></script>
     <script src="~/js/script.js" asp-append-version="true"></script>
     <script src="~/js/form-handler.js" asp-append-version="true"></script>
     <script src="~/js/file-validator.js" asp-append-version="true"></script>
     <script src="~/js/step-progress.js" asp-append-version="true"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
-
-</html>
-
-
-
+</html> 

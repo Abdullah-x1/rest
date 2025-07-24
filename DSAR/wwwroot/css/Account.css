@@ -1,23 +1,23 @@
-﻿    body {
-        background: radial-gradient( circle at top left, #00B96B 0%, #29B6F6 33%, #304FFE 76%, #8C52FF 100% );
-        background-size: 200% 200%;
-        background-repeat: no-repeat;
-        background-position: top left;
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem;
-        font-family: 'Tajawal', sans-serif;
-    }
+﻿body {
+    background: #f9f9f9 ;
+    background-size: 200% 200%;
+    background-repeat: no-repeat;
+    background-position: top left;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    font-family: 'Tajawal', sans-serif;
+}
 
 .login-container {
-    background-color: #fff;
+    background-color: #ffffff;
     border-radius: 16px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
     width: 100%;
     max-width: 600px;
-    min-height: 70vh; /* 80% of viewport height */
+    min-height: 40vh; /* 80% of viewport height */
     padding: 2.5rem 2rem;
     display: flex;
     flex-direction: column;

@@ -51,7 +51,27 @@ namespace DSAR.Controllers
 
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Main", "Account");
+                    // Get the logged-in user
+                    var user = await _userManager.FindByEmailAsync(model.Email);
+
+                    // Get roles for the user
+                    var roles = await _userManager.GetRolesAsync(user);
+
+                    // Assuming a user only has one role, you can use FirstOrDefault
+                    var role = roles.FirstOrDefault();
+
+                    // Redirect based on role
+                    switch (role)
+                    {
+                        case "Analyzer":
+                            return RedirectToAction("orderpage", "Request");
+                        case "ApplicationManager":
+                            return RedirectToAction("orderpage", "Request");
+                        case "ITManager":
+                            return RedirectToAction("orderpage", "Request");
+                        default:
+                            return RedirectToAction("Main", "Account");
+                    }
                 }
                 else
                 {
@@ -61,6 +81,7 @@ namespace DSAR.Controllers
 
             return View(model);
         }
+
         public ActionResult Register()
         {
             var model = new RegisterViewModel

@@ -5,7 +5,7 @@
     display: flex;
     flex-direction: column;
     font-family: 'Tajawal', sans-serif;
-    background: linear-gradient(to right, #6dc1a8, #7ab8ea);
+    background: #f9f9f9;
 }
 
 .main-content {
@@ -19,7 +19,7 @@
 
 
 .form-container {
-    background-color: white;
+    background-color: #ffffff;
     width: 1288px;
     max-width: 98vw;
     height: 729px;

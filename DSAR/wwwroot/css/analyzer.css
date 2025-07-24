@@ -6,11 +6,11 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background: linear-gradient(to right, #6dc1a8, #7ab8ea);
+    background: #f9f9f9;
 }
 
 .container {
-    background: white;
+    background: #ffffff;
     width: 90%;
     max-width: 1288px;
     min-height: 729px;

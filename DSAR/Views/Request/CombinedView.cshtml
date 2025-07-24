@@ -16,7 +16,6 @@
     <title>عرض الطلب الكامل وصلاحيات المعتمدين</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/StepsView.css" asp-append-version="true" />
-
 </head>
 <body>
     <div class="page-wrapper">
@@ -29,8 +28,6 @@
                         <div class="timeline-content">
                             <h3 class="date">@entry.CreationDate</h3>
                             <p><strong>المستوى:</strong> @entry.LevelName</p>
-                          @*<p><strong>الحالة:</strong> @entry.StatusName</p>
-                            <p><strong>الدور:</strong> @entry.RoleName</p> *@
                             <p><strong>ملاحظات</strong> @entry.Notes</p>
                             <p><strong>معلومات إضافية:</strong> @entry.Information</p>
                         </div>
@@ -39,286 +36,277 @@
             </div>
         </div>
 
-        <!-- Step 1 Section -->
-        <div class="section-header">مقدمة عن الخدمة</div>
-        <div class="step1-section content-area">
+        <div class="content-area">
+            <div class="section-header">تفاصيل الطلب </div>
             <div class="form-container">
-                <div class="right-column column">
-                    <label class="form-label small-label">اسم الخدمة المطلوبة</label>
-                    <input type="text" class="in1" value="@Model.ServiceName" readonly />
+                <!-- Step 1 Section -->
+                <h3>مقدمة عن الخدمة</h3>
+                <div class="section-columns">
+                    <div class="right-column column">
+                        <label class="form-label small-label">اسم الخدمة المطلوبة</label>
+                        <input type="text" class="in1" value="@Model.ServiceName" readonly />
 
-                    <label class="form-label small-label">نوع الخدمة</label>
-                    <input type="text" class="in1" value="@Model.ServiceTypeAndLocation" readonly />
+                        <label class="form-label small-label">نوع الخدمة</label>
+                        <input type="text" class="in1" value="@Model.ServiceTypeAndLocation" readonly />
 
-                    <label class="form-label small-label">وصف الخدمة</label>
-                    <textarea class="in2" readonly>@Model.ServiceDescription</textarea>
+                        <label class="form-label small-label">وصف الخدمة</label>
+                        <textarea class="in2" readonly>@Model.ServiceDescription</textarea>
 
-                    <div class="radio-section">
-                        <label>هل توجد اعتمادية على خدمات حالية؟</label>
-                        <div class="radio-options">
-                            <label>
-                                <input type="radio" name="Depend" value="yes" @(Model.HasDependency == "yes" ? "checked" : "") disabled /> نعم
-                            </label>
-                            <label>
-                                <input type="radio" name="Depend" value="no" @(Model.HasDependency == "no" ? "checked" : "") disabled /> لا
-                            </label>
+                        <div class="radio-section">
+                            <label>هل توجد اعتمادية على خدمات حالية؟</label>
+                            <div class="radio-options">
+                                <label>
+                                    <input type="radio" name="Depend" value="yes" @(Model.HasDependency == "yes" ? "checked" : "") disabled /> نعم
+                                </label>
+                                <label>
+                                    <input type="radio" name="Depend" value="no" @(Model.HasDependency == "no" ? "checked" : "") disabled /> لا
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="left-column column">
+                        <label class="form-label small-label">توضيح الاعتمادية</label>
+                        <input type="text" class="in1" value="@Model.DependencyDetails" readonly />
+
+                        <label class="form-label small-label">رقم الإجراء الإداري</label>
+                        <input type="text" class="in1" value="@Model.ProcedureNumber" readonly />
+
+                        <label class="form-label">ملف الإجراء الإداري إن وجد:</label>
+                        <div class="attachment-section">
+                            @if (step1Attachments.Any())
+                            {
+                                <span>المرفقات:</span>
+                                <ul class="attached-files">
+                                    @foreach (var att in step1Attachments)
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = att.Id })"
+                                               class="attachment-link" target="_blank">
+                                                @att.FileName@att.FileExtension
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <span class="no-attachment">لا يوجد مرفقات</span>
+                            }
                         </div>
                     </div>
                 </div>
 
-                <div class="left-column column">
-                    <label class="form-label small-label">توضيح الاعتمادية</label>
-                    <input type="text" class="in1" value="@Model.DependencyDetails" readonly />
+                <!-- Step 2 Section -->
+                <h3>معلومات أولية عن الخدمة</h3>
+                <div class="section-columns">
+                    <div class="right-column column">
+                        <label class="form-label small-label">عدد المرات المسموحة لتقديم الطلب</label>
+                        <input type="text" class="in1" value="@Model.RepeatLimit" readonly />
 
-                    <label class="form-label small-label">رقم الإجراء الإداري</label>
-                    <input type="text" class="in1" value="@Model.ProcedureNumber" readonly />
+                        <label class="form-label small-label">رسوم الخدمة</label>
+                        <input type="text" class="in1" value="@Model.Fees" readonly />
 
-                    <label class="form-label">ملف الإجراء الإداري إن وجد:</label><br />
+                        <label class="form-label small-label">المدن المتاحة للخدمة</label>
+                        <input type="text" class="in1" value="@Model.Cities" readonly />
 
-                    <div class="attachment-section">
-                        @if (step1Attachments.Any())
-                        {
-                            <span>المرفقات:</span>
-                            <ul class="attached-files">
-                                @foreach (var att in step1Attachments)
-                                {
-                                    <li>
-                                        <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = att.Id })"
-                                           class="attachment-link" target="_blank">
-                                            @att.FileName@att.FileExtension
-                                        </a>
-                                    </li>
-                                }
-                            </ul>
-                        }
-                        else
-                        {
-                            <span class="no-attachment">لا يوجد مرفقات</span>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
+                        <label class="form-label small-label">الفئة المستهدفة</label>
+                        <input type="text" class="in1" value="@Model.TargetAudience" readonly />
 
-        <!-- Step 2 Section -->
-        <div class="section-header">معلومات أولية عن الخدمة</div>
-        <div class="step2-section content-area">
-            <div class="form-container">
-                <div class="right-column column">
-                    <label class="form-label small-label">عدد المرات المسموحة لتقديم الطلب</label>
-                    <input type="text" class="in1" value="@Model.RepeatLimit" readonly />
-
-                    <label class="form-label small-label">رسوم الخدمة</label>
-                    <input type="text" class="in1" value="@Model.Fees" readonly />
-
-                    <label class="form-label small-label">المدن المتاحة للخدمة</label>
-                    <input type="text" class="in1" value="@Model.Cities" readonly />
-
-                    <label class="form-label small-label">الفئة المستهدفة</label>
-                    <input type="text" class="in1" value="@Model.TargetAudience" readonly />
-
-                    <label class="form-label small-label">الإدارة المسؤولة عن الخدمة</label>
-                    <input type="text" class="in1" value="@Model.DepartmentName" readonly />
-                </div>
-
-                <div class="left-column column">
-                    <label class="form-label small-label">مخرجات الخدمة</label>
-                    <textarea class="in1" readonly>@Model.ExpectedOutput1</textarea>
-
-                    <label class="form-label small-label">النماذج المستخدمة</label>
-                    <textarea class="in1" readonly>@Model.ApprovedTemplate</textarea>
-
-                    <label class="form-label small-label">المرفقات (النماذج)</label>
-                    <div class="attachment-section">
-                        @if (step2Attachments1.Any())
-                        {
-                            <ul class="attached-files">
-                                @foreach (var att in step2Attachments1)
-                                {
-                                    <li>
-                                        <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = att.Id })"
-                                           class="attachment-link" target="_blank">
-                                            @att.FileName@att.FileExtension
-                                        </a>
-                                    </li>
-                                }
-                            </ul>
-                        }
-                        else
-                        {
-                            <span class="no-attachment">لا يوجد مرفقات</span>
-                        }
+                        <label class="form-label small-label">الإدارة المسؤولة عن الخدمة</label>
+                        <input type="text" class="in1" value="@Model.DepartmentName" readonly />
                     </div>
 
-                    <label class="form-label small-label">البيانات الاعتمادية</label>
-                    <textarea class="in1" readonly>@Model.DetailedInfo</textarea>
+                    <div class="left-column column">
+                        <label class="form-label small-label">مخرجات الخدمة</label>
+                        <textarea class="in1" readonly>@Model.ExpectedOutput1</textarea>
 
-                    <label class="form-label small-label">المرفقات (البيانات الاعتمادية)</label>
-                    <div class="attachment-section">
-                        @if (step2Attachments2.Any())
-                        {
-                            <ul class="attached-files">
-                                @foreach (var att in step2Attachments2)
-                                {
-                                    <li>
-                                        <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = att.Id })"
-                                           class="attachment-link" target="_blank">
-                                            @att.FileName@att.FileExtension
-                                        </a>
-                                    </li>
-                                }
-                            </ul>
-                        }
-                        else
-                        {
-                            <span class="no-attachment">لا يوجد مرفقات</span>
-                        }
-                    </div>
+                        <label class="form-label small-label">النماذج المستخدمة</label>
+                        <textarea class="in1" readonly>@Model.ApprovedTemplate</textarea>
 
-                    <label class="form-label small-label">شروط الخدمة</label>
-                    <textarea class="in1" readonly>@Model.RequiredConditions</textarea>
-                </div>
-            </div>
-        </div>
+                        <label class="form-label small-label">المرفقات (النماذج)</label>
+                        <div class="attachment-section">
+                            @if (step2Attachments1.Any())
+                            {
+                                <ul class="attached-files">
+                                    @foreach (var att in step2Attachments1)
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = att.Id })"
+                                               class="attachment-link" target="_blank">
+                                                @att.FileName@att.FileExtension
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <span class="no-attachment">لا يوجد مرفقات</span>
+                            }
+                        </div>
 
-        <!-- Step 3 (assumed as Step 4 from previous context) Section -->
-        <div class="section-header">معلومات تفصيلية عن الخدمة</div>
-        <div class="step3-section content-area">
-            <div class="form-container">
-                <div class="right-column column">
-                    <label class="form-label small-label">المرفقات المطلوبة للخدمة</label>
-                    <textarea class="in1" readonly>@Model.UploadsRequired</textarea>
+                        <label class="form-label small-label">البيانات الاعتمادية</label>
+                        <textarea class="in1" readonly>@Model.DetailedInfo</textarea>
 
-                    <label class="form-label small-label">ملفات المرفقات المطلوبة:</label>
-                    <div class="attachment-section">
-                        @if (step4Attachments2.Any())
-                        {
-                            <ul class="attached-files">
-                                @foreach (var att in step4Attachments2)
-                                {
-                                    <li>
-                                        <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = att.Id })" target="_blank" class="attachment-link">
-                                            @att.FileName@att.FileExtension
-                                        </a>
-                                    </li>
-                                }
-                            </ul>
-                        }
-                        else
-                        {
-                            <span class="no-attachment">لا يوجد مرفقات</span>
-                        }
-                    </div>
+                        <label class="form-label small-label">المرفقات (البيانات الاعتمادية)</label>
+                        <div class="attachment-section">
+                            @if (step2Attachments2.Any())
+                            {
+                                <ul class="attached-files">
+                                    @foreach (var att in step2Attachments2)
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = att.Id })"
+                                               class="attachment-link" target="_blank">
+                                                @att.FileName@att.FileExtension
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <span class="no-attachment">لا يوجد مرفقات</span>
+                            }
+                        </div>
 
-                    <label class="form-label small-label">وثائق الدعم</label>
-                    <textarea class="in1" readonly>@Model.Documents</textarea>
-
-                    <label class="form-label small-label">ملفات وثائق الدعم:</label>
-                    <div class="attachment-section">
-                        @if (step4Attachments3.Any())
-                        {
-                            <ul class="attached-files">
-                                @foreach (var att in step4Attachments3)
-                                {
-                                    <li>
-                                        <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = att.Id })" target="_blank" class="attachment-link">
-                                            @att.FileName@att.FileExtension
-                                        </a>
-                                    </li>
-                                }
-                            </ul>
-                        }
-                        else
-                        {
-                            <span class="no-attachment">لا يوجد مرفقات</span>
-                        }
-                    </div>
-
-                    <label class="form-label small-label">مسار العمل للخدمة بطريقة رسم (Workflow) توضيحي:</label>
-                    <div class="attachment-section">
-                        @if (step4Attachments1.Any())
-                        {
-                            <ul class="attached-files">
-                                @foreach (var att in step4Attachments1)
-                                {
-                                    <li>
-                                        <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = att.Id })" target="_blank" class="attachment-link">
-                                            @att.FileName@att.FileExtension
-                                        </a>
-                                    </li>
-                                }
-                            </ul>
-                        }
-                        else
-                        {
-                            <span class="no-attachment">لا يوجد مرفقات</span>
-                        }
+                        <label class="form-label small-label">شروط الخدمة</label>
+                        <textarea class="in1" readonly>@Model.RequiredConditions</textarea>
                     </div>
                 </div>
 
-                <div class="left-column column">
-                    <label class="form-label small-label">المدة الزمنية لإنجاز الخدمة</label>
-                    <textarea class="in2" readonly>@Model.Timeline</textarea>
+                <!-- Step 3 Section -->
+                <h3>معلومات تفصيلية عن الخدمة</h3>
+                <div class="section-columns">
+                    <div class="right-column column">
+                        <label class="form-label small-label">المرفقات المطلوبة للخدمة</label>
+                        <textarea class="in1" readonly>@Model.UploadsRequired</textarea>
 
-                    <label class="form-label small-label">الربط الخارجي</label>
-                    <textarea class="in1" readonly>@Model.SystemNeeded</textarea>
+                        <label class="form-label small-label">ملفات المرفقات المطلوبة:</label>
+                        <div class="attachment-section">
+                            @if (step4Attachments2.Any())
+                            {
+                                <ul class="attached-files">
+                                    @foreach (var att in step4Attachments2)
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = att.Id })" target="_blank" class="attachment-link">
+                                                @att.FileName@att.FileExtension
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <span class="no-attachment">لا يوجد مرفقات</span>
+                            }
+                        </div>
 
-                
+                        <label class="form-label small-label">وثائق الدعم</label>
+                        <textarea class="in1" readonly>@Model.Documents</textarea>
+
+                        <label class="form-label small-label">ملفات وثائق الدعم:</label>
+                        <div class="attachment-section">
+                            @if (step4Attachments3.Any())
+                            {
+                                <ul class="attached-files">
+                                    @foreach (var att in step4Attachments3)
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = att.Id })" target="_blank" class="attachment-link">
+                                                @att.FileName@att.FileExtension
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <span class="no-attachment">لا يوجد مرفقات</span>
+                            }
+                        </div>
+
+                        <label class="form-label small-label">مسار العمل للخدمة بطريقة رسم (Workflow) توضيحي:</label>
+                        <div class="attachment-section">
+                            @if (step4Attachments1.Any())
+                            {
+                                <ul class="attached-files">
+                                    @foreach (var att in step4Attachments1)
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("DownloadAttachment", "Request", new { attachmentId = att.Id })" target="_blank" class="attachment-link">
+                                                @att.FileName@att.FileExtension
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <span class="no-attachment">لا يوجد مرفقات</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="left-column column">
+                        <label class="form-label small-label">المدة الزمنية لإنجاز الخدمة</label>
+                        <textarea class="in2" readonly>@Model.Timeline</textarea>
+
+                        <label class="form-label small-label">الربط الخارجي</label>
+                        <textarea class="in1" readonly>@Model.SystemNeeded</textarea>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Authorized Contacts Section -->
-        <div class="section-header">معلومات التواصل لأصحاب الصلاحية</div>
-        <div class="content-area">
-            <div class="content-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>المدينة</th>
-                            <th>ممثل القطاع</th>
-                            <th>المنصب</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.AuthorizedContacts)
-                        {
+                <!-- Authorized Contacts Section -->
+                <div class="table-section">
+                    <h3>معلومات التواصل لأصحاب الصلاحية</h3>
+                    <table>
+                        <thead>
                             <tr>
-                                <td>@item.ApprovedCities</td>
-                                <td>@item.SectorRepresentative</td>
-                                <td>@item.SectorRepresentativeTitle</td>
+                                <th>المدينة</th>
+                                <th>ممثل القطاع</th>
+                                <th>المنصب</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.AuthorizedContacts)
+                            {
+                                <tr>
+                                    <td>@item.ApprovedCities</td>
+                                    <td>@item.SectorRepresentative</td>
+                                    <td>@item.SectorRepresentativeTitle</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
 
-        <!-- Step Descriptions View -->
-        <div class="section-header">صلاحيات المعتمدين</div>
-        <div class="content-area">
-            <div class="content-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>الإدارة</th>
-                            <th>اسم المعتمد</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.Descriptions)
-                        {
+                <!-- Step Descriptions Section -->
+                <div class="table-section">
+                    <h3>صلاحيات المعتمدين</h3>
+                    <table>
+                        <thead>
                             <tr>
-                                <td>@item.Description1</td>
-                                <td>@item.Description2</td>
+                                <th>الإدارة</th>
+                                <th>اسم المعتمد</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Descriptions)
+                            {
+                                <tr>
+                                    <td>@item.Description1</td>
+                                    <td>@item.Description2</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
 
+                <!-- Button Footer -->
                 <div class="button-footer">
-                  
-
                     <div class="btn-group-custom">
                         @if (User.IsInRole("ApplicationManager") && Model.LevelId == 6)
                         {

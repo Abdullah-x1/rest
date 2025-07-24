@@ -1,4 +1,12 @@
-﻿
+﻿.welcome-text {
+    font-family: 'Tajawal', sans-serif;
+    font-size: 25px;
+    font-weight: 600;
+    line-height: 50px;
+    text-align: left;
+    padding: 0 1.5rem;
+}
+
 .site-header {
     position: sticky;
     top: 0;
@@ -15,7 +23,6 @@
 /* shrink logo */
 .header-logo {
     height: 65px; /* was 40px before */
-
 }
 
 /* smaller nav-links */
@@ -29,14 +36,7 @@
 /* shrink logout icon */
 .header-logout {
     height: 40px;
-    width:40px;
-}
-header.site-header .btn-link {
-    /* force it back to its natural size */
-    width: auto !important;
-    height: auto !important;
-    padding: 0 !important;
-    margin: 0 !important;
+    width: 40px;
 }
 
 header.site-header .btn-link {
@@ -56,6 +56,7 @@ body {
     font-family: 'Tajawal', sans-serif;
     background: linear-gradient(to right, #6dc1a8, #7ab8ea); /* for consistency */
 }
+
 .main-content {
     flex: 1;
     padding-top: 100px; /* height of your header */
@@ -72,6 +73,14 @@ body {
     width: 100%;
     z-index: 1030;
 }
+
+/* Flex container for welcome text and logout button */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* Space between welcome text and logout button */
+}
+
 @media (max-width: 600px) {
     header.site-header {
         flex-direction: column;
@@ -102,6 +111,17 @@ body {
     footer.site-footer {
         font-size: 12px;
     }
+
+    .welcome-text {
+        font-size: 18px; /* Match header-link size */
+        margin: 5px 10px; /* Smaller margins for mobile */
+        line-height: normal; /* Adjust for stacked layout */
+    }
+
+    .header-right {
+        flex-direction: row;
+        gap: 0.5rem;
+    }
 }
 
 @media (min-width: 601px) and (max-width: 1024px) {
@@ -127,8 +147,17 @@ body {
     .main-content {
         padding-top: 90px;
     }
-}
 
+    .welcome-text {
+        font-size: 22px; /* Match header-link size */
+        margin: 0 1rem;
+        line-height: 40px; /* Adjust for smaller header height */
+    }
+
+    .header-right {
+        gap: 0.8rem;
+    }
+}
 
 @media (min-width: 1025px) and (max-width: 1440px) {
     header.site-header {
@@ -151,5 +180,15 @@ body {
 
     .main-content {
         padding-top: 95px;
+    }
+
+    .welcome-text {
+        font-size: 24px; /* Match header-link size */
+        margin: 0 1.2rem;
+        line-height: 45px; /* Adjust for header height */
+    }
+
+    .header-right {
+        gap: 1rem;
     }
 }
