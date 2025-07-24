@@ -6,18 +6,18 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background: #f9f9f9;
+    background-color: #eaeaea;
 }
 
 .container {
-    background: #ffffff;
+    background-color: #ffffff;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
     width: 90%;
     max-width: 1288px;
     min-height: 729px;
     height: auto;
-    border-radius: 20px;
     position: relative;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     padding: 40px;
     direction: rtl;
     margin: 20px auto;

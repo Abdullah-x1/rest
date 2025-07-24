@@ -256,12 +256,12 @@
                     .ToList();
 
                 requestViewModel.UploadsRequiredAttachmentId = snapshot.Attachments
-                    .Where(a => a.FieldName == "Step4_uploadsRequiredFile")
+                    .Where(a => a.FieldName == "Step4_UploadsRequiredFile")
                     .Select(a => a.Id)
                     .ToList();
 
                 requestViewModel.UploadsRequiredName = snapshot.Attachments
-                    .Where(a => a.FieldName == "Step4_uploadsRequiredFile")
+                    .Where(a => a.FieldName == "Step4_UploadsRequiredFile")
                     .Select(a => $"{a.FileName}{a.FileExtension}")
                     .ToList();
 
@@ -626,14 +626,14 @@
             if (anyUploads)
             {
                 var oldUploads = snapshot.Attachments
-                    .Where(a => a.FieldName == "Step4_uploadsRequiredFile")
+                    .Where(a => a.FieldName == "Step4_UploadsRequiredFile")
                     .ToList();
 
                 foreach (var att in oldUploads)
                     snapshot.Attachments.Remove(att);
 
                 foreach (var file in uploadsRequiredFiles.Where(f => f.Length > 0))
-                    await HandleAttachment(file, snapshot, "Step4_uploadsRequiredFile");
+                    await HandleAttachment(file, snapshot, "Step4_UploadsRequiredFile");
 
                 uploadsName = string.Join(", ", uploadsRequiredFiles.Select(f => Path.GetFileName(f.FileName)));
             }

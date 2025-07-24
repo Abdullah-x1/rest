@@ -1,12 +1,12 @@
-﻿    html, body {
-        margin: 0;
-        padding: 0;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        font-family: sans-serif;
-        background: linear-gradient(to right, #6dc1a8, #7ab8ea);
-    }
+﻿html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: sans-serif;
+    background-color: #eaeaea;
+}
 
     .main-content {
         flex: 1;

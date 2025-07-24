@@ -7,7 +7,7 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background: #f9f9f9;
+    background: #eaeaea;
     overflow-x: hidden;
 }
 
@@ -27,15 +27,15 @@ body {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
-    background-color: #ffffff;
+    background: #ffffff;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
     padding: 40px;
-    border-radius: 10px;
     box-sizing: border-box;
     position: relative;
     padding-bottom: 80px;
     transform: scale(0.8);
     transform-origin: top center;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
     border-radius: 12px;
     padding: 75px;
 }
@@ -107,7 +107,7 @@ textarea {
 /* Select Form */
 select.form-select {
     width: 100%;
-    max-width: 430px;
+    max-width: 414px;
     height: 38px;
     padding: 6px 12px;
     font-family: 'Tajawal', sans-serif;

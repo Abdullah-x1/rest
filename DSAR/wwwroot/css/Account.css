@@ -1,118 +1,128 @@
 ﻿body {
-    background: #f9f9f9 ;
-    background-size: 200% 200%;
-    background-repeat: no-repeat;
-    background-position: top left;
+    background: #eaeaea;
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem;
+    padding: 1.5rem;
     font-family: 'Tajawal', sans-serif;
 }
 
 .login-container {
     background-color: #ffffff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     border-radius: 16px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
     width: 100%;
-    max-width: 600px;
-    min-height: 40vh; /* 80% of viewport height */
-    padding: 2.5rem 2rem;
+    max-width: 450px;
+    padding: 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1.5rem;
 }
 
-    .logo {
-        width: 120px;
-        height: 120px;
+.logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 0.5rem;
+}
+
+    .logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 12px;
     }
 
-        .logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            border-radius: 16px;
-        }
+h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1a3c6d;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
 
-    h1 {
-        font-size: 1.8rem;
-        font-weight: 600;
-        color: #333;
-        text-align: center;
-    }
+.form-control {
+    font-size: 1rem;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid #d1d9e6;
+    background-color: #f8fafc;
+    transition: all 0.3s ease;
+}
 
     .form-control:focus {
-        border-color: #8BC6EC;
-        box-shadow: 0 0 0 0.2rem rgba(139, 198, 236, 0.25);
+        border-color: #4a90e2;
+        box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+        background-color: #ffffff;
     }
 
-    .password-group {
-        position: relative;
+.form-label {
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.password-group {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    top: 65%;
+    left: 1rem;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 1rem;
+    color: #4a90e2;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+    .toggle-password:hover {
+        color: #2b6cb0;
     }
 
-    .toggle-password {
-        position: absolute;
-        top: 68%;
-        left: 1rem;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        font-size: 0.9rem;
-        color: #555;
-        cursor: pointer;
+.btn-login {
+    background: linear-gradient(135deg, #4a90e2 0%, #63b3ed 100%);
+    color: white;
+    font-weight: 500;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+    .btn-login:hover {
+        background: linear-gradient(135deg, #2b6cb0 0%, #4299e1 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
     }
 
-    .btn-login {
-        background: linear-gradient(135deg, #8BC6EC 0%, #9599E2 100%);
-        color: white;
-        font-weight: 500;
-        padding: 12px;
-        border-radius: 20px;
-        transition: all 0.3s ease;
-        font-size: 1rem;
-    }
+.text-danger {
+    font-size: 0.85rem;
+}
 
-        .btn-login:hover {
-            background: linear-gradient(135deg, #76b8e3 0%, #848ae0 100%);
-            transform: scale(1.02);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    text-align: right;
+}
 
-
-
-    input[type="text"],
-    input[type="email"]
-   {
-        text-align: left;
-    }
-    label {
-        text-align: right;
-    }
+@media (max-width: 576px) {
     .login-container {
-        padding: 2rem 1rem;
+        padding: 1.5rem 1rem;
     }
 
     h1 {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
     }
 
-    }
-
-    /* Make inputs larger */
     .form-control {
-        font-size: 1.1rem;
-        padding: 14px 16px;
-        border-radius: 14px;
+        font-size: 0.95rem;
+        padding: 10px 14px;
     }
-
-    /* Align labels to the left regardless of RTL */
-    .form-label {
-        display: block;
-        font-weight: 500;
-        font-size: 1rem;
-        color: #333;
-    }
-
+}

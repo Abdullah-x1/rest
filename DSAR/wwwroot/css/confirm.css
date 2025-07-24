@@ -6,7 +6,7 @@
 }
 
 body {
-    background: #f9f9f9;
+    background-color: #eaeaea;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -14,11 +14,11 @@ body {
 }
 
 .container {
-    background: #ffffff;
+    background-color: #ffffff;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
     width: auto;
     height: auto;
-    border-radius: 20px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     padding: 60px 40px;
     direction: rtl;
     display: flex;

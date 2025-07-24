@@ -5,7 +5,7 @@
     display: flex;
     flex-direction: column;
     font-family: 'Tajawal', sans-serif;
-    background: #f9f9f9;
+    background: #eaeaea;
 }
 
 .main-content {
@@ -19,7 +19,9 @@
 
 
 .form-container {
-    background-color: #ffffff;
+    background: #ffffff;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
     width: 1288px;
     max-width: 98vw;
     height: 729px;
@@ -28,7 +30,6 @@
     flex-direction: column;
     padding: 25px 30px;
     box-sizing: border-box;
-    border-radius: 10px;
     position: relative;
     transform: scale(0.8);
     transform-origin: top center;
@@ -418,24 +419,79 @@ th {
 }
 
 /* Mobile Fix: Prevent them from stretching full-width */
+/* Merge and fix mobile view (≤768px) */
 @media (max-width: 768px) {
-    .btn-add-row,
-    .btn-delete-row {
-        width: auto !important;
-        min-width: 120px !important;
-        padding: 10px 18px !important;
-        font-size: 1rem !important;
+    body {
+        margin: 0;
+        padding: 10px; /* Consistent padding */
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Center horizontally */
+        justify-content: flex-start; /* Align content to top */
+        box-sizing: border-box;
     }
+
+    .main-content {
+        width: 100%;
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically if needed */
+        padding: 10px;
+        margin-top: 0; /* Remove negative margin for mobile */
+    }
+
+    .form-container {
+        width: 100%;
+        max-width: 700px; /* Keep larger max-width */
+        height: auto;
+        padding: 20px 25px;
+        border-radius: 10px;
+        margin: 0 auto; /* Ensure horizontal centering */
+        transform: none; /* Remove scale for simplicity in mobile */
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Center content inside */
+        Transform: scale(0.8);
+        transform-origin: top center;
+    }
+
+    .button-container {
+        flex-direction: column;
+        align-items: stretch;
+        margin-bottom: 20px;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .btn {
+        width: 100%;
+        min-width: unset;
+        padding: 14px 0;
+        font-size: 1.1rem;
+    }
+
+    .arrow-left, .arrow-right {
+        position: static;
+        margin-top: 15px;
+        text-align: center;
+    }
+
+    .arrow img {
+        width: 28px;
+        height: 28px;
+    }
+
     .step-progress-container {
-        margin-top: 100px; /* adjust based on your fixed header height */
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+        width: 100%;
     }
+
     .step {
-        position: relative;
-        padding-right: 30px;
-        padding-left: 10px;
         flex-direction: row;
-        align-items: center;
-        justify-content: flex-start;
         gap: 10px;
     }
 
@@ -446,25 +502,10 @@ th {
         }
 
         .step .label {
-            text-align: right;
-            font-size: 14px;
-            white-space: nowrap;
+            font-size: 13px;
         }
 
         .step::before {
-            top: 40px;
-            left: 14px;
-            width: 4px;
-            height: calc(100% - 40px);
-            background: #ddd;
-        }
-
-        .step.active::before,
-        .step.completed::before {
-            background: #00c9a7;
-        }
-
-        .step:last-child::before {
             display: none;
         }
 }

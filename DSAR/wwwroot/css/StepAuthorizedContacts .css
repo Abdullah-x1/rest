@@ -6,12 +6,14 @@ html, body {
     display: flex;
     flex-direction: column;
     font-family: sans-serif;
-    background: linear-gradient(to right, #6dc1a8, #7ab8ea);
+    background-color: #eaeaea;
 }
 
 /* ====== Main Container ====== */
 .form-container {
-    background-color: white;
+    background-color: #ffffff;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
     width: 1288px;
     max-width: 98vw;
     max-height: 90vh;

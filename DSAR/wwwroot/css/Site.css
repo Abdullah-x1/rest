@@ -1,17 +1,21 @@
 ﻿.welcome-text {
     font-family: 'Tajawal', sans-serif;
-    font-size: 25px;
+    font-size: clamp(1.2rem, 2.5vw, 1.5rem); /* Scales between 1.2rem and 1.5rem based on viewport */
     font-weight: 600;
-    line-height: 50px;
+    line-height: 1.5; /* Unitless for better scaling */
     text-align: left;
-    padding: 0 1.5rem;
+    padding: 0 1rem;
+    white-space: nowrap; /* Prevent wrapping unless necessary */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Handle long names gracefully */
 }
 
 .site-header {
     position: sticky;
     top: 0;
     z-index: 1030;
-    background: white; /* avoid transparency */
+    background-color: #ffffff;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
     height: 100px; /* adjust as needed */
 }
 
@@ -113,9 +117,11 @@ body {
     }
 
     .welcome-text {
-        font-size: 18px; /* Match header-link size */
-        margin: 5px 10px; /* Smaller margins for mobile */
-        line-height: normal; /* Adjust for stacked layout */
+        font-size: clamp(1rem, 2vw, 1.1rem); /* Smaller font for mobile */
+        padding: 0 0.5rem;
+        line-height: 1.4;
+        white-space: normal; /* Allow wrapping on very small screens */
+        text-align: center; /* Center text for better mobile appearance */
     }
 
     .header-right {
@@ -149,9 +155,9 @@ body {
     }
 
     .welcome-text {
-        font-size: 22px; /* Match header-link size */
-        margin: 0 1rem;
-        line-height: 40px; /* Adjust for smaller header height */
+        font-size: clamp(1.1rem, 2.2vw, 1.3rem);
+        padding: 0 0.8rem;
+        line-height: 1.4;
     }
 
     .header-right {
@@ -183,9 +189,9 @@ body {
     }
 
     .welcome-text {
-        font-size: 24px; /* Match header-link size */
-        margin: 0 1.2rem;
-        line-height: 45px; /* Adjust for header height */
+        font-size: clamp(1.2rem, 2.3vw, 1.4rem);
+        padding: 0 1rem;
+        line-height: 1.5;
     }
 
     .header-right {
